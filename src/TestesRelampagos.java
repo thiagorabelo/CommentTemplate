@@ -42,6 +42,7 @@ public class TestesRelampagos {
 		}
 	}
 
+
 	public static void teste10(String[] args) throws Exception {
 		String exp = "a + length(text).floatValue * 2";
 		

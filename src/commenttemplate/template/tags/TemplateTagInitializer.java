@@ -1,6 +1,6 @@
 package commenttemplate.template.tags;
 
-import commenttemplate.template.tags.builtin.ForEachTemplateTag;
+import commenttemplate.template.tags.builtin.ForTemplateTag;
 import commenttemplate.template.tags.builtin.IfTemplateTag;
 import commenttemplate.template.tags.builtin.SetTemplateTag;
 import commenttemplate.template.tags.builtin.extend.ExtendsTemplateTag;

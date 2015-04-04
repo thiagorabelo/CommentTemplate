@@ -26,9 +26,14 @@ import commenttemplate.expressions.exceptions.FunctionDoesNotExists;
 import commenttemplate.expressions.exceptions.Unexpected;
 import commenttemplate.expressions.parser.Parser;
 import commenttemplate.expressions.tree.Exp;
+import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
+import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.template.tags.TagComponent;
-import commenttemplate.template.tags.builtin.ForEachTemplateTag;
+import commenttemplate.template.tags.TemplateTag;
+import commenttemplate.template.tags.builtin.ForTemplateTag;
 import commenttemplate.util.Tuple;
+import commenttemplate.util.Utils;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -49,10 +54,10 @@ public class ForEachComponent extends TagComponent {
 	
 	
 	public ForEachComponent() {
-		super("forEach", ForEachTemplateTag.class);
+		super("for", ForTemplateTag.class);
 	}
 
-	public Exp parseExpression(String paramName, String expression) throws ExpectedOperator, ExpectedExpression, BadExpression, Unexpected, FunctionDoesNotExists {
+	public Exp parseExpression(ForTemplateTag tag, String paramName, String expression) throws ExpectedOperator, ExpectedExpression, BadExpression, Unexpected, FunctionDoesNotExists {
 		if (!paramName.equals(LIST)) {
 			return parseExpression(expression);
 		}
@@ -63,23 +68,53 @@ public class ForEachComponent extends TagComponent {
 			Exp begin = new Parser(m.group(BUILTIN_GROUP_BEGIN)).parse();
 			Exp length = new Parser(m.group(BUILTIN_GROUP_LENGTH)).parse();
 			
-			return new NumericalList(begin, length);
+			return tag.new NumericalList(begin, length);
 		}
 
 		return parseExpression(expression);
 	}
 	
-	@Override
-	public List<Tuple<String, Exp>> paramsList(String parameters) throws BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected {
+	public List<Tuple<String, Exp>> paramsList(ForTemplateTag tag, String parameters) throws BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected {
 		LinkedList<Tuple<String, Exp>> params = new LinkedList<>();
 		Matcher m = PARAMS_PATTERN.matcher(parameters);
 
 		while (m.find()) {
 			String paramName = m.group(PARAM_NAME_GROUP);
 			String expression = m.group(PARAM_VALUE_GROUP);
-			params.add(new Tuple<>(paramName, parseExpression(paramName, expression)));
+			params.add(new Tuple<>(paramName, parseExpression(tag, paramName, expression)));
 		}
 		
 		return params;
+	}
+	
+	@Override
+	public TemplateTag populateParameters(String parameters)
+			throws CouldNotInstanciateTagException, CouldNotSetTagParameterException,
+			BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected {
+
+		ForTemplateTag tag;
+
+		try {
+			tag = (ForTemplateTag)tagClass.newInstance();
+			tag.setTagName(name);
+		} catch (IllegalAccessException | InstantiationException ex) {
+			throw new CouldNotInstanciateTagException(tagClass.getName(), ex);
+		}
+		
+		List<Tuple<String, Exp>> params = paramsList(tag, parameters);
+
+		for (Tuple<String, Exp> t : params) {
+			try {
+				Utils.setProperty(tag, t.getA(), t.getB());
+			} catch (
+				IllegalAccessException    | IllegalArgumentException |
+				InvocationTargetException | NoSuchMethodException    |
+				SecurityException ex
+			) {
+				throw new CouldNotSetTagParameterException(tagClass.getName(), t.getA(), ex);
+			}
+		}
+
+		return tag;
 	}
 }

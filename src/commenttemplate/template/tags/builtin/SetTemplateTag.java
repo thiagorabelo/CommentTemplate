@@ -12,7 +12,7 @@ import commenttemplate.template.writer.Writer;
  */
 public class SetTemplateTag extends TemplateTag {
 	
-	private Exp varName;
+	private Exp var;
 	private Exp value;
 	
 	public SetTemplateTag() {
@@ -32,7 +32,7 @@ public class SetTemplateTag extends TemplateTag {
 	public int evalParams(Context context, Writer sb) {
 		Exp attr = value;
 
-		String name = this.varName.eval(context).toString();
+		String name = this.var.eval(context).toString();
 		
 		if (name != null && !name.equals("")) {
 			Object result;
@@ -57,12 +57,12 @@ public class SetTemplateTag extends TemplateTag {
 		return SKIP_BODY;
 	}
 
-	public Exp getVarName() {
-		return varName;
+	public Exp getVar() {
+		return var;
 	}
 
-	public void setVarName(Exp varName) {
-		this.varName = varName;
+	public void setVar(Exp var) {
+		this.var = var;
 	}
 
 	public Exp getValue() {

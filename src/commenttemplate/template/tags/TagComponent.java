@@ -47,8 +47,8 @@ public class TagComponent {
 	protected static final int PARAM_VALUE_GROUP = 2;
 	
 
-	private String name;
-	private final Class<? extends TemplateTag> tagClass;
+	protected String name;
+	protected final Class<? extends TemplateTag> tagClass;
 	
 	public TagComponent(String name, Class<? extends TemplateTag> tagClass) {
 		this.name = name;

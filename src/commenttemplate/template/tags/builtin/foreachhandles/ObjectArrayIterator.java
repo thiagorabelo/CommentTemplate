@@ -1,4 +1,4 @@
-package commenttemplate.template.tags.customtagparams;
+package commenttemplate.template.tags.builtin.foreachhandles;
 
 import java.lang.reflect.Array;
 import java.util.Iterator;
@@ -49,7 +49,6 @@ public class ObjectArrayIterator implements Iterator<Object> {
 
 	@Override
 	public void remove() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		throw new UnsupportedOperationException("Not supported.");
 	}
-
 }

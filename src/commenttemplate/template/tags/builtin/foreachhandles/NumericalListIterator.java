@@ -1,5 +1,6 @@
-package commenttemplate.template.tags.customtagparams;
+package commenttemplate.template.tags.builtin.foreachhandles;
 
+import commenttemplate.template.tags.builtin.foreachhandles.NumericalList;
 import commenttemplate.util.Utils;
 import java.util.Iterator;
 

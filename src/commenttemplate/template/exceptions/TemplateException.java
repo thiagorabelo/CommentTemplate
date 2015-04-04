@@ -44,7 +44,24 @@ public class TemplateException extends Exception {
 	}
 
 	public TemplateException(String msg, int line) {
-		this(msg, line, null);
+		this(msg, line, (String)null);
+	}
+
+	public TemplateException(String msg, int line, String error, Throwable cause) {
+		super(msg, cause);
+		this.line = line;
+		this.error = error;
+	}
+
+	public TemplateException(String name, String msg, int line, String error,  Throwable cause) {
+		super(msg, cause);
+		this.line = line;
+		this.error = error;
+		this.name = name;
+	}
+
+	public TemplateException(String msg, int line,  Throwable cause) {
+		this(msg, line, null, cause);
 	}
 
 	public String getName() {

@@ -109,7 +109,7 @@ public class Utils {
 	}
 	
 	public static Object getProperty(Object target, String propertyName) {
-		return getProperty(target, propertyName, false);
+		return getProperty(target, propertyName, true);
 	}
 	
 	public static Object getProperty(Object target, String propertyName, boolean force) {
@@ -167,6 +167,63 @@ public class Utils {
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
+	}
+	
+	public static Object setProperty(Object instance, String propertyName, Object value)
+			throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+
+		String prefix = "set";
+		String methodName = prefix + capitalize(propertyName);
+		Class classInstance = instance.getClass();
+
+		for (Class cls = value.getClass(); cls != null; cls = cls.getSuperclass()) {
+			
+			try {
+				// 1 - tentar pela classe
+				return setProp(instance, classInstance, methodName, value, cls);
+			} catch (NoSuchMethodException ex) {
+
+				// 2 - tentar pelas interfaces
+				for (Class interf : cls.getInterfaces()) {
+					
+					// 2 - tentando pela interface e pelas
+					// 2.1 - super-interfaces
+					Class superInterf = interf;
+					for (int i = 0; superInterf != null;) {
+						try {
+							return setProp(instance, classInstance, methodName, value, superInterf);
+						} catch (NoSuchMethodException ex1) {
+							superInterf = getSuperInterf(superInterf, i--);
+						}
+					}
+					
+				}
+
+			}
+		}
+
+		throw new NoSuchMethodException(concat(
+			instance.getClass().getName(),
+			".",
+			methodName,
+			"(",
+			value.getClass().getName(),
+			")"
+		));
+	}
+	
+	private static Class getSuperInterf(Class interf, int i) {
+		Class []interfs = interf != null ? interf.getInterfaces() : null;
+		return interfs != null && i < interfs.length ? interfs[i] : null;
+	}
+	
+	private static Object setProp(Object instance, Class classInstance, String methodName, Object value, Class cls)
+			throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		
+		Method m = classInstance.getDeclaredMethod(methodName, cls);
+		return m.invoke(instance, value);
 	}
 	
 	public static String capitalize(String str) {

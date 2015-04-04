@@ -5,9 +5,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import commenttemplate.expressions.exceptions.ExpressionException;
 import commenttemplate.expressions.parser.Parser;
+import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
+import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.template.tags.TemplateTag;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.template.exceptions.TemplateNestingException;
+import commenttemplate.template.tags.TagComponent;
+import commenttemplate.template.tags.TagContainer;
 import commenttemplate.util.MyStack;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Wrap;
@@ -108,33 +112,18 @@ public class TemplateParser {
 				// crie um novo bloco, correspondente ao nome da tag (expressions[0])
 				// e empilhe este novo bloco na pilha.
 				if (!startsWithEnd && !isElse) {
-					
-					/*
-					TODO: Mudança brusca!
-					Fazer com que TemplateTag herde de TemplateBlock. Eliminando a necessidade
-					de haver uma Tag dentro de um Block. A própria Tag seria um Block.
-					Sem falar na facilidade que seria inserir os argumentos da Tag na própria Tag,
-					usando reflexão. Por exemplo, se a Tag tem os seguintes parâmetros:
-					<!--someTag foo="param1" bar="param2"-->...
 
-					Utils.setProperty(someTag, "foo", param1);
-					Utils.setProperty(someTag, "bar", param2);
-					*/
-					TemplateBlock tb = new TemplateBlock();
-
-					TemplateTag tag = TemplateTag.getByTagName(expressions[0]);
-					tb.setTag(tag.getNewInstance());
-
+					TagComponent component = TagContainer.instance().getByTagName(expressions[0]);
 					// @TODO: Fazer a validação das exceções aqui lançadas
-					tb.setParams(tag.evalExpression(expressions[1]));
+					TemplateTag tag = component.populateParameters(expressions[1]);
 
 					if (!usingElse.peek()) {
-						block.append(tb);
+						block.append(tag);
 					} else {
-						block.appendToElse(tb);
+						block.appendToElse(tag);
 					}
 
-					stack.push(tb);
+					stack.push(tag);
 					usingElse.push(false);
 				} else if (isElse) {
 					usingElse.replaceTop(true);
@@ -157,7 +146,7 @@ public class TemplateParser {
 			}
 		} catch (ExpressionException ex) {
 
-			throw new TemplateException(ex.getMessage(), lineCounter(input.substring(0, tagMatcher.start())), ex.show());
+			throw new TemplateException(ex.getMessage(), lineCounter(input.substring(0, tagMatcher.start())), ex.show(), ex);
 
 		} catch (TemplateException ex) {
 			int lines_before = lastLength.getValue() > 0
@@ -167,7 +156,13 @@ public class TemplateParser {
 					? (lines_before + (ex.getLine() > 1 ? ex.getLine() -1 : 0))
 					: (ex.getLine());
 
-			throw new TemplateException(ex.getMsg(), lines, ex.getError());
+			throw new TemplateException(ex.getMsg(), lines, ex.getError(), ex);
+
+		} catch (CouldNotInstanciateTagException | CouldNotSetTagParameterException ex) {
+			int lines_before = lastLength.getValue() > 0
+					? lineCounter(input.substring(0, lastLength.getValue()))
+					: 0;
+			throw new TemplateException(ex.getMessage(), lines_before, ex);
 		}
 	}
 

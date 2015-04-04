@@ -1,4 +1,4 @@
-package commenttemplate.template.tags.customtagparams;
+package commenttemplate.template.tags.builtin.foreachhandles;
 
 import java.util.Iterator;
 import commenttemplate.expressions.function.Function;
@@ -22,10 +22,17 @@ public class NumericalList implements Iterable<Integer>, Exp {
 	private int i_step;
 	private int i_size;
 
+	// TODO: Remover o "step" e fazer com que seja passado na hora de iterar
 	public NumericalList(Object start, Object length, Object step) {
 		this.start = start;
 		this.length = length;
 		this.step = step;
+	}
+
+	public NumericalList(Object start, Object length) {
+		this.start = start;
+		this.length = length;
+		this.step = 1;
 	}
 
 	public NumericalList(int start, int length) {

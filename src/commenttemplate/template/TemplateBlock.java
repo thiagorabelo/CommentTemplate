@@ -61,6 +61,6 @@ public class TemplateBlock extends AbstractTemplateBlock {
 
 	@Override
 	public void eval(Context context, Writer sb) {
-		tag.eval(this, context, sb);
+		tag.eval(context, sb);
 	}
 }

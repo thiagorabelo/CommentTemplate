@@ -20,11 +20,9 @@ import commenttemplate.template.writer.Writer;
  */
 public class IfTemplateTag extends TemplateTag {
 
-	private static Pattern l_brackets = Pattern.compile("^\\[");
-	private static Pattern r_brackets = Pattern.compile("\\]$");
+	private Exp test;
 
 	public IfTemplateTag() {
-		super("if");
 	}
 
 	protected boolean isBool(Object ob) {
@@ -44,33 +42,13 @@ public class IfTemplateTag extends TemplateTag {
 	}
 
 	@Override
-	public Exp evalExpression(String expression) throws ExpectedOperator, ExpectedExpression, BadExpression, Unexpected, FunctionDoesNotExists {
-		String ps = l_brackets.matcher(expression).replaceFirst("");
-		ps = r_brackets.matcher(ps).replaceFirst("");
-
-		return defaultEvalExpression(ps);
-	}
-
-	@Override
-	public int evalParams(AbstractTemplateBlock block, Context context, Writer sb) {
-		TemplateBlock actualBlock = (TemplateBlock) block;
-
-		Exp exp = actualBlock.getParams();
+	public int evalParams(Context context, Writer sb) {
+		Exp exp = test;
 
 		Object t = exp.eval(context);
 
 		boolean test = (t != null) && (isBool(t) ? (Boolean)t :!((isNumber(t) && NumHandle.isZero((Number)t)) ^ (isString(t) && isEmptyStr((String)t))));
 
 		return test ? EVAL_BODY : EVAL_ELSE;
-	}
-
-	@Override
-	public TemplateTag getNewInstance() {
-		return this;
-	}
-
-	@Override
-	public boolean hasOwnContext() {
-		return false;
 	}
 }

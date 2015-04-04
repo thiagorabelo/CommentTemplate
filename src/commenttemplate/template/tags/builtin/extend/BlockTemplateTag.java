@@ -18,31 +18,17 @@ import commenttemplate.template.writer.Writer;
  * @author thiago
  */
 public class BlockTemplateTag extends TemplateTag {
-	
+
 	public static final int EVAL_WRITER = 4;
 	public static final int EVAL_BODY_WITH_MAPPED_WRITER = 5;
-	
+
+	private Exp name;
+
 	public BlockTemplateTag() {
-		super("block");
 	}
 
 	@Override
-	public Exp evalExpression(String expression) throws ExpectedOperator, ExpectedExpression, BadExpression, Unexpected, FunctionDoesNotExists {
-		return defaultEvalExpression(expression);
-	}
-
-	@Override
-	public TemplateTag getNewInstance() {
-		return this;
-	}
-
-	@Override
-	public boolean hasOwnContext() {
-		return true;
-	}
-
-	@Override
-	public int evalParams(AbstractTemplateBlock block, Context context, Writer sb) {
+	public int evalParams(Context context, Writer sb) {
 		ContextWriterMap cwm = (ContextWriterMap)context;
 		
 		if (cwm.getMode() == ContextWriterMap.Mode.STORE) {
@@ -55,33 +41,24 @@ public class BlockTemplateTag extends TemplateTag {
 	}
 	
 	@Override
-	public void eval(AbstractTemplateBlock block, Context context, Writer sb) {
+	public void eval(Context context, Writer sb) {
 		if (context instanceof ContextWriterMap) {
 			ContextWriterMap cwm = (ContextWriterMap)context;
-			TemplateBlock actualBlock = (TemplateBlock) block;
-			Exp exp = actualBlock.getParams();
+			Exp exp = name;
 			
 			String blockName = exp.eval(context).toString();
 			Writer w = cwm.getWriter(blockName);
 			
 			AbstractTemplateBlock inner;
-			int whomEvaluate = evalParams(block, cwm, w);
+			int whomEvaluate = evalParams(cwm, w);
 			
 			switch (whomEvaluate) {
 				case EVAL_BODY_WITH_MAPPED_WRITER:
-					inner = block.getNextInner();
+					inner = getNextInner();
 					if (inner != null) {
-						boolean hasOwnContext;
-
-						if (hasOwnContext = hasOwnContext()) {
-							context.push();
-						}
-
-						evalBody(block, cwm, w);
-
-						if (hasOwnContext) {
-							context.pop();
-						}
+						context.push();
+						evalBody(cwm, w);
+						context.pop();
 					}
 					break;
 
@@ -90,31 +67,31 @@ public class BlockTemplateTag extends TemplateTag {
 					break;
 
 				case EVAL_BODY:
-					inner = block.getNextInner();
+					inner = getNextInner();
 					if (inner != null) {
-						boolean hasOwnContext;
-
-						if (hasOwnContext = hasOwnContext()) {
-							context.push();
-						}
-
-						evalBody(block, cwm, sb);
-
-						if (hasOwnContext) {
-							context.pop();
-						}
+						context.push();
+						evalBody(cwm, sb);
+						context.pop();
 					}
 					break;
 
 				default:
 					break;
 			}
-			
-			AbstractTemplateBlock next = block.getNext();
+
+			AbstractTemplateBlock next = getNext();
 
 			if (next != null) {
 				next.eval(context, sb);
 			}
 		}
+	}
+
+	public Exp getName() {
+		return name;
+	}
+
+	public void setName(Exp name) {
+		this.name = name;
 	}
 }

@@ -28,7 +28,7 @@ public class TemplateCache {
 			try {
 				templates.put(template.getKey(), TemplateParser.compile(template.getSource()));
 			} catch (TemplateException ex) {
-				throw new TemplateException(template.getKey().toString(), ex.getMsg(), ex.getLine(), ex.getError());
+				throw new TemplateException(template.getKey().toString(), ex.getMsg(), ex.getLine(), ex.getError(), ex);
 			}
 		}
 	}

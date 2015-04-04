@@ -5,6 +5,8 @@ import commenttemplate.template.tags.builtin.IfTemplateTag;
 import commenttemplate.template.tags.builtin.SetTemplateTag;
 import commenttemplate.template.tags.builtin.extend.ExtendsTemplateTag;
 import commenttemplate.template.tags.builtin.extend.BlockTemplateTag;
+import commenttemplate.template.tags.builtin.foreachhandles.ForEachComponent;
+import commenttemplate.util.Utils;
 
 /**
  *
@@ -42,17 +44,17 @@ public class TemplateTagInitializer {
 	
 	
 	private void initBuildin() {
-		TemplateTag.addBuiltinTag(new IfTemplateTag());
-		TemplateTag.addBuiltinTag(new ForEachTemplateTag());
-		TemplateTag.addBuiltinTag(new SetTemplateTag());
+		TagContainer.instance().addBuiltinTag(new ForEachComponent());
+		TagContainer.instance().addBuiltinTag(new TagComponent("if", IfTemplateTag.class));
+		TagContainer.instance().addBuiltinTag(new TagComponent("set", SetTemplateTag.class));
 //		TemplateTag.addBuiltinTag(new ValueFormatterTemplateTag());
-		TemplateTag.addBuiltinTag(new ExtendsTemplateTag());
-		TemplateTag.addBuiltinTag(new BlockTemplateTag());
+		TagContainer.instance().addBuiltinTag(new TagComponent("extends", ExtendsTemplateTag.class));
+		TagContainer.instance().addBuiltinTag(new TagComponent("block", BlockTemplateTag.class));
 	}
 	
-	public void addTag(TemplateTag tag) {
-		if (tag != null) {
-			TemplateTag.addCustomTag(tag);
+	public void addTag(TagComponent component) {
+		if (component != null && !Utils.empty(component.getName()) && component.getTagClass() != null) {
+			TagContainer.instance().addCustomTag(component);
 		}
 	}
 }

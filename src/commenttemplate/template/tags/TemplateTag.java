@@ -1,32 +1,14 @@
 package commenttemplate.template.tags;
 
-import java.util.HashMap;
-import java.util.regex.Pattern;
-import commenttemplate.expressions.exceptions.BadExpression;
-import commenttemplate.expressions.exceptions.ExpectedExpression;
-import commenttemplate.expressions.exceptions.ExpectedOperator;
-import commenttemplate.expressions.exceptions.FunctionDoesNotExists;
-import commenttemplate.expressions.exceptions.Unexpected;
-import commenttemplate.expressions.parser.Parser;
-import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.AbstractTemplateBlock;
-import commenttemplate.template.exceptions.TemplateTagDoesNotExists;
-import commenttemplate.template.exceptions.TemplateWithSameNameAlreadyExistsException;
 import commenttemplate.context.Context;
 import commenttemplate.template.writer.Writer;
-import static commenttemplate.util.Utils.concat;
 
 /**
  *
  * @author thiago
  */
-public abstract class TemplateTag {
-
-	protected static final HashMap<String, TemplateTag> builtInTags = new HashMap<String, TemplateTag>();
-	protected static final HashMap<String, TemplateTag> customTags = new HashMap<String, TemplateTag>();
-
-	// Split as strings pelo caractere |. Se houver ||, não vai fazer o split neste ponto.
-	private static Pattern splitParams = Pattern.compile("(?<!\\|)\\|(?!\\|)");
+public abstract class TemplateTag extends AbstractTemplateBlock {
 
 	public static final int SKIP_BODY = 0;
 	public static final int EVAL_BODY = 1;
@@ -39,105 +21,44 @@ public abstract class TemplateTag {
 		EVAL_ELSE
 	}
 	*/
+	
+	private String tagName;
 
-	protected static synchronized void addBuiltinTag(TemplateTag tag) {
-		if (!builtInTags.containsKey(tag.getTagName())) {
-			builtInTags.put(tag.getTagName(), tag);
-		} else {
-			String className = builtInTags.get(tag.getTagName()).getClass().getName();
-			throw new TemplateWithSameNameAlreadyExistsException(concat("A built in TemplateTag whith the same name (", tag.getTagName(), ") already exists: ", className));
-		}
+	public TemplateTag() {
+	}
+	
+	public void start(Context context, Writer sb) {
 	}
 
-	public static synchronized void addCustomTag(TemplateTag tag) {
-		if (builtInTags.containsKey(tag.getTagName())) {
-			String className = builtInTags.get(tag.getTagName()).getClass().getName();
-			throw new TemplateWithSameNameAlreadyExistsException(concat("A built in TemplateTag whith the same name (", tag.getTagName(), ") already exists: [", className, "]"));
-		} else if (customTags.containsKey(tag.getTagName())) {
-			String className = customTags.get(tag.getTagName()).getClass().getName();
-			throw new TemplateWithSameNameAlreadyExistsException(concat("A custom TemplateTag whith the same name (", tag.getTagName(), ") already exists: [", className, "]"));
-		}
-
-		customTags.put(tag.getTagName(), tag);
+	public void end(Context context, Writer sb) {
 	}
 
-	public static TemplateTag getByTagName(String tagName) {
-		TemplateTag tag;
-		if (((tag = builtInTags.get(tagName)) != null) || ((tag = customTags.get(tagName)) != null)) {
-			return tag;
-		}
+	public abstract int evalParams(Context context, Writer sb);
 
-		throw new TemplateTagDoesNotExists(concat("There is no ", tagName, " registred."));
-	}
-
-	public static Exp defaultEvalExpression(String expression) throws ExpectedOperator, ExpectedExpression, BadExpression, Unexpected, FunctionDoesNotExists {
-		Parser p = new Parser(expression);
-		return p.parse();
-	}
-
-	public static String []splitParams(String str) {
-		String []params = splitParams.split(str);
-
-		for (int i = 0, len = params.length; i < len; i++) {
-			params[i] = params[i].trim();
-		}
-
-		return params;
-	}
-
-	private final String tagName;
-
-	public TemplateTag(String tagName) {
-		this.tagName = tagName;
-	}
-
-	public String getTagName() {
-		return tagName;
-	}
-
-	public abstract Exp evalExpression(String expression) throws ExpectedOperator, ExpectedExpression, BadExpression, Unexpected, FunctionDoesNotExists;
-
-	public abstract TemplateTag getNewInstance();
-
-	public abstract boolean hasOwnContext();
-
-	public abstract int evalParams(AbstractTemplateBlock block, Context context, Writer sb);
-
-	public void eval(AbstractTemplateBlock block, Context context, Writer sb) {
-		int whomEvaluate = evalParams(block, context, sb);
-		AbstractTemplateBlock inner = block.getNextInner();
-		AbstractTemplateBlock innerElse = block.getNextInnerElse();
+	@Override
+	public void eval(Context context, Writer sb) {
+		int whomEvaluate = evalParams(context, sb);
+		AbstractTemplateBlock inner = getNextInner();
+		AbstractTemplateBlock innerElse = getNextInnerElse();
 
 		switch (whomEvaluate) {
 			case EVAL_BODY:
 				if (inner != null) {
-					boolean hasOwnContext;
+					start(context, sb);
 
-					if (hasOwnContext = hasOwnContext()) {
-						context.push();
-					}
+					evalBody(context, sb);
 
-					evalBody(block, context, sb);
-
-					if (hasOwnContext) {
-						context.pop();
-					}
+					end(context, sb);
 				}
 				break;
 
 			case EVAL_ELSE:
 				if (innerElse != null) {
-					boolean hasOwnContext;
+					start(context, sb);
 
-					if (hasOwnContext = hasOwnContext()) {
-						context.push();
-					}
+					evalElse(context, sb);
 
-					evalElse(block, context, sb);
-
-					if (hasOwnContext) {
-						context.pop();
-					}
+					end(context, sb);
 				}
 				break;
 
@@ -148,26 +69,64 @@ public abstract class TemplateTag {
 				break;
 		}
 
-		AbstractTemplateBlock next = block.getNext();
+		AbstractTemplateBlock next = getNext();
 
 		if (next != null) {
 			next.eval(context, sb);
 		}
 	}
 
-	protected void evalBody(AbstractTemplateBlock block, Context context, Writer sb) {
-		AbstractTemplateBlock inner = block.getNextInner();
+	protected void evalBody(Context context, Writer sb) {
+		AbstractTemplateBlock inner = getNextInner();
 
 		if (inner != null) {
 			inner.eval(context, sb);
 		}
 	}
 
-	protected void evalElse(AbstractTemplateBlock block, Context context, Writer sb) {
-		AbstractTemplateBlock innerElse = block.getNextInnerElse();
+	protected void evalElse(Context context, Writer sb) {
+		AbstractTemplateBlock innerElse = getNextInnerElse();
 
 		if (innerElse != null) {
 			innerElse.eval(context, sb);
 		}
+	}
+
+	public String getTagName() {
+		return tagName;
+	}
+
+	public void setTagName(String tagName) {
+		this.tagName = tagName;
+	}
+	
+	public String paramsToString() {
+		return "";
+	}
+	
+	@Override
+	public void toString(StringBuilder sb) {
+		if (getNextInner() != null) {
+			sb.append("<!--").append(tagName).append(" ").append(paramsToString()).append("-->");
+			getNextInner().toString(sb);
+
+			if (getNextInnerElse() != null) {
+				sb.append("<!--else-->");
+				getNextInnerElse().toString(sb);
+			}
+
+			sb.append("<!--end").append(tagName).append("-->");
+		}
+
+		if (getNext() != null) {
+			getNext().toString(sb);
+		}
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		toString(sb);
+		return sb.toString();
 	}
 }

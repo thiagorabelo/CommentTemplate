@@ -8,7 +8,8 @@ import java.util.Map;
  * @param <A>
  * @param <B>
  */
-public class Tuple<A, B> implements Map.Entry<A, B> {
+// TODO: Map.Entry é usado para fins de depuração, pois as IDEs mostram o toString().
+public class Tuple<A, B> /*implements Map.Entry<A, B>*/ {
 	
 	private A a;
 	private B b;
@@ -44,6 +45,7 @@ public class Tuple<A, B> implements Map.Entry<A, B> {
 		return ""+a.toString() + "=>" + b.toString();
 	}
 
+	/*
 	@Override
 	public A getKey() {
 		return a;
@@ -60,4 +62,5 @@ public class Tuple<A, B> implements Map.Entry<A, B> {
 		b = value;
 		return b;
 	}
+	*/
 }

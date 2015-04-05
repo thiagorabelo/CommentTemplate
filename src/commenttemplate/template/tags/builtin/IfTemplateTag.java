@@ -1,16 +1,8 @@
 package commenttemplate.template.tags.builtin;
 
 import commenttemplate.template.tags.TemplateTag;
-import java.util.regex.Pattern;
-import commenttemplate.expressions.exceptions.BadExpression;
-import commenttemplate.expressions.exceptions.ExpectedExpression;
-import commenttemplate.expressions.exceptions.ExpectedOperator;
-import commenttemplate.expressions.exceptions.FunctionDoesNotExists;
-import commenttemplate.expressions.exceptions.Unexpected;
 import commenttemplate.expressions.primitivehandle.NumHandle;
 import commenttemplate.expressions.tree.Exp;
-import commenttemplate.template.AbstractTemplateBlock;
-import commenttemplate.template.TemplateBlock;
 import commenttemplate.context.Context;
 import commenttemplate.template.writer.Writer;
 

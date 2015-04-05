@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import commenttemplate.expressions.exceptions.ExpressionException;
 import commenttemplate.expressions.parser.Parser;
+import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.template.tags.TemplateTag;
@@ -239,15 +240,15 @@ public class TemplateParser {
 		return c;
 	}
 
-	public static Object []getContent(String content) throws TemplateException {
-		ArrayList<Object> cont = new ArrayList<Object>();
+	public static Exp []getContent(String content) throws TemplateException {
+		ArrayList<Exp> cont = new ArrayList<Exp>();
 
 		Matcher m = expPattern.matcher(content);
 		int lastIndex = 0;
 
 		try {
 			while (m.find()) {
-				cont.add(content.substring(lastIndex, m.start()));
+				cont.add(new TemplateStatic.PlainText(content.substring(lastIndex, m.start())));
 
 				Tuple<String, Integer> t = expressionContent(m.group());
 				cont.add(new Parser(t.getA().substring(2, t.getA().length()-1)).parse());
@@ -258,9 +259,9 @@ public class TemplateParser {
 			throw new TemplateException(ex.getMessage(), lineCounter(content.substring(0, m.start())), ex.show());
 		}
 
-		cont.add(content.substring(lastIndex));
+		cont.add(new TemplateStatic.PlainText(content.substring(lastIndex)));
 
-		Object array [] = new Object[cont.size()];
+		Exp array [] = new Exp[cont.size()];
 
 		cont.toArray(array);
 

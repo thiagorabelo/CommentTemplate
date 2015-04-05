@@ -45,11 +45,11 @@ public class TemplateTagInitializer {
 	
 	private void initBuildin() {
 		TagContainer.instance().addBuiltinTag(new ForEachComponent());
-		TagContainer.instance().addBuiltinTag(new TagComponent("if", IfTemplateTag.class));
-		TagContainer.instance().addBuiltinTag(new TagComponent("set", SetTemplateTag.class));
+		TagContainer.instance().addBuiltinTag(new TagComponent("if", IfTemplateTag.class, "!test"));
+		TagContainer.instance().addBuiltinTag(new TagComponent("set", SetTemplateTag.class, "!var", "value"));
 //		TemplateTag.addBuiltinTag(new ValueFormatterTemplateTag());
-		TagContainer.instance().addBuiltinTag(new TagComponent("extends", ExtendsTemplateTag.class));
-		TagContainer.instance().addBuiltinTag(new TagComponent("block", BlockTemplateTag.class));
+		TagContainer.instance().addBuiltinTag(new TagComponent("extends", ExtendsTemplateTag.class,  "!name"));
+		TagContainer.instance().addBuiltinTag(new TagComponent("block", BlockTemplateTag.class, "!name"));
 	}
 	
 	public void addTag(TagComponent component) {

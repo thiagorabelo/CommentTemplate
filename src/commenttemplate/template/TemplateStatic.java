@@ -3,6 +3,7 @@ package commenttemplate.template;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.context.Context;
+import commenttemplate.expressions.tree.Literal;
 import commenttemplate.template.writer.Writer;
 
 /**
@@ -11,7 +12,13 @@ import commenttemplate.template.writer.Writer;
  */
 public class TemplateStatic extends AbstractTemplateBlock {
 	
-	private Object []content;
+	public static class PlainText extends Literal {
+		public PlainText(String text) {
+			super(text);
+		}
+	};
+	
+	private Exp []content;
 	
 	public TemplateStatic() {
 	}
@@ -22,7 +29,7 @@ public class TemplateStatic extends AbstractTemplateBlock {
 		super.setNextInner(null);
 	}
 
-	public Object []getContent() {
+	public Exp []getContent() {
 		return content;
 	}
 
@@ -35,12 +42,12 @@ public class TemplateStatic extends AbstractTemplateBlock {
 		StringBuilder sb = new StringBuilder();
 		
 		for (Object ob : content) {
-			if (ob instanceof Exp) {
+			if (ob instanceof PlainText) {
+				sb.append(ob);
+			} else {
 				sb.append("${");
 				((Exp)ob).toString(sb);
 				sb.append("}");
-			} else {
-				sb.append(ob);
 			}
 		}
 
@@ -59,12 +66,8 @@ public class TemplateStatic extends AbstractTemplateBlock {
 	// Falta ajeitar essa onça
 	@Override
 	public void eval(Context context, Writer sb) {
-		for (Object ob : content) {
-			if (ob instanceof Exp) {
-				sb.append(((Exp)ob).eval(context));
-			} else {
-				sb.append(ob);
-			}
+		for (Exp exp : content) {
+			sb.append(exp.eval(context));
 		}
 
 		if (getNext() != null) {

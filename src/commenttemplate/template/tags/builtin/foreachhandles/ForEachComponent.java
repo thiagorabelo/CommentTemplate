@@ -54,7 +54,7 @@ public class ForEachComponent extends TagComponent {
 	
 	
 	public ForEachComponent() {
-		super("for", ForTemplateTag.class);
+		super("for", ForTemplateTag.class, "!list", "var", "step", "counter");
 	}
 
 	public Exp parseExpression(ForTemplateTag tag, String paramName, String expression) throws ExpectedOperator, ExpectedExpression, BadExpression, Unexpected, FunctionDoesNotExists {
@@ -92,28 +92,10 @@ public class ForEachComponent extends TagComponent {
 			throws CouldNotInstanciateTagException, CouldNotSetTagParameterException,
 			BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected {
 
-		ForTemplateTag tag;
-
-		try {
-			tag = (ForTemplateTag)tagClass.newInstance();
-			tag.setTagName(name);
-		} catch (IllegalAccessException | InstantiationException ex) {
-			throw new CouldNotInstanciateTagException(tagClass.getName(), ex);
-		}
-		
+		ForTemplateTag tag = (ForTemplateTag)newInstance();
 		List<Tuple<String, Exp>> params = paramsList(tag, parameters);
-
-		for (Tuple<String, Exp> t : params) {
-			try {
-				Utils.setProperty(tag, t.getA(), t.getB());
-			} catch (
-				IllegalAccessException    | IllegalArgumentException |
-				InvocationTargetException | NoSuchMethodException    |
-				SecurityException ex
-			) {
-				throw new CouldNotSetTagParameterException(tagClass.getName(), t.getA(), ex);
-			}
-		}
+		new ParamsChecker().check(params);
+		populateParameters(tag, params);
 
 		return tag;
 	}

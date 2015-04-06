@@ -26,6 +26,12 @@ import java.util.Map;
  *
  * @author thiago
  */
+// TODO: Reescrever todo este código.
+// Ideia: Em "a.b.c.d". Tentar na ordem:
+//     "a".getB().getC().getD()
+//     "a.b.c.d"
+//     "a.b.c".getD()
+//     "a.b".getC().getD()
 public class RecursiveRetrieveDataMap implements RetrieveDataMap<Map<String, Object>> {
 
 	//Entrada é VAR_PATH, saída é o valor encontrado. Vazio é retornado se nada for encontrado.

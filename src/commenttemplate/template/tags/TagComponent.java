@@ -73,8 +73,8 @@ public class TagComponent {
 	protected final Tuple<Boolean, String> []params;
 	
 	protected class ParamsChecker {
-		private Tuple<Boolean, String> []requiredParams;
-		private Tuple<Boolean, String> []othersParans;
+		private final Tuple<Boolean, String> []requiredParams;
+		private final Tuple<Boolean, String> []othersParans;
 		private int iR; // index required
 		private int iO; // index others
 		

@@ -36,13 +36,11 @@ public abstract class IterativeRetriever<T> implements RetrieveDataMap<T> {
 		int len = keys.length;
 
 		if (len > 0) {
-			Object obj = getSource(target, keys[0]);
+			Object obj;
 
-			if (obj != null) {
+			if ((obj = getSource(target, keys[0])) != null) {
 				for (int i = beginLoopIndex(); i < len; i++) {
-					obj = Utils.getProperty(obj, keys[i]);
-
-					if (obj == null) {
+					if ((obj = Utils.getProperty(obj, keys[i])) == null) {
 						break;
 					}
 				}

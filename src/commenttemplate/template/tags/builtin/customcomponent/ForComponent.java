@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  */
 
-package commenttemplate.template.tags.builtin.foreachhandles;
+package commenttemplate.template.tags.builtin.customcomponent;
 
 import commenttemplate.expressions.exceptions.BadExpression;
 import commenttemplate.expressions.exceptions.ExpectedExpression;

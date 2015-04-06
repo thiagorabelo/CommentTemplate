@@ -36,6 +36,7 @@ public class DefaultJoiner extends Joiner {
 		return join(parts.iterator());
 	}
 
+	// TODO: Ver os casos onde part pode ser iterado
 	@Override
 	public Joiner join(Iterator iterator) {
 		Wrap<Boolean> skiped = new Wrap(false);
@@ -65,11 +66,28 @@ public class DefaultJoiner extends Joiner {
 
 		for (int i = 0; i < length; i++) {
 			Object part = parts[i];
-			String append = skip(skiped, part);
-			if (appended > 1 && !skiped.getValue()) {
-				sb.append(joiner);
+			
+			if (part != null) {
+				if (part instanceof Iterable) {
+					join((Iterable)part);
+				} else if (part instanceof Iterator) {
+					join((Iterator)part);
+				} else if (part.getClass().isArray()) {
+					join((Object[])part);
+				} else {
+					String append = skip(skiped, part);
+					if (appended > 1 && !skiped.getValue()) {
+						sb.append(joiner);
+					}
+					sb.append(append);
+				}
+			} else {
+				String append = skip(skiped, part);
+				if (appended > 1 && !skiped.getValue()) {
+					sb.append(joiner);
+				}
+				sb.append(append);
 			}
-			sb.append(append);
 		}
 		
 		return this;
@@ -87,6 +105,8 @@ public class DefaultJoiner extends Joiner {
 			} else {
 				join(new Object[]{first});
 			}
+		} else {
+			join(new Object[]{first});
 		}
 
 		if (second != null) {
@@ -99,6 +119,8 @@ public class DefaultJoiner extends Joiner {
 			} else {
 				join(new Object[]{second});
 			}
+		} else {
+			join(new Object[]{second});
 		}
 
 		join(others);

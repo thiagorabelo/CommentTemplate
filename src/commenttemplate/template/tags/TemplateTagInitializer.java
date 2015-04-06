@@ -1,11 +1,10 @@
 package commenttemplate.template.tags;
 
-import commenttemplate.template.tags.builtin.ForTemplateTag;
 import commenttemplate.template.tags.builtin.IfTemplateTag;
 import commenttemplate.template.tags.builtin.SetTemplateTag;
 import commenttemplate.template.tags.builtin.extend.ExtendsTemplateTag;
 import commenttemplate.template.tags.builtin.extend.BlockTemplateTag;
-import commenttemplate.template.tags.builtin.foreachhandles.ForComponent;
+import commenttemplate.template.tags.builtin.customcomponent.ForComponent;
 import commenttemplate.util.Utils;
 
 /**

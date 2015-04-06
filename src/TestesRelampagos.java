@@ -346,6 +346,7 @@ public class TestesRelampagos {
 	}
 
 	public static void teste1() {
+//	public static void main(String []args) {
 		List<String> list = new ArrayList();
 		
 		list.add(null);
@@ -356,6 +357,8 @@ public class TestesRelampagos {
 		list.add(null);
 		
 		String [] array = new String[] {null, "d", "e", null, "f", null};
+		
+		System.out.println(Join.with(",").join("a", "b", "c", new Object[]{"d", "e", new Object[]{"f", "g"}}));
 		
 		System.out.println(Join.path().skipNulls().join(list.iterator()).toString());
 

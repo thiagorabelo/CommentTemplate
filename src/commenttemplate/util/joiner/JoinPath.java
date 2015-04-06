@@ -32,6 +32,7 @@ public class JoinPath extends DefaultJoiner {
 		onNull = "";
 	}
 	
+	// TODO: Ver os casos onde parts[i] pode ser iterado
 	@Override
 	public Joiner join(Iterator iterator) {
 		Wrap<Boolean> skiped = new Wrap(false);
@@ -72,6 +73,7 @@ public class JoinPath extends DefaultJoiner {
 		return this;
 	}
 
+	// TODO: Ver os casos onde parts[i] pode ser iterado
 	@Override
 	public Joiner join(Object[] parts) {
 		Wrap<Boolean> skiped = new Wrap(false);

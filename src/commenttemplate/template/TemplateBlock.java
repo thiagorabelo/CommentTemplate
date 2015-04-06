@@ -1,7 +1,5 @@
 package commenttemplate.template;
 
-import commenttemplate.expressions.tree.Exp;
-import commenttemplate.template.tags.TemplateTag;
 import commenttemplate.context.Context;
 import commenttemplate.template.writer.Writer;
 
@@ -9,58 +7,69 @@ import commenttemplate.template.writer.Writer;
  *
  * @author thiago
  */
-public class TemplateBlock extends AbstractTemplateBlock {
+public abstract class TemplateBlock {
 
-	private TemplateTag tag;
-	private Exp params;
+	private TemplateBlock nextInner;
+	private TemplateBlock nextInnerElse;
+	private TemplateBlock next;
 
 	public TemplateBlock() {
 	}
 
-	public TemplateTag getTag() {
-		return tag;
+	public TemplateBlock getNextInner() {
+		return nextInner;
 	}
 
-	public void setTag(TemplateTag tag) {
-		this.tag = tag;
+	public void setNextInner(TemplateBlock nextInner) {
+		this.nextInner = nextInner;
 	}
 
-	public Exp getParams() {
-		return params;
+	public void setNextInnerElse(TemplateBlock nextInnerElse) {
+		this.nextInnerElse = nextInnerElse;
 	}
 
-	public void setParams(Exp params) {
-		this.params = params;
+	public TemplateBlock getNextInnerElse()  {
+		return nextInnerElse;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		toString(sb);
-		return sb.toString();
+	public void setNext(TemplateBlock next) {
+		this.next = next;
 	}
 
-	@Override
-	public void toString(StringBuilder sb) {
-		if (getNextInner() != null) {
-			sb.append("<!--").append(tag.getTagName()).append(" ").append(params).append("-->");
-			getNextInner().toString(sb);
+	public TemplateBlock getNext() {
+		return next;
+	}
 
-			if (getNextInnerElse() != null) {
-				sb.append("<!--else-->");
-				getNextInnerElse().toString(sb);
-			}
+	public void putInEnd(TemplateBlock last) {
+		TemplateBlock item = this;
 
-			sb.append("<!--end").append(tag.getTagName()).append("-->");
+		while (item.getNext() != null) {
+			item = item.getNext();
 		}
 
-		if (getNext() != null) {
-			getNext().toString(sb);
+		item.setNext(last);
+	}
+
+	public void append(TemplateBlock other) {
+		if (this.getNextInner() != null) {
+			this.getNextInner().putInEnd(other);
+		} else {
+			this.setNextInner(other);
+		}
+	}
+
+	public void appendToElse(TemplateBlock other) {
+		if (this.getNextInnerElse() != null) {
+			this.getNextInnerElse().putInEnd(other);
+		} else {
+			this.setNextInnerElse(other);
 		}
 	}
 
 	@Override
-	public void eval(Context context, Writer sb) {
-		tag.eval(context, sb);
-	}
+	public abstract String toString();
+
+	public abstract void toString(StringBuilder sb);
+
+	public abstract void eval(Context context, Writer sb);
 }

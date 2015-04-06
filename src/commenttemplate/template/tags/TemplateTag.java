@@ -1,6 +1,6 @@
 package commenttemplate.template.tags;
 
-import commenttemplate.template.AbstractTemplateBlock;
+import commenttemplate.template.TemplateBlock;
 import commenttemplate.context.Context;
 import commenttemplate.template.writer.Writer;
 
@@ -8,7 +8,7 @@ import commenttemplate.template.writer.Writer;
  *
  * @author thiago
  */
-public abstract class TemplateTag extends AbstractTemplateBlock {
+public abstract class TemplateTag extends TemplateBlock {
 
 	public static final int SKIP_BODY = 0;
 	public static final int EVAL_BODY = 1;
@@ -38,8 +38,8 @@ public abstract class TemplateTag extends AbstractTemplateBlock {
 	@Override
 	public void eval(Context context, Writer sb) {
 		int whomEvaluate = evalParams(context, sb);
-		AbstractTemplateBlock inner = getNextInner();
-		AbstractTemplateBlock innerElse = getNextInnerElse();
+		TemplateBlock inner = getNextInner();
+		TemplateBlock innerElse = getNextInnerElse();
 
 		switch (whomEvaluate) {
 			case EVAL_BODY:
@@ -69,7 +69,7 @@ public abstract class TemplateTag extends AbstractTemplateBlock {
 				break;
 		}
 
-		AbstractTemplateBlock next = getNext();
+		TemplateBlock next = getNext();
 
 		if (next != null) {
 			next.eval(context, sb);
@@ -77,7 +77,7 @@ public abstract class TemplateTag extends AbstractTemplateBlock {
 	}
 
 	protected void evalBody(Context context, Writer sb) {
-		AbstractTemplateBlock inner = getNextInner();
+		TemplateBlock inner = getNextInner();
 
 		if (inner != null) {
 			inner.eval(context, sb);
@@ -85,7 +85,7 @@ public abstract class TemplateTag extends AbstractTemplateBlock {
 	}
 
 	protected void evalElse(Context context, Writer sb) {
-		AbstractTemplateBlock innerElse = getNextInnerElse();
+		TemplateBlock innerElse = getNextInnerElse();
 
 		if (innerElse != null) {
 			innerElse.eval(context, sb);

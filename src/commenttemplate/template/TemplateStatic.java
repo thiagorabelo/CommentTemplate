@@ -10,7 +10,7 @@ import commenttemplate.template.writer.Writer;
  *
  * @author thiago
  */
-public class TemplateStatic extends AbstractTemplateBlock {
+public class TemplateStatic extends TemplateBlock {
 	
 	public static class PlainText extends Literal {
 		public PlainText(String text) {
@@ -25,7 +25,7 @@ public class TemplateStatic extends AbstractTemplateBlock {
 	
 	@Override
 	@Deprecated
-	public void setNextInner(AbstractTemplateBlock nextInner) {
+	public void setNextInner(TemplateBlock nextInner) {
 		super.setNextInner(null);
 	}
 

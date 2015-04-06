@@ -2,7 +2,7 @@ package commenttemplate.template.tags.builtin.extend;
 
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.loader.TemplateLoader;
-import commenttemplate.template.AbstractTemplateBlock;
+import commenttemplate.template.TemplateBlock;
 import commenttemplate.template.TemplateBlockBase;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.context.Context;
@@ -41,7 +41,7 @@ public class ExtendsTemplateTag extends TemplateTag {
 			String templateName = exp.eval(context).toString();
 			TemplateBlockBase base = TemplateLoader.get(templateName);
 
-			AbstractTemplateBlock inner = getNextInner();
+			TemplateBlock inner = getNextInner();
 			VoidWriter vw = new VoidWriter();
 			ContextWriterMap cwm = new ContextWriterMap(context);
 
@@ -54,7 +54,7 @@ public class ExtendsTemplateTag extends TemplateTag {
 			cwm.setMode(ContextWriterMap.Mode.RENDER);
 			base.eval(cwm, sb);
 
-			AbstractTemplateBlock next = getNext();
+			TemplateBlock next = getNext();
 			if (next != null) {
 				next.eval(context, sb);
 			}

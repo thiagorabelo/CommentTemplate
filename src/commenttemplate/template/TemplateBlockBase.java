@@ -10,7 +10,7 @@ import commenttemplate.template.writer.Writer;
  *
  * @author thiago
  */
-public class TemplateBlockBase extends AbstractTemplateBlock {
+public class TemplateBlockBase extends TemplateBlock {
 
 	private int initialBufferSize;
 

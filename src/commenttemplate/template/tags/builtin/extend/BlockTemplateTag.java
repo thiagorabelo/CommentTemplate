@@ -1,15 +1,9 @@
 package commenttemplate.template.tags.builtin.extend;
 
-import commenttemplate.expressions.exceptions.BadExpression;
-import commenttemplate.expressions.exceptions.ExpectedExpression;
-import commenttemplate.expressions.exceptions.ExpectedOperator;
-import commenttemplate.expressions.exceptions.FunctionDoesNotExists;
-import commenttemplate.expressions.exceptions.Unexpected;
 import commenttemplate.expressions.tree.Exp;
-import commenttemplate.template.AbstractTemplateBlock;
+import commenttemplate.template.TemplateBlock;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
-import commenttemplate.template.TemplateBlock;
 import commenttemplate.template.tags.TemplateTag;
 import commenttemplate.template.writer.Writer;
 
@@ -49,7 +43,7 @@ public class BlockTemplateTag extends TemplateTag {
 			String blockName = exp.eval(context).toString();
 			Writer w = cwm.getWriter(blockName);
 			
-			AbstractTemplateBlock inner;
+			TemplateBlock inner;
 			int whomEvaluate = evalParams(cwm, w);
 			
 			switch (whomEvaluate) {
@@ -79,7 +73,7 @@ public class BlockTemplateTag extends TemplateTag {
 					break;
 			}
 
-			AbstractTemplateBlock next = getNext();
+			TemplateBlock next = getNext();
 
 			if (next != null) {
 				next.eval(context, sb);

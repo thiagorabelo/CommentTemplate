@@ -62,7 +62,7 @@ public class TemplateParser {
 
 		TemplateBlockBase base = new TemplateBlockBase(initialBufferSize);
 		Matcher tagMatcher = openPattern.matcher(input);
-		MyStack<AbstractTemplateBlock> stack = new MyStack<AbstractTemplateBlock>();
+		MyStack<TemplateBlock> stack = new MyStack<TemplateBlock>();
 		MyStack<Boolean> usingElse = new MyStack<Boolean>();
 
 		stack.push(base);
@@ -76,13 +76,13 @@ public class TemplateParser {
 	// @TODO: Ignorar comentários html. Os cometários serão caracterizados como tendo um espaço depois de abrir a tag
 	// <!-- espaço antes daprimeira palavra -->
 	// Faz o trabalho sujo de mountTemplateTree.
-	private static void mountTemplateTreeAux(String input, Wrap<Integer> lastLength, Matcher tagMatcher, MyStack<AbstractTemplateBlock> stack, MyStack<Boolean> usingElse) throws TemplateException {
+	private static void mountTemplateTreeAux(String input, Wrap<Integer> lastLength, Matcher tagMatcher, MyStack<TemplateBlock> stack, MyStack<Boolean> usingElse) throws TemplateException {
 
 		try {
 			// Procura o próximo bloco.
 			while (tagMatcher.find()) {
 				// Obtem, mas não remove, o bloco que está no topo da pilha.
-				AbstractTemplateBlock block = stack.peek();
+				TemplateBlock block = stack.peek();
 
 				// @TODO: Pode ser que não haja este trecho "estático". Verificar isto!
 				// Copiar tudo que esteja entre "lastLength" e o bloco encontrado, para
@@ -142,7 +142,7 @@ public class TemplateParser {
 				TemplateStatic sttc = new TemplateStatic();
 				sttc.setContent(text);
 
-				AbstractTemplateBlock block = stack.pop();
+				TemplateBlock block = stack.pop();
 				block.append(sttc);
 			}
 		} catch (ExpressionException ex) {

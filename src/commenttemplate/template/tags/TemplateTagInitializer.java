@@ -5,7 +5,7 @@ import commenttemplate.template.tags.builtin.IfTemplateTag;
 import commenttemplate.template.tags.builtin.SetTemplateTag;
 import commenttemplate.template.tags.builtin.extend.ExtendsTemplateTag;
 import commenttemplate.template.tags.builtin.extend.BlockTemplateTag;
-import commenttemplate.template.tags.builtin.foreachhandles.ForEachComponent;
+import commenttemplate.template.tags.builtin.foreachhandles.ForComponent;
 import commenttemplate.util.Utils;
 
 /**
@@ -44,7 +44,7 @@ public class TemplateTagInitializer {
 	
 	
 	private void initBuildin() {
-		TagContainer.instance().addBuiltinTag(new ForEachComponent());
+		TagContainer.instance().addBuiltinTag(new ForComponent());
 		TagContainer.instance().addBuiltinTag(new TagComponent("if", IfTemplateTag.class, "!test"));
 		TagContainer.instance().addBuiltinTag(new TagComponent("set", SetTemplateTag.class, "!var", "value"));
 //		TemplateTag.addBuiltinTag(new ValueFormatterTemplateTag());

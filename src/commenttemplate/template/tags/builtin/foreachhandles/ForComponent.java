@@ -32,8 +32,6 @@ import commenttemplate.template.tags.TagComponent;
 import commenttemplate.template.tags.TemplateTag;
 import commenttemplate.template.tags.builtin.ForTemplateTag;
 import commenttemplate.util.Tuple;
-import commenttemplate.util.Utils;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -43,7 +41,7 @@ import java.util.regex.Pattern;
  *
  * @author thiago
  */
-public class ForEachComponent extends TagComponent {
+public class ForComponent extends TagComponent {
 
 	//                                                              1           2
 	private static final Pattern BUILTIN_PATTERN = Pattern.compile("(\\d+)\\.\\.(\\d+)");
@@ -53,7 +51,7 @@ public class ForEachComponent extends TagComponent {
 	private static final String LIST = "list";
 	
 	
-	public ForEachComponent() {
+	public ForComponent() {
 		super("for", ForTemplateTag.class, "!list", "var", "step", "counter");
 	}
 

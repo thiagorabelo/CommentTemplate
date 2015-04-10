@@ -8,6 +8,7 @@ import commenttemplate.context.Context;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Utils;
 import java.lang.reflect.Array;
+import java.util.NoSuchElementException;
 
 /**
  *
@@ -65,7 +66,7 @@ public class ForTemplateTag extends TemplateTag {
 					return current;
 				}
 
-				throw new RuntimeException(Utils.concat("Iterating over the limit of list [", i_start, "..", i_length, "]"));
+				throw new NoSuchElementException(Utils.concat("Iterating over the limit of list [", i_start, "..", i_length, "]"));
 			}
 
 			@Override

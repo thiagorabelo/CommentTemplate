@@ -19,7 +19,7 @@
 package commenttemplate.util;
 
 import commenttemplate.util.joiner.DefaultJoiner;
-import commenttemplate.util.joiner.JoinPath;
+import commenttemplate.util.joiner.PathJoiner;
 import commenttemplate.util.joiner.Joiner;
 import java.io.File;
 
@@ -34,10 +34,10 @@ public class Join {
 	}
 	
 	public static Joiner path() {
-		return new JoinPath(File.separator);
+		return new PathJoiner(File.separator);
 	}
 	
 	public static Joiner path(String joiner) {
-		return new JoinPath(joiner);
+		return new PathJoiner(joiner);
 	}
 }

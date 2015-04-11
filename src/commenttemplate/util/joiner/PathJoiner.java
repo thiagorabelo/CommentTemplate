@@ -25,9 +25,9 @@ import java.util.Iterator;
  *
  * @author thiago
  */
-public class JoinPath extends DefaultJoiner {
+public class PathJoiner extends DefaultJoiner {
 	
-	public JoinPath(String joiner) {
+	public PathJoiner(String joiner) {
 		super(joiner);
 		onNull = "";
 	}

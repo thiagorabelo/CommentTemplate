@@ -32,41 +32,54 @@ public class JoinPath extends DefaultJoiner {
 		onNull = "";
 	}
 	
+	private void joinAux(Object part, Wrap<Boolean> skiped, Wrap<Boolean> last) {
+		String append = skip(skiped, part);
+		if (appended > 1 && !skiped.getValue()) {
+			sb.append(joiner);
+		}
+
+		if (appended > 1) {
+			if (append.startsWith(joiner)) {
+				append = append.substring(joiner.length());
+			}
+			if (append.endsWith(joiner)) {
+				append = append.substring(0, append.length() - joiner.length());
+				last.setValue(true);
+			} else {
+				last.setValue(false);
+			}
+
+		} else {
+			if (append.endsWith(joiner)) {
+				append = append.substring(0, append.length() - joiner.length());
+			}
+		}
+		
+		sb.append(append);
+	}
+	
 	// TODO: Ver os casos onde parts[i] pode ser iterado
 	@Override
 	public Joiner join(Iterator iterator) {
-		Wrap<Boolean> skiped = new Wrap(false);
 		Object part;
-		boolean last = false;
+		Wrap<Boolean> skiped = new Wrap(false);
+		Wrap<Boolean> last = new Wrap<>(false);
 
 		while (iterator.hasNext()) {
 			part = iterator.next();
-			String append = skip(skiped, part);
-			if (appended > 1 && !skiped.getValue()) {
-				sb.append(joiner);
-			}
-
-			if (appended > 1) {
-				if (append.startsWith(joiner)) {
-					append = append.substring(joiner.length());
-				}
-				if (append.endsWith(joiner)) {
-					append = append.substring(0, append.length() - joiner.length());
-					last = true;
-				} else {
-					last = false;
-				}
-
+			
+			if (part instanceof Iterable) {
+				join((Iterable)part);
+			} else if (part instanceof Iterator) {
+				join((Iterator)part);
+			} else if (isArray(part)) {
+				join((Object[])part);
 			} else {
-				if (append.endsWith(joiner)) {
-					append = append.substring(0, append.length() - joiner.length());
-				}
+				joinAux(part, skiped, last);
 			}
-
-			sb.append(append);
 		}
 		
-		if (last) {
+		if (last.getValue()) {
 			sb.append(joiner);
 		}
 		
@@ -76,37 +89,25 @@ public class JoinPath extends DefaultJoiner {
 	// TODO: Ver os casos onde parts[i] pode ser iterado
 	@Override
 	public Joiner join(Object[] parts) {
+		Object part;
 		Wrap<Boolean> skiped = new Wrap(false);
-		boolean last = false;
+		Wrap<Boolean> last = new Wrap<>(false);
 
 		for (int i = 0, len = parts.length; i < len; i++) {
-			Object part = parts[i];
-			String append = skip(skiped, part);
-			if (appended > 1 && !skiped.getValue()) {
-				sb.append(joiner);
-			}
-
-			if (appended > 1) {
-				if (append.startsWith(joiner)) {
-					append = append.substring(joiner.length());
-				}
-				if (append.endsWith(joiner)) {
-					append = append.substring(0, append.length() - joiner.length());
-					last = true;
-				} else {
-					last = false;
-				}
-
+			part = parts[i];
+			
+			if (part instanceof Iterable) {
+				join((Iterable)part);
+			} else if (part instanceof Iterator) {
+				join((Iterator)part);
+			} else if (isArray(part)) {
+				join((Object[])part);
 			} else {
-				if (append.endsWith(joiner)) {
-					append = append.substring(0, append.length() - joiner.length());
-				}
+				joinAux(part, skiped, last);
 			}
-
-			sb.append(append);
 		}
 		
-		if (last) {
+		if (last.getValue()) {
 			sb.append(joiner);
 		}
 		

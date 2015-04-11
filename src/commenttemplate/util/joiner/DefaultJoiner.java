@@ -35,8 +35,15 @@ public class DefaultJoiner extends Joiner {
 	public Joiner join(Iterable parts) {
 		return join(parts.iterator());
 	}
+	
+	private void joinAux(Object part, Wrap<Boolean> skiped) {
+		String append = skip(skiped, part);
+		if (appended > 1 && !skiped.getValue()) {
+			sb.append(joiner);
+		}
+		sb.append(append);
+	}
 
-	// TODO: Ver os casos onde part pode ser iterado
 	@Override
 	public Joiner join(Iterator iterator) {
 		Wrap<Boolean> skiped = new Wrap(false);
@@ -45,11 +52,16 @@ public class DefaultJoiner extends Joiner {
 
 		while (iterator.hasNext()) {
 			part = iterator.next();
-			String append = skip(skiped, part);
-			if (appended > 1 && !skiped.getValue()) {
-				sb.append(joiner);
+			
+			if (part instanceof Iterable) {
+				join((Iterable)part);
+			} else if (part instanceof Iterator) {
+				join((Iterator)part);
+			} else if (isArray(part)) {
+				join((Object[])part);
+			} else {
+				joinAux(part, skiped);
 			}
-			sb.append(append);
 		}
 		
 		return this;
@@ -66,27 +78,15 @@ public class DefaultJoiner extends Joiner {
 
 		for (int i = 0; i < length; i++) {
 			Object part = parts[i];
-			
-			if (part != null) {
-				if (part instanceof Iterable) {
-					join((Iterable)part);
-				} else if (part instanceof Iterator) {
-					join((Iterator)part);
-				} else if (part.getClass().isArray()) {
-					join((Object[])part);
-				} else {
-					String append = skip(skiped, part);
-					if (appended > 1 && !skiped.getValue()) {
-						sb.append(joiner);
-					}
-					sb.append(append);
-				}
+
+			if (part instanceof Iterable) {
+				join((Iterable)part);
+			} else if (part instanceof Iterator) {
+				join((Iterator)part);
+			} else if (isArray(part)) {
+				join((Object[])part);
 			} else {
-				String append = skip(skiped, part);
-				if (appended > 1 && !skiped.getValue()) {
-					sb.append(joiner);
-				}
-				sb.append(append);
+				joinAux(part, skiped);
 			}
 		}
 		
@@ -95,30 +95,22 @@ public class DefaultJoiner extends Joiner {
 
 	@Override
 	public Joiner join(Object first, Object second, Object ...others) {
-		if (first != null) {
-			if (first instanceof Iterable) {
-				join((Iterable)first);
-			} else if (first instanceof Iterator) {
-				join((Iterator)first);
-			} else if (first.getClass().isArray()) {
-				join((Object[])first);
-			} else {
-				join(new Object[]{first});
-			}
+		if (first instanceof Iterable) {
+			join((Iterable)first);
+		} else if (first instanceof Iterator) {
+			join((Iterator)first);
+		} else if (isArray(first)) {
+			join((Object[])first);
 		} else {
 			join(new Object[]{first});
 		}
 
-		if (second != null) {
-			if (second instanceof Iterable) {
-				join((Iterable)second);
-			} else if (second instanceof Iterator) {
-				join((Iterator)second);
-			} else if (second.getClass().isArray()) {
-				join((Object[])second);
-			} else {
-				join(new Object[]{second});
-			}
+		if (second instanceof Iterable) {
+			join((Iterable)second);
+		} else if (second instanceof Iterator) {
+			join((Iterator)second);
+		} else if (isArray(second)) {
+			join((Object[])second);
 		} else {
 			join(new Object[]{second});
 		}

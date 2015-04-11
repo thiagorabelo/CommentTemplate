@@ -57,12 +57,22 @@ public abstract class Joiner {
 		return this;
 	}
 
+	public Joiner useNulls(String onNull) {
+		useNulls();
+		return insteadNull(onNull);
+	}
+
 	public Joiner insteadNull(String onNull) {
-		if (onNull == null) {
-			throw new IllegalArgumentException("Can't be null");
+		if (onNull != null) {
+			this.onNull = onNull;
+			return this;
 		}
-		this.onNull = onNull;
-		return this;
+
+		throw new IllegalArgumentException("Can't be null");
+	}
+	
+	protected boolean isArray(Object obj) {
+		return obj != null && obj.getClass().isArray();
 	}
 	
 	protected String skip(Wrap<Boolean> skiped, Object o) {

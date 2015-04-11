@@ -40,7 +40,4 @@ public class Join {
 	public static Joiner path(String joiner) {
 		return new JoinPath(joiner);
 	}
-	
-	private Join() {
-	}
 }

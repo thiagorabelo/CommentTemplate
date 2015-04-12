@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2015 thiago.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ */
+
 package commenttemplate.context;
 
 
@@ -16,7 +35,6 @@ import java.util.Set;
  *
  * @author thiago
  */
-// @TODO: Adicionar leitura ao mapa do Params
 public class Context implements Map<String, Object> {
 
 	private static final RetrieveDataMap<Map<String, Object>> defaultRetrieverDataMap = new IterativeRetrieverDataMap();
@@ -73,12 +91,12 @@ public class Context implements Map<String, Object> {
 	private RetrieveDataMap<Map<String, Object>> retrieverDataMap;
 	
 	public Context() {
-		contextStack = new MyStack<MyHashMap<String, Object>>();
+		contextStack = new MyStack<>();
 		retrieverDataMap = defaultRetrieverDataMap;
 	}
 
 	public Context(RetrieveDataMap retrieverDataMap) {
-		contextStack = new MyStack<MyHashMap<String, Object>>();
+		contextStack = new MyStack<>();
 		this.retrieverDataMap = retrieverDataMap;
 	}
 	
@@ -101,7 +119,7 @@ public class Context implements Map<String, Object> {
 		if (params instanceof MyHashMap) {
 			contextStack.push((MyHashMap<String, Object>)params);
 		} else {
-			contextStack.push(new MyHashMap<String, Object>()).peek().putAll(params);
+			contextStack.push(new MyHashMap<>()).peek().putAll(params);
 		}
 
 		size = params.size();
@@ -128,7 +146,7 @@ public class Context implements Map<String, Object> {
 		if (params instanceof MyHashMap) {
 			contextStack.push((MyHashMap<String, Object>)params);
 		} else {
-			contextStack.push(new MyHashMap<String, Object>()).peek().putAll(params);
+			contextStack.push(new MyHashMap<>()).peek().putAll(params);
 		}
 
 		size = size(contextStack.getList());
@@ -138,7 +156,7 @@ public class Context implements Map<String, Object> {
 	}
 
 	public Context push() {
-		contextStack.push(new MyHashMap<String, Object>());
+		contextStack.push(new MyHashMap<>());
 		
 		return this;
 	}
@@ -235,7 +253,7 @@ public class Context implements Map<String, Object> {
 	@Override
 	public Collection<Object> values() {
 		Set<String> keys = keySet(contextStack.getList());
-		ArrayList<Object> objs = new ArrayList<Object>();
+		ArrayList<Object> objs = new ArrayList<>();
 
 		for (String key : keys) {
 			objs.add(get(contextStack.getList(), key));
@@ -247,7 +265,7 @@ public class Context implements Map<String, Object> {
 	@Override
 	public Set<Map.Entry<String, Object>> entrySet() {
 		List<MyHashMap<String, Object>> maps = contextStack.getList();
-		MyHashMap<String, Object> plainMap = new MyHashMap<String, Object>();
+		MyHashMap<String, Object> plainMap = new MyHashMap<>();
 		
 		for (MyHashMap<String, Object> map : maps) {
 			plainMap.putAll(map);

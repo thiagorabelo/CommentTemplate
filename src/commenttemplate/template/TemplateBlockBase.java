@@ -4,6 +4,7 @@ import commenttemplate.template.writer.TemplateWriter;
 import java.util.Map;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextPreprocessor;
+import commenttemplate.context.preprocessor.PreprocessorCache;
 import commenttemplate.template.writer.Writer;
 
 /**
@@ -66,14 +67,14 @@ public class TemplateBlockBase extends TemplateBlock {
 	@Override
 	public void eval(Context context, Writer sb) {
 		
-		// TODO: Ver o caso desta exceção
-		// TODO: O uso das tags extends e block, estão causando múltiplas chamadas aos preprocessadores
-		try {
-			for (Class<? extends ContextPreprocessor> cls : ContextPreprocessor.preprocessors) {
-				cls.newInstance().execute(context);
-			}
-		} catch (InstantiationException | IllegalAccessException ex) {}
+		for (ContextPreprocessor p : PreprocessorCache.instance()) {
+			p.before(context);
+		}
 
 		getNextInner().eval(context, sb);
+
+		for (ContextPreprocessor p : PreprocessorCache.instance()) {
+			p.after(sb, context);
+		}
 	}
 }

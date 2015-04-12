@@ -17,18 +17,30 @@
  * MA 02110-1301  USA
  */
 
-package commenttemplate.context;
+package commenttemplate.context.preprocessor;
 
-import commenttemplate.template.writer.Writer;
+import commenttemplate.context.ContextPreprocessor;
+import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  *
  * @author thiago
  */
-public abstract class ContextPreprocessor {
-
-	public void before(Context context) {}
+public class PreprocessorCache extends LinkedList<ContextPreprocessor> {
 	
-	public void after(Writer sb, Context context) {}
-
+	static {
+		INSTANCE = new PreprocessorCache();
+	}
+	
+	private static final PreprocessorCache INSTANCE;
+	
+	public static PreprocessorCache instance() {
+		return INSTANCE;
+	}
+	
+	private PreprocessorCache() {}
+	private PreprocessorCache(Collection<? extends ContextPreprocessor> c) {
+        super(c);
+    }
 }

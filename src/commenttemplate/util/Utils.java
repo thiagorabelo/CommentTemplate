@@ -26,6 +26,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  *
@@ -112,24 +114,87 @@ public class Utils {
 		return getProperty(target, propertyName, true);
 	}
 	
+	public static class IterableClass implements Iterable<Class> {
+		private Class current;
+		
+		public IterableClass(Class klass) {
+			current = klass;
+		}
+
+		private class ClassIterator implements Iterator<Class> {
+
+			@Override
+			public boolean hasNext() {
+				return current.getSuperclass() != null;
+			}
+
+			@Override
+			public Class next() {
+				try {
+					Class next = current;
+					current = current.getSuperclass();
+					return next;
+				} catch (NullPointerException ex) {
+					throw new NoSuchElementException("There is no more super classes.");
+				}
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("Not supported.");
+			}
+		}
+
+		@Override
+		public Iterator<Class> iterator() {
+			return new ClassIterator();
+		}
+	}
+	
+	private static Method getMethod(Class klass, String name) throws NoSuchMethodException {
+		Utils.IterableClass it = new Utils.IterableClass(klass);
+		
+		for (Class c : it){
+			try {
+				return c.getDeclaredMethod(name);
+			} catch (NoSuchMethodException ex) {}
+		}
+		
+		throw new NoSuchMethodException();
+	}
+
+	private static Field getField(Class klass, String name) throws NoSuchFieldException {
+		Utils.IterableClass it = new Utils.IterableClass(klass);
+		
+		for (Class c : it) {
+			try {
+				return c.getDeclaredField(name);
+			} catch (NoSuchFieldException ex) {}
+		}
+		
+		throw new NoSuchFieldException();
+	}
+	
 	public static Object getProperty(Object target, String propertyName, boolean force) {
 		String []prefixes = {"get", "is", "has"};
+		Class klass = target.getClass();
+		String capitalized = capitalize(propertyName);
 
 		// Tenta captura o valor da propriedade pelos métodos
 		// get, is e has.
 		for (int i = 0, len = prefixes.length; i < len;) {
 			String prefix = prefixes[i];
-			String methodName = prefix + capitalize(propertyName);
+			String methodName = prefix + capitalized;
 
 			try {
-				Method method = target.getClass().getDeclaredMethod(methodName);
+				Method method = getMethod(klass, methodName);
 
 				if (force) {
 					method.setAccessible(true);
 				}
 
 				return method.invoke(target);
-			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+			} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 				i += 1;
 			} catch (Exception ex) {
 				throw new RuntimeException(ex);
@@ -139,14 +204,14 @@ public class Utils {
 		// Caso não tenha conseguido através da invocação dos métodos com prefixies,
 		// tenta encontrar algum metódo com o nome.
 		try {
-			Method method = target.getClass().getDeclaredMethod(propertyName);
+			Method method = getMethod(klass, propertyName);
 
 			if (force) {
 				method.setAccessible(true);
 			}
 
 			return method.invoke(target);
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+		} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 			// não faz nada.
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
@@ -155,20 +220,20 @@ public class Utils {
 		// Caso não tenha conseguido através da invocação dos métodos,
 		// tenta encontrar algum atributo com o nome.
 		try {
-			Field field = target.getClass().getDeclaredField(propertyName);
+			Field field = getField(klass, propertyName);
 
 			if (force) {
 				field.setAccessible(true);
 			}
 
 			return field.get(target);
-		} catch(NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+		} catch(NoSuchFieldException | IllegalArgumentException | IllegalAccessException ex) {
 			return null;
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
 	}
-	
+
 	public static Object setProperty(Object instance, String propertyName, Object value)
 			throws NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {

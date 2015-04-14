@@ -19,6 +19,7 @@
 package commenttemplate.loader;
 
 import commenttemplate.context.ContextPreprocessor;
+import commenttemplate.context.preprocessor.PreprocessorCache;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
@@ -79,16 +80,11 @@ public class Init extends TemplateLoaderConfig {
 		setType(LoaderType.valueOf(prop.getProperty(RETRIEVER).toUpperCase()));
 		setFolderPath(res);
 		
-		// @TODO: Load preprocessors
 		String []preprocessors = prop.getAsArray(PREPROCESSOR);
 		if (preprocessors.length > 0) {
 			for (String preprocessor : preprocessors) {
 				Class<? extends ContextPreprocessor> preClass = (Class<? extends ContextPreprocessor>)Class.forName(preprocessor);
-				ContextPreprocessor.preprocessors.add(preClass);
-			}
-
-			if (!ContextPreprocessor.preprocessors.isEmpty()) {
-				ContextPreprocessor.preprocessors.trimToSize();
+				PreprocessorCache.instance().add(preClass.newInstance());
 			}
 		}
 	}

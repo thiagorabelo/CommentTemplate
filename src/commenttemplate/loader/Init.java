@@ -66,6 +66,7 @@ public class Init extends TemplateLoaderConfig {
 	
 
 	// @TODO: Refatorar para que seja possível usar uma classe customizada para fazer a configuração.
+	// @TODO: Falta carregar Funções customizadas.
 	@Override
 	public void init() throws Exception {
 		Properties prop = new Properties();

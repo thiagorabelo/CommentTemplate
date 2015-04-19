@@ -20,14 +20,22 @@ package commenttemplate.loader;
 
 import commenttemplate.context.ContextPreprocessor;
 import commenttemplate.context.preprocessor.PreprocessorCache;
+import commenttemplate.template.tags.TagComponent;
+import commenttemplate.template.tags.TemplateTag;
+import commenttemplate.template.tags.TemplateTagInitializer;
+import commenttemplate.util.Utils;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author thiago
  */
 public class Init extends TemplateLoaderConfig {
+//	private static final String RETRIEVER_CLASS = "commenttemplate.retriever_class";
 	private static final String RETRIEVER = "commenttemplate.retriever_type";
 	private static final String RESOURCES = "commenttemplate.resource_folder";
 	private static final String PREPROCESSOR = "commenttemplate.preprocessor";
@@ -35,6 +43,9 @@ public class Init extends TemplateLoaderConfig {
 //	private static final String CONFIG_CLASS = "commenttemplate.config_class";
 	
 	private static final String filename = "commenttemplate.properties";
+	
+	private static final Pattern SPLIT_TAG_CLASS = Pattern.compile("((?<tagname>\\w+)\\s*,\\s*)?(?<tagclass>[\\w|\\.]+)");
+	private static final Pattern SPLIT_BY_COMMA = Pattern.compile("\\s*,\\s*");
 	
 	private static Boolean configured = false;
 	
@@ -87,5 +98,41 @@ public class Init extends TemplateLoaderConfig {
 				PreprocessorCache.instance().add(preClass.newInstance());
 			}
 		}
+		
+		customTags(prop);
+	}
+	
+	protected void customTags(Properties prop) {
+		String []tagsParams = prop.getAsArray(CUSTOM_TAG);
+		
+		Arrays.asList(tagsParams).stream().forEach(u -> {
+			Matcher m = SPLIT_TAG_CLASS.matcher(u);
+			
+			if (m.find()) {
+				try {
+					String tagName = m.group("tagname");
+					String className = m.group("tagclass");
+
+					if (Utils.empty(tagName)) {
+						Class<? extends TagComponent> cls = (Class<? extends TagComponent>)Class.forName(className);
+						TagComponent component = cls.newInstance();
+						TemplateTagInitializer.getInstance().addTag(component);
+					} else {
+						Class<? extends TemplateTag> cls = (Class<? extends TemplateTag>)Class.forName(className);
+						String p = u.substring(m.end()).trim().substring(1);
+						String [] params = SPLIT_BY_COMMA.split(p);
+						
+						TagComponent component = new TagComponent(tagName, cls, params);
+						TemplateTagInitializer.instance().addTag(component);
+					}
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+					// TODO: Melhorar esta exceção
+					throw new RuntimeException(ex);
+				}
+			} else {
+				// TODO: Melhorar esta exceção
+				throw new RuntimeException("ERRO AO CARREGAR CUSTOM TAG: " + u);
+			}
+		});
 	}
 }

@@ -15,6 +15,7 @@ import commenttemplate.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 import commenttemplate.util.maps.*;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,8 +26,29 @@ import java.util.regex.Pattern;
  * @author thiago
  */
 public class TestesRelampagos {
-
+	
 	public static void main(String[] args) {
+		Pattern SPLIT_TAG_CLASS = Pattern.compile("((?<tagname>\\w+)\\s*,\\s*)?(?<tagclass>[\\w|\\.]+)");
+		Pattern SPLIT_BY_COMMA = Pattern.compile("\\s*,\\s*");
+		
+		String padrao = "for,commenttemplate.template.tags.builtin.ForTemplateTag,!list,var,step,counter";
+		
+		Matcher m = SPLIT_TAG_CLASS.matcher(padrao);
+		
+		if (m.find()) {
+			System.out.println(m.group("tagname"));
+			System.out.println(m.group("tagclass"));
+			
+			String p = padrao.substring(m.end()).trim().substring(1);
+			System.out.println(p);
+			
+			String [] params = SPLIT_BY_COMMA.split(p);
+			
+			Arrays.asList(params).stream().forEach(u -> System.out.println(u));
+		}
+	}
+
+	public static void teste11(String[] args) {
 		Pattern p = Pattern.compile("<\\!\\-\\-(\\w+)\\s*(.*?)\\s*\\-\\->");
 		Pattern param = Pattern.compile("(\\w+)\\=\"([^\"]*)\"");
 		String tag = " <!--tag foo=\"param1\" bar=\"param2\" --> ";

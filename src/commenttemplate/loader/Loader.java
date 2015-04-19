@@ -28,7 +28,7 @@ public class Loader {
 	
 	// @TODO: FAZER USO DO CACHE
 	
-	public Loader(TemplateRetrieve retriever) {
+	protected Loader(TemplateRetrieve retriever) {
 		this.retriever = retriever;
 	}
 	

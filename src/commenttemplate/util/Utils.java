@@ -240,31 +240,32 @@ public class Utils {
 
 		String prefix = "set";
 		String methodName = prefix + capitalize(propertyName);
-		Class classInstance = instance.getClass();
 
-		for (Class cls = value.getClass(); cls != null; cls = cls.getSuperclass()) {
-			
-			try {
-				// 1 - tentar pela classe
-				return setProp(instance, classInstance, methodName, value, cls);
-			} catch (NoSuchMethodException ex) {
+		for (Class classInstance : new IterableClass(instance.getClass())) {
+			for (Class cls : new IterableClass(value.getClass())) {
 
-				// 2 - tentar pelas interfaces
-				for (Class interf : cls.getInterfaces()) {
-					
-					// 2 - tentando pela interface e pelas
-					// 2.1 - super-interfaces
-					Class superInterf = interf;
-					for (int i = 0; superInterf != null;) {
-						try {
-							return setProp(instance, classInstance, methodName, value, superInterf);
-						} catch (NoSuchMethodException ex1) {
-							superInterf = getSuperInterf(superInterf, i--);
+				try {
+					// 1 - tentar pela classe
+					return setProp(instance, classInstance, methodName, value, cls);
+				} catch (NoSuchMethodException ex) {
+
+					// 2 - tentar pelas interfaces
+					for (Class interf : cls.getInterfaces()) {
+
+						// 2 - tentando pela interface e pelas
+						// 2.1 - super-interfaces
+						Class superInterf = interf;
+						for (int i = 0; superInterf != null;) {
+							try {
+								return setProp(instance, classInstance, methodName, value, superInterf);
+							} catch (NoSuchMethodException ex1) {
+								superInterf = getSuperInterf(superInterf, i--);
+							}
 						}
-					}
-					
-				}
 
+					}
+
+				}
 			}
 		}
 

@@ -28,6 +28,22 @@ import java.util.regex.Pattern;
 public class TestesRelampagos {
 	
 	public static void main(String[] args) {
+		String plain = "\n		${append('${', name, '}')}\n" +
+"\n" +
+"	${append('[', name, ']')}";
+		System.out.println(Utils.concat("[",plain,"]"));
+		
+		Pattern expPattern = Pattern.compile("\\$\\{(?<exp>([^$]|[^{])*)\\}");
+		Matcher m = expPattern.matcher(plain);
+		
+		System.out.println("Encontrando...");
+		while (m.find()) {
+			System.out.println(Utils.concat("[", m.group(), "]"));
+			//System.out.println(m.group("exp")+"\n");
+		}
+	}
+	
+	public static void teste12(String[] args) {
 		Pattern SPLIT_TAG_CLASS = Pattern.compile("((?<tagname>\\w+)\\s*,\\s*)?(?<tagclass>[\\w|\\.]+)");
 		Pattern SPLIT_BY_COMMA = Pattern.compile("\\s*,\\s*");
 		

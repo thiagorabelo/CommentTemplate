@@ -5,8 +5,7 @@ import commenttemplate.context.ContextWriterMap;
 import commenttemplate.expressions.parser.Parser;
 import commenttemplate.expressions.parser.Semantic;
 import commenttemplate.expressions.parser.Tokenizer;
-import commenttemplate.expressions.parser.Tokenizer2;
-import commenttemplate.expressions.parser.TokensToExp2;
+import commenttemplate.expressions.parser.TokensToExp;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Join;
@@ -117,8 +116,8 @@ public class TestesRelampagos {
 		map.put("a", 10.0);
 		map.put("text", "Hellor, World");
 		
-		List<Tuple<String, Integer>> tokens = new Tokenizer2(exp).tokenList();
-		List<Exp> exprs = new TokensToExp2(tokens, exp).convert();
+		List<Tuple<String, Integer>> tokens = new Tokenizer(exp).tokenList();
+		List<Exp> exprs = new TokensToExp(tokens, exp).convert();
 		new Semantic(exprs, exp, tokens).analise();
 		Parser p = new Parser();
 		MyStack<Exp> stack = p.buildStack(exprs);
@@ -133,13 +132,13 @@ public class TestesRelampagos {
 		String expression = "a + b.c + d.e + length('my.eggs').toInt.value + z.y";
 //		String expression = "a + b.c + d.e + empty('my.eggs') + z.y";
 		//                                          ^ - Tá apontando que começa no 23, mas é 22
-		List<Tuple<String, Integer>> tokens = new Tokenizer2(expression).tokenList();
+		List<Tuple<String, Integer>> tokens = new Tokenizer(expression).tokenList();
 		
 		for (Tuple<String, Integer> token : tokens) {
 			System.out.println(String.format("%s::%d", token.getA(), token.getB()));
 		}
 		
-		List<Exp> exprs = new TokensToExp2(tokens, expression).convert();
+		List<Exp> exprs = new TokensToExp(tokens, expression).convert();
 		System.out.println("----------------\n");
 		for (Exp exp : exprs) {
 			System.out.println(Utils.concat("[", exp, "]"));

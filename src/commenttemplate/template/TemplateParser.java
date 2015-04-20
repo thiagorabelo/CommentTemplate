@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import commenttemplate.expressions.exceptions.ExpressionException;
 import commenttemplate.expressions.parser.Parser;
+import commenttemplate.expressions.parser.Tokenizer;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
@@ -16,6 +17,7 @@ import commenttemplate.template.tags.TagContainer;
 import commenttemplate.util.MyStack;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Wrap;
+import java.util.List;
 
 /**
  *
@@ -35,7 +37,8 @@ public class TemplateParser {
 	private static final String _else = "else";
 
 	//private static final Pattern expPattern = Pattern.compile("\\$\\{([^\\}]*)}");
-	private static final Pattern expPattern = Pattern.compile("\\$\\{([^${]*)\\}");
+//	private static final Pattern expPattern = Pattern.compile("\\$\\{([^${]*)\\}");
+	private static final Pattern openExpPattern = Pattern.compile("\\$\\{");
 
 	// precisa dizer o que faz?
 	public static TemplateBlockBase compile(String input)  throws TemplateException {
@@ -240,45 +243,64 @@ public class TemplateParser {
 		return c;
 	}
 
-	public static Exp []getContent(String content) throws TemplateException {
-		ArrayList<Exp> cont = new ArrayList<Exp>();
+	// @TODO: Se torna muito pesado o uso do Tokenizer aqui.
+	//        Faz-se o a tokenização repetitiva de uma substring de content.
+	//        Talvez seja bom criar um LazeTokenizer.
+	protected static int expContentEnd(String content, int begin) {
+		String part = content.substring(begin);
+		List<Tuple<String, Integer>> l = new Tokenizer(part).tokenList();
+		String open = "${";
+		String close = "}";
+		
+		for (Tuple<String, Integer> t : l) {
+			String x = t.getA();
+			if (x.startsWith(close)) {
+				return t.getB();
+			}
 
-		Matcher m = expPattern.matcher(content);
-		int lastIndex = 0;
+			if (x.equals(open)) {
+				return -1;
+			}
+		}
+		
+		return -1;
+	}
+
+	public static Exp []getContent(String content) throws TemplateException {
+		ArrayList<Exp> cont = new ArrayList<>();
+
+		Matcher m = openExpPattern.matcher(content);
+		int lastEnd = 0;
 
 		try {
 			while (m.find()) {
-				cont.add(new TemplateStatic.PlainText(content.substring(lastIndex, m.start())));
+				if (m.start() >= lastEnd) {
+					int endIndex = expContentEnd(content, m.end());
 
-				Tuple<String, Integer> t = expressionContent(m.group());
-				cont.add(new Parser(t.getA().substring(2, t.getA().length()-1)).parse());
+					if (endIndex >= 0) {
+						String plain = content.substring(lastEnd, m.start());
 
-				lastIndex = m.end() - t.getB();
+						if (!plain.isEmpty()) {
+							cont.add(new TemplateStatic.PlainText(plain));
+						}
+
+						String exp = content.substring(m.end(), m.end() + endIndex);
+						cont.add(new Parser(exp).parse());
+
+						lastEnd = m.end() + endIndex + 1;
+					}
+				}
 			}
 		} catch (ExpressionException ex) {
 			throw new TemplateException(ex.getMessage(), lineCounter(content.substring(0, m.start())), ex.show());
 		}
 
-		cont.add(new TemplateStatic.PlainText(content.substring(lastIndex)));
+		cont.add(new TemplateStatic.PlainText(content.substring(lastEnd)));
 
 		Exp array [] = new Exp[cont.size()];
 
 		cont.toArray(array);
 
 		return array;
-	}
-
-	public static Tuple<String, Integer> expressionContent(String str) {
-		int j = str.length() - 1;
-
-		for (int i = str.length() - 1; i >= 0; i--) {
-			char ch = str.charAt(i);
-
-			if (ch == '}') {
-				j = i;
-			}
-		}
-
-		return new Tuple<String, Integer>(str.substring(0, j + 1), str.length() - 1 - j);
 	}
 }

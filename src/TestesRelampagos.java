@@ -4,6 +4,7 @@ import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
 import commenttemplate.expressions.parser.Parser;
 import commenttemplate.expressions.parser.Semantic;
+import commenttemplate.expressions.parser.Tokenizer;
 import commenttemplate.expressions.parser.Tokenizer2;
 import commenttemplate.expressions.parser.TokensToExp2;
 import commenttemplate.expressions.tree.Exp;
@@ -27,19 +28,46 @@ import java.util.regex.Pattern;
  */
 public class TestesRelampagos {
 	
-	public static void main(String[] args) {
-		String plain = "\n		${append('${', name, '}')}\n" +
+	public static int length(String content, int begin) throws Exception {
+		String part = content.substring(begin);
+		List<Tuple<String, Integer>> l = new Tokenizer(part).tokenList();
+		String open = "${";
+		String close = "}";
+		String closeOpen = "}${";
+		
+		for (Tuple<String, Integer> t : l) {
+			String x = t.getA();
+			if (x.equals(close) || x.equals(closeOpen)) {
+				return t.getB();
+			}
+			
+			if (x.equals(open)) {
+				return -1;
+			}
+		}
+		
+		return -1;
+	}
+	
+	public static void main(String[] args) throws Exception  {
+		String plain = "${'oi'}\n		${append('${', name, '}')}${'teste'}\n" +
 "\n" +
-"	${append('[', name, ']')}";
+" vai tomar no cu	${append('[', name, ']')}";
 		System.out.println(Utils.concat("[",plain,"]"));
 		
-		Pattern expPattern = Pattern.compile("\\$\\{(?<exp>([^$]|[^{])*)\\}");
-		Matcher m = expPattern.matcher(plain);
-		
+		Pattern openExpPattern = Pattern.compile("\\$\\{");
+		Matcher m = openExpPattern.matcher(plain);
+		int lastEnd = 0;
+
 		System.out.println("Encontrando...");
 		while (m.find()) {
-			System.out.println(Utils.concat("[", m.group(), "]"));
-			//System.out.println(m.group("exp")+"\n");
+			if (m.start() >= lastEnd) {
+				int e = length(plain, m.end());
+				log(plain.substring(lastEnd, m.start()));
+				log(plain.substring(m.end(), m.end() + e));
+				lastEnd = m.end() + e + 1;
+				System.out.println("---------------------------");
+			}
 		}
 	}
 	
@@ -405,5 +433,9 @@ public class TestesRelampagos {
 		System.out.println(Join.path().skipNulls().join(list, array, "g", null, "h", "i", null).join("j", "k", "l"));
 		
 		System.out.println(Utils.concat("olá", "mundo", "cruel"));
+	}
+	
+	public static void log(String ...str) {
+		System.out.println(Join.with("").join("[", str, "]"));
 	}
 }

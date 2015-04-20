@@ -58,6 +58,7 @@ import commenttemplate.expressions.tree.Literal;
 import commenttemplate.expressions.tree.PropertyPath;
 import commenttemplate.expressions.tree.Token;
 import commenttemplate.util.Tuple;
+import java.util.Arrays;
 
 
 /**
@@ -96,6 +97,10 @@ public class TokensToExp {
 		ops.put(")", RParenthesis.class);
 		ops.put(",", Comma.class);
 	}
+	
+	private static final List<String> NOT_ALLOWED = Arrays.asList(new String[]{
+		"$", "{", "}", "|", "&"
+	});
 	
 	private static interface PositiveNegative {
 		public Exp signal();
@@ -146,6 +151,7 @@ public class TokensToExp {
 			List<String> unprocessed = new ArrayList<>();
 
 			for (int i = 0, len = tokens.size(); i < len; i++) {
+				isAllowedToken(tokens.get(i));
 				String token = tokens.get(i).getA();
 				Exp exp = idenfityExp(token, i);
 
@@ -164,6 +170,12 @@ public class TokensToExp {
 		}
 
 		return exps;
+	}
+	
+	public void isAllowedToken(Tuple<String, Integer> token) throws Unexpected {
+		if (NOT_ALLOWED.contains(token.getA())) {
+			throw new Unexpected(expression, token.getB(), "Unexpected token [", token.getA(), "]");
+		}
 	}
 	
 	protected Exp idenfityExp(String str, int i) throws FunctionDoesNotExists {

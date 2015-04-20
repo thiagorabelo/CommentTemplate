@@ -75,6 +75,9 @@ public class Tokenizer {
 
 								break;
 
+							case '$': // Tokeniza, mas não é usado
+							case '{': // Tokeniza, mas não é usado
+							case '}': // Tokeniza, mas não é usado
 							case '(':
 							case ')':
 							case '/':
@@ -107,7 +110,7 @@ public class Tokenizer {
 
 								break;
 
-							case '&': // &
+							case '&': // &&
 								i = lookahead(i, token, '&', lastIndex);
 								token = sb();
 								lastIndex = i + 1;

@@ -249,8 +249,9 @@ public class TemplateParser {
 	protected static int expContentEnd(String content, int begin) {
 		String part = content.substring(begin);
 		List<Tuple<String, Integer>> l = new Tokenizer(part).tokenList();
-		String open = "${";
 		String close = "}";
+		String []opening = { "$", "{" };
+		boolean isopening = false;
 		
 		for (Tuple<String, Integer> t : l) {
 			String x = t.getA();
@@ -258,8 +259,12 @@ public class TemplateParser {
 				return t.getB();
 			}
 
-			if (x.equals(open)) {
+			if (x.equals(opening[0])) {
+				isopening = true;
+			} else if (x.endsWith(opening[1]) && isopening) {
 				return -1;
+			} else {
+				isopening = false;
 			}
 		}
 		

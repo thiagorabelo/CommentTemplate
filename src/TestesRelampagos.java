@@ -49,7 +49,15 @@ public class TestesRelampagos {
 	}
 	
 	public static void main(String[] args) throws Exception  {
-		String plain = "${'oi'}\n		${append('${', name, '}')}${'teste'}\n" +
+		List<Tuple<String, Integer>> tokens = new Tokenizer("append('${', na|me, '}'").tokenList();
+		
+		tokens.stream().forEach(t -> {
+			System.out.println(t.getA());
+		});
+		
+		System.out.println("-----------------------");
+		
+		String plain = "${'oi'}\n		${append('${', na|me, '}')}${'teste'}\n" +
 "\n" +
 " vai tomar no cu	${append('[', name, ']')}";
 		System.out.println(Utils.concat("[",plain,"]"));

@@ -2,6 +2,7 @@
 import commenttemplate.util.MyHashMap;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
+import commenttemplate.expressions.parser.LazeTokenizer;
 import commenttemplate.expressions.parser.Parser;
 import commenttemplate.expressions.parser.Semantic;
 import commenttemplate.expressions.parser.Tokenizer;
@@ -27,6 +28,48 @@ import java.util.regex.Pattern;
  */
 public class TestesRelampagos {
 	
+	
+	public static void main(String[] args) {
+		String exp = "(70+10**-2)<2*-6/num.val||!(length('olá mundo')!=num.val)";
+		List<Tuple<String, Integer>> l = new Tokenizer(exp).tokenList();
+		List<Tuple<String, Integer>> tokens = new ArrayList<>();
+		
+		l.stream().forEach(u -> {
+			tokens.add(u);
+			System.out.println(u.getA());
+		});
+		
+		System.out.println(exp);
+		for (int i = 0, j = 0; i < exp.length(); i++) {
+			if (tokens.get(j).getB() == i) {
+				System.out.print("^");
+				j++;
+			} else {
+				System.out.print(" ");
+			}
+		}
+		
+		System.out.println("\n-----------------");
+		
+		tokens.clear();
+		for (Tuple<String, Integer> t : new LazeTokenizer(exp)) {
+			tokens.add(t);
+			System.out.println(t.getA()+":"+t.getB());
+		}
+		
+		System.out.println("\n"+exp);
+		for (int i = 0, j = 0; i < exp.length(); i++) {
+//			System.out.println(tokens.get(j).getB());
+			if (tokens.get(j).getB() == i) {
+				System.out.print("^");
+				j++;
+			} else {
+				System.out.print(" ");
+			}
+		}
+		System.out.println("");
+	}
+	
 	public static int length(String content, int begin) throws Exception {
 		String part = content.substring(begin);
 		List<Tuple<String, Integer>> l = new Tokenizer(part).tokenList();
@@ -48,7 +91,7 @@ public class TestesRelampagos {
 		return -1;
 	}
 	
-	public static void main(String[] args) throws Exception  {
+	public static void teste13(String[] args) throws Exception  {
 		List<Tuple<String, Integer>> tokens = new Tokenizer("append('${', na|me, '}'").tokenList();
 		
 		tokens.stream().forEach(t -> {

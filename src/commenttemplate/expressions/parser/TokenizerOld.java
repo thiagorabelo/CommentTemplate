@@ -27,14 +27,14 @@ import commenttemplate.util.Tuple;
  *
  * @author thiago
  */
-public class Tokenizer {
+public class TokenizerOld {
 
 	private final String stream;
 	private List<Tuple<String, Integer>> tokenList;
 	private boolean executed = false;
 	
 	// @TODO: Lançar exceção caso a string seja nula?
-	public Tokenizer(String stream) {
+	public TokenizerOld(String stream) {
 		this.stream = stream;
 	}
 	
@@ -98,7 +98,7 @@ public class Tokenizer {
 								break;
 							
 							case '.':
-								lastIndex = lookbehind(i, token, lastIndex, ')', '\'', '"');
+								lastIndex = lookbehind(i, token, ')', lastIndex);
 								break;
 
 							case '!': // !=
@@ -330,18 +330,15 @@ public class Tokenizer {
 		}
 	}
 	
-	private int lookbehind(int idx, StringBuilder sb, int lastLength, char ...prev) {
+	private int lookbehind(int idx, StringBuilder sb, char prev, int lastLength) {
 		int listIdx = tokenList.size() - 1;
 		
 		if (idx > 0 && listIdx >= 0) {
 			Tuple<String, Integer> tuple = tokenList.get(listIdx);
-			
-			for (char ch : prev) {
-				String l = tuple.getA();
-				if (l.charAt(l.length() - 1) == ch) {
-					tokenList.add(t(""+stream.charAt(idx), lastLength));
-					return idx + 1;
-				}
+
+			if (tuple.getA().equals(""+prev)) {
+				tokenList.add(t(""+stream.charAt(idx), lastLength));
+				return idx + 1;
 			}
 		}
 

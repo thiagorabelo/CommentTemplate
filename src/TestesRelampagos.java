@@ -16,7 +16,10 @@ import commenttemplate.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 import commenttemplate.util.maps.*;
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +30,6 @@ import java.util.regex.Pattern;
  * @author thiago
  */
 public class TestesRelampagos {
-	
 	
 	public static void main(String[] args) {
 		String exp = "(70+10**-2)<2*-6/num.val||!(length('olá mundo')!=num.val)";
@@ -102,7 +104,7 @@ public class TestesRelampagos {
 		
 		String plain = "${'oi'}\n		${append('${', na|me, '}')}${'teste'}\n" +
 "\n" +
-" vai tomar no cu	${append('[', name, ']')}";
+" vai tomar banho	${append('[', name, ']')}";
 		System.out.println(Utils.concat("[",plain,"]"));
 		
 		Pattern openExpPattern = Pattern.compile("\\$\\{");

@@ -115,13 +115,14 @@ public class Utils {
 	}
 	
 	public static class IterableClass implements Iterable<Class> {
-		private Class current;
+		private Class klass;
 		
 		public IterableClass(Class klass) {
-			current = klass;
+			this.klass = klass;
 		}
 
 		private class ClassIterator implements Iterator<Class> {
+			private Class current = klass;
 
 			@Override
 			public boolean hasNext() {
@@ -298,5 +299,81 @@ public class Utils {
 		}
 
 		return str.toUpperCase();
+	}
+	
+	private abstract static class PropIterable<T> implements Iterable<T> {
+		private Class klass;
+		
+		public PropIterable(Class klass) {
+			this.klass = klass;
+		}
+		
+		protected abstract T [] getDeclaredProp(Class klass);
+		
+		private class PropIterator implements Iterator<T> {
+			private Class current = klass;
+			private Class nextClass = klass.getSuperclass();
+			private T [] props = getDeclaredProp(current);
+			private T [] nextProps = nextClass != null ? getDeclaredProp(nextClass) : null;
+			private int i = 0;
+			
+			private boolean checkSuper() {
+				return nextClass != null && nextProps != null && nextProps.length > 0;
+			}
+
+			@Override
+			public boolean hasNext() {
+				return i < props.length || checkSuper();
+			}
+			
+			private boolean needChange() {
+				return i >= props.length;
+			}
+
+			@Override
+			public T next() {
+				if (needChange()) {
+					if (checkSuper()) {
+						i = 0;
+						current = nextClass;
+						nextClass = current.getSuperclass();
+						props = getDeclaredProp(current);
+						nextProps = nextClass != null ? getDeclaredProp(nextClass) : null;
+					} else {
+						throw new NoSuchElementException("There is no more methods.");
+					}
+				}
+				
+				return props[i++];
+			}
+		}
+
+		@Override
+		public Iterator<T> iterator() {
+			return new PropIterator();
+		}	
+	}
+	
+	public static class MethodIterable extends PropIterable<Method> {
+		
+		public MethodIterable(Class klass) {
+			super(klass);
+		}
+		
+		@Override
+		protected Method[] getDeclaredProp(Class klass) {
+			return klass.getDeclaredMethods();
+		}
+	}
+	
+	public static class FieldIterable extends PropIterable<Field> {
+		public FieldIterable(Class klass) {
+			super(klass);
+		}
+
+		@Override
+		protected Field[] getDeclaredProp(Class klass) {
+			return klass.getDeclaredFields();
+		}		
 	}
 }

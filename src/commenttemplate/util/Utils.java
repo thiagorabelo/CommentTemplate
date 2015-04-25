@@ -18,6 +18,8 @@
  */
 package commenttemplate.util;
 
+import commenttemplate.util.reflection.IterateByFields;
+import commenttemplate.util.reflection.IterateByMethods;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,8 +28,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  *
@@ -114,66 +114,59 @@ public class Utils {
 		return getProperty(target, propertyName, true);
 	}
 	
-	public static class IterableClass implements Iterable<Class> {
-		private Class klass;
-		
-		public IterableClass(Class klass) {
-			this.klass = klass;
+	private static boolean compareParams(Class<?> a1[], Class<?> a2[]) {
+		if (a1 == null) {
+			return a2 == null || a2.length == 0;
 		}
 
-		private class ClassIterator implements Iterator<Class> {
-			private Class current = klass;
+		if (a2 == null) {
+			return a1.length == 0;
+		}
 
-			@Override
-			public boolean hasNext() {
-				return current.getSuperclass() != null;
-			}
+		if (a1.length != a2.length) {
+			return false;
+		}
 
-			@Override
-			public Class next() {
-				try {
-					Class next = current;
-					current = current.getSuperclass();
-					return next;
-				} catch (NullPointerException ex) {
-					throw new NoSuchElementException("There is no more super classes.");
-				}
-			}
-
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException("Not supported.");
+		for (int i = 0; i < a1.length; i++) {
+			if (!(a1[i] == a2[i] || a2[i].isAssignableFrom(a1[i]))) {
+				return false;
 			}
 		}
 
-		@Override
-		public Iterator<Class> iterator() {
-			return new ClassIterator();
-		}
+		return true;
 	}
-	
-	private static Method getMethod(Class klass, String name) throws NoSuchMethodException {
-		Utils.IterableClass it = new Utils.IterableClass(klass);
+
+	public static Method getMethod(Class klass, String name, Class ...paramsTypes) throws NoSuchMethodException {
+		IterateByMethods im = new IterateByMethods(klass);
 		
-		for (Class c : it){
-			try {
-				return c.getDeclaredMethod(name);
-			} catch (NoSuchMethodException ex) {}
+		String internedName = name.intern();
+		for (Method m : im) {
+			if (m.getName() == internedName && compareParams(paramsTypes, m.getParameterTypes())) {
+				return m;
+			}
 		}
-		
-		throw new NoSuchMethodException();
+
+		throw new NoSuchMethodException(concat(
+			klass.getName(),
+			".",
+			name,
+			"(",
+			concat((Object[])paramsTypes),
+			")"
+		));
 	}
 
 	private static Field getField(Class klass, String name) throws NoSuchFieldException {
-		Utils.IterableClass it = new Utils.IterableClass(klass);
+		IterateByFields it = new IterateByFields(klass);
 		
-		for (Class c : it) {
-			try {
-				return c.getDeclaredField(name);
-			} catch (NoSuchFieldException ex) {}
+		String internedName = name.intern();
+		for (Field f : it) {
+			if (f.getName() == internedName) {
+				return f;
+			}
 		}
 		
-		throw new NoSuchFieldException();
+		throw new NoSuchFieldException(name);
 	}
 	
 	public static Object getProperty(Object target, String propertyName, boolean force) {
@@ -242,55 +235,8 @@ public class Utils {
 		String prefix = "set";
 		String methodName = prefix + capitalize(propertyName);
 
-		for (Class classInstance : new IterableClass(instance.getClass())) {
-			for (Class cls : new IterableClass(value.getClass())) {
-
-				try {
-					// 1 - tentar pela classe
-					return setProp(instance, classInstance, methodName, value, cls);
-				} catch (NoSuchMethodException ex) {
-
-					// 2 - tentar pelas interfaces
-					for (Class interf : cls.getInterfaces()) {
-
-						// 2 - tentando pela interface e pelas
-						// 2.1 - super-interfaces
-						Class superInterf = interf;
-						for (int i = 0; superInterf != null;) {
-							try {
-								return setProp(instance, classInstance, methodName, value, superInterf);
-							} catch (NoSuchMethodException ex1) {
-								superInterf = getSuperInterf(superInterf, i--);
-							}
-						}
-
-					}
-
-				}
-			}
-		}
-
-		throw new NoSuchMethodException(concat(
-			instance.getClass().getName(),
-			".",
-			methodName,
-			"(",
-			value.getClass().getName(),
-			")"
-		));
-	}
-	
-	private static Class getSuperInterf(Class interf, int i) {
-		Class []interfs = interf != null ? interf.getInterfaces() : null;
-		return interfs != null && i < interfs.length ? interfs[i] : null;
-	}
-	
-	private static Object setProp(Object instance, Class classInstance, String methodName, Object value, Class cls)
-			throws NoSuchMethodException, SecurityException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
-		
-		Method m = classInstance.getDeclaredMethod(methodName, cls);
-		return m.invoke(instance, value);
+		Method setter = getMethod(instance.getClass(), methodName, value.getClass());
+		return setter.invoke(instance, value);
 	}
 	
 	public static String capitalize(String str) {
@@ -299,81 +245,5 @@ public class Utils {
 		}
 
 		return str.toUpperCase();
-	}
-	
-	private abstract static class PropIterable<T> implements Iterable<T> {
-		private Class klass;
-		
-		public PropIterable(Class klass) {
-			this.klass = klass;
-		}
-		
-		protected abstract T [] getDeclaredProp(Class klass);
-		
-		private class PropIterator implements Iterator<T> {
-			private Class current = klass;
-			private Class nextClass = klass.getSuperclass();
-			private T [] props = getDeclaredProp(current);
-			private T [] nextProps = nextClass != null ? getDeclaredProp(nextClass) : null;
-			private int i = 0;
-			
-			private boolean checkSuper() {
-				return nextClass != null && nextProps != null && nextProps.length > 0;
-			}
-
-			@Override
-			public boolean hasNext() {
-				return i < props.length || checkSuper();
-			}
-			
-			private boolean needChange() {
-				return i >= props.length;
-			}
-
-			@Override
-			public T next() {
-				if (needChange()) {
-					if (checkSuper()) {
-						i = 0;
-						current = nextClass;
-						nextClass = current.getSuperclass();
-						props = getDeclaredProp(current);
-						nextProps = nextClass != null ? getDeclaredProp(nextClass) : null;
-					} else {
-						throw new NoSuchElementException("There is no more methods.");
-					}
-				}
-				
-				return props[i++];
-			}
-		}
-
-		@Override
-		public Iterator<T> iterator() {
-			return new PropIterator();
-		}	
-	}
-	
-	public static class MethodIterable extends PropIterable<Method> {
-		
-		public MethodIterable(Class klass) {
-			super(klass);
-		}
-		
-		@Override
-		protected Method[] getDeclaredProp(Class klass) {
-			return klass.getDeclaredMethods();
-		}
-	}
-	
-	public static class FieldIterable extends PropIterable<Field> {
-		public FieldIterable(Class klass) {
-			super(klass);
-		}
-
-		@Override
-		protected Field[] getDeclaredProp(Class klass) {
-			return klass.getDeclaredFields();
-		}		
 	}
 }

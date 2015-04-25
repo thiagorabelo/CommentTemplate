@@ -19,6 +19,7 @@
 
 package commenttemplate.util.timer;
 
+import commenttemplate.util.Utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -67,12 +68,17 @@ public class TimeIt implements Iterable<Long> {
 		int _total = times;
 		long before, after;
 		Timing t = timing;
+		int i = 0;
 		
-		for (int i = 0; i < _total; i++) {
-			before = System.nanoTime();
-			t.run();
-			after = System.nanoTime();
-			deltas.add(after - before);
+		try {
+			for (; i < _total; i++) {
+				before = System.nanoTime();
+				t.run();
+				after = System.nanoTime();
+				deltas.add(after - before);
+			}
+		} catch (Exception ex) {
+			throw new Exception(Utils.concat("Executed ", i, " from ", _total, " times."), ex);
 		}
 	}
 

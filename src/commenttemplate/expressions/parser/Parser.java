@@ -110,7 +110,7 @@ public class Parser {
 	public Exp parse() throws ExpectedOperator, ExpectedExpression, BadExpression, Unexpected, FunctionDoesNotExists {
 		// Lista de tupas que contém o token e o seu indice na string da expressão
 		List<Tuple<String, Integer>> tokens = new Tokenizer(exp).tokenList();
-		// Converte as Tuplas de tokens e suas respectivas classes
+		// Converte as Tuplas de tokens e suas respectivas classess
 		List<Exp> exprs = new TokensToExp(tokens, exp).convert();
 
 		// Faz análise semântica da expressão

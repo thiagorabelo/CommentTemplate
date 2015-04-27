@@ -1,3 +1,21 @@
+/*
+ * Copyright (C) 2015 Thiago Rabelo.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ */
 package commenttemplate.expressions.parser;
 
 import java.util.ArrayList;
@@ -28,6 +46,7 @@ import commenttemplate.expressions.operators.numerical.Mult;
 import commenttemplate.expressions.operators.numerical.Negative;
 import commenttemplate.expressions.operators.numerical.Positive;
 import commenttemplate.expressions.operators.numerical.Power;
+import commenttemplate.expressions.operators.properties.Property;
 import commenttemplate.expressions.operators.unevaluable.Comma;
 import commenttemplate.expressions.operators.unevaluable.LParenthesis;
 import commenttemplate.expressions.operators.unevaluable.RParenthesis;
@@ -36,8 +55,10 @@ import commenttemplate.expressions.primitivehandle.Null;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.expressions.tree.Identifier;
 import commenttemplate.expressions.tree.Literal;
+import commenttemplate.expressions.tree.PropertyPath;
 import commenttemplate.expressions.tree.Token;
 import commenttemplate.util.Tuple;
+import java.util.Arrays;
 
 
 /**
@@ -59,6 +80,7 @@ public class TokensToExp {
 		ops.put("**", Power.class);
 		ops.put("/", Div.class);
 		ops.put("%", Mod.class);
+		ops.put(".", Property.class);
 
 		ops.put("<", LessThan.class);
 		ops.put("<=", LessEqualsThan.class);
@@ -75,6 +97,10 @@ public class TokensToExp {
 		ops.put(")", RParenthesis.class);
 		ops.put(",", Comma.class);
 	}
+	
+	private static final List<String> NOT_ALLOWED = Arrays.asList(new String[]{
+		"$", "{", "}", "|", "&"
+	});
 	
 	private static interface PositiveNegative {
 		public Exp signal();
@@ -121,10 +147,11 @@ public class TokensToExp {
 
 	public List<Exp> convert() throws Unexpected, ExpectedExpression, BadExpression, FunctionDoesNotExists {
 		if (!executed) {
-			exps= new ArrayList<Exp>();
-			List<String> unprocessed = new ArrayList<String>();
+			exps= new ArrayList<>();
+			List<String> unprocessed = new ArrayList<>();
 
 			for (int i = 0, len = tokens.size(); i < len; i++) {
+				isAllowedToken(tokens.get(i));
 				String token = tokens.get(i).getA();
 				Exp exp = idenfityExp(token, i);
 
@@ -145,6 +172,12 @@ public class TokensToExp {
 		return exps;
 	}
 	
+	public void isAllowedToken(Tuple<String, Integer> token) throws Unexpected {
+		if (NOT_ALLOWED.contains(token.getA())) {
+			throw new Unexpected(expression, token.getB(), "Unexpected token [", token.getA(), "]");
+		}
+	}
+	
 	protected Exp idenfityExp(String str, int i) throws FunctionDoesNotExists {
 		Object o;
 		
@@ -160,6 +193,8 @@ public class TokensToExp {
 		} else if (ok(o = getLiteral(str))) {
 			return (Exp)o;
 		} else if (ok(o = getFunction(str, i))) {
+			return (Exp)o;
+		} else if (ok(o = getPropertyPath(str, i))) {
 			return (Exp)o;
 		} else if (ok(o = getIndentifier(str))) {
 			return (Exp)o;
@@ -219,6 +254,14 @@ public class TokensToExp {
 			}
 		}
 		
+		return null;
+	}
+	
+	private Object getPropertyPath(String str, int i) {
+		if (i > 0 && tokens.get(i - 1).getA().equals(".")) {
+			return new PropertyPath(str);
+		}
+
 		return null;
 	}
 
@@ -455,3 +498,4 @@ public class TokensToExp {
 		exps.addAll(temp);
 	}
 }
+

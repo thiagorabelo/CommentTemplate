@@ -20,21 +20,37 @@ package commenttemplate.loader;
 
 import commenttemplate.context.ContextPreprocessor;
 import commenttemplate.context.preprocessor.PreprocessorCache;
+import commenttemplate.expressions.function.Function;
+import commenttemplate.expressions.function.FunctionsRegister;
+import commenttemplate.template.tags.TagComponent;
+import commenttemplate.template.tags.TemplateTag;
+import commenttemplate.template.tags.TemplateTagInitializer;
+import commenttemplate.util.Utils;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author thiago
  */
 public class Init extends TemplateLoaderConfig {
+//	private static final String RETRIEVER_CLASS = "commenttemplate.retriever_class";
 	private static final String RETRIEVER = "commenttemplate.retriever_type";
 	private static final String RESOURCES = "commenttemplate.resource_folder";
 	private static final String PREPROCESSOR = "commenttemplate.preprocessor";
 	private static final String CUSTOM_TAG = "commenttemplate.custom_tag";
+	private static final String CUSTOM_FUNCTION = "commenttemplate.custom_function";
 //	private static final String CONFIG_CLASS = "commenttemplate.config_class";
 	
 	private static final String filename = "commenttemplate.properties";
+	
+	// TODO: Fonte de Bug! Se a classe não estiver em um pacote (padrão: a.b.Class), esta regex não
+	//       vai conseguir identificar o padrão.
+	private static final Pattern SPLIT_NAME_AND_CLASS = Pattern.compile("((?<name>\\w+)\\s*,\\s*)?(?<class>[\\w|\\.]+)");
+	private static final Pattern SPLIT_BY_COMMA = Pattern.compile("\\s*,\\s*");
 	
 	private static Boolean configured = false;
 	
@@ -55,6 +71,7 @@ public class Init extends TemplateLoaderConfig {
 	
 
 	// @TODO: Refatorar para que seja possível usar uma classe customizada para fazer a configuração.
+	// @TODO: Falta carregar Funções customizadas.
 	@Override
 	public void init() throws Exception {
 		Properties prop = new Properties();
@@ -87,5 +104,64 @@ public class Init extends TemplateLoaderConfig {
 				PreprocessorCache.instance().add(preClass.newInstance());
 			}
 		}
+		
+		customTags(prop);
+		customFunctions(prop);
+	}
+	
+	protected void customFunctions(Properties prop) {
+		String []functions = prop.getAsArray(CUSTOM_FUNCTION);
+		
+		Arrays.asList(functions).stream().forEach(u -> {
+			Matcher m = SPLIT_NAME_AND_CLASS.matcher(u);
+			
+			if (m.find()) {
+				try {
+					String functionName = m.group("name");
+					String className = m.group("class");
+
+					if (!Utils.empty(functionName) && !Utils.empty(className)) {
+						Class<? extends Function> fclass = (Class<? extends Function>)Class.forName(className);
+						FunctionsRegister.instance().addFunction(functionName, fclass);
+					}
+				} catch (Exception ex) {
+					throw new RuntimeException(ex);
+				}
+			}
+		});
+	}
+	
+	protected void customTags(Properties prop) {
+		String []tagsParams = prop.getAsArray(CUSTOM_TAG);
+		
+		Arrays.asList(tagsParams).stream().forEach(u -> {
+			Matcher m = SPLIT_NAME_AND_CLASS.matcher(u);
+			
+			if (m.find()) {
+				try {
+					String tagName = m.group("name");
+					String className = m.group("class");
+
+					if (Utils.empty(tagName)) {
+						Class<? extends TagComponent> cls = (Class<? extends TagComponent>)Class.forName(className);
+						TagComponent component = cls.newInstance();
+						TemplateTagInitializer.getInstance().addTag(component);
+					} else {
+						Class<? extends TemplateTag> cls = (Class<? extends TemplateTag>)Class.forName(className);
+						String p = u.substring(m.end()).trim().substring(1);
+						String [] params = SPLIT_BY_COMMA.split(p);
+						
+						TagComponent component = new TagComponent(tagName, cls, params);
+						TemplateTagInitializer.instance().addTag(component);
+					}
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+					// TODO: Melhorar esta exceção
+					throw new RuntimeException(ex);
+				}
+			} else {
+				// TODO: Melhorar esta exceção
+				throw new RuntimeException("ERRO AO CARREGAR CUSTOM TAG: " + u);
+			}
+		});
 	}
 }

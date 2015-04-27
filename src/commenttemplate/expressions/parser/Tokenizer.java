@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2015 Thiago Rabelo.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ * MA 02110-1301  USA
+ */
+
 package commenttemplate.expressions.parser;
 
 import java.util.ArrayList;
@@ -10,7 +29,7 @@ import commenttemplate.util.Tuple;
  */
 public class Tokenizer {
 
-	private String stream;
+	private final String stream;
 	private List<Tuple<String, Integer>> tokenList;
 	private boolean executed = false;
 	
@@ -19,10 +38,11 @@ public class Tokenizer {
 		this.stream = stream;
 	}
 	
-	// @TODO: Permitir o uso de escapes com "\"
+	// @TODO: A expressão <'olá mundo'.length>, não vira a lista de tokens ['olá mundo', ., length]
+	//        Ver também na LazeTokenizer
 	public List<Tuple<String, Integer>> tokenList() {
 		if (!executed) {
-			tokenList = new ArrayList<Tuple<String, Integer>>();
+			tokenList = new ArrayList<>();
 			StringBuilder token = sb();
 			int lastIndex = 0;
 			boolean inString = false;
@@ -46,16 +66,19 @@ public class Tokenizer {
 								}
 
 								token.append(ch);
-								lastIndex = i + 1;
+								lastIndex = i;// + 1; // 'ksdsasa' - lastIndex tava apontando pra ksd... não pra 'ksd...
 
 								break;
 							case '*':
-								i = findInSequence(i, token, '*', lastIndex);
+								i = lookahead(i, token, '*', lastIndex);
 								token = sb();
 								lastIndex = i + 1;
 
 								break;
 
+							case '$': // Tokeniza, mas não é usado
+							case '{': // Tokeniza, mas não é usado
+							case '}': // Tokeniza, mas não é usado
 							case '(':
 							case ')':
 							case '/':
@@ -73,26 +96,30 @@ public class Tokenizer {
 								lastIndex = i + 1;
 
 								break;
+							
+							case '.':
+								lastIndex = lookbehind(i, token, lastIndex, ')', '\'', '"');
+								break;
 
 							case '!': // !=
 							case '<': // <=
 							case '>': // >=
 							case '=': // ==
-								i = findInSequence(i, token, '=', lastIndex);
+								i = lookahead(i, token, '=', lastIndex);
 								token = sb();
 								lastIndex = i + 1;
 
 								break;
 
-							case '&': // &
-								i = findInSequence(i, token, '&', lastIndex);
+							case '&': // &&
+								i = lookahead(i, token, '&', lastIndex);
 								token = sb();
 								lastIndex = i + 1;
 
 								break;
 
 							case '|': // ||
-								i = findInSequence(i, token, '|', lastIndex);
+								i = lookahead(i, token, '|', lastIndex);
 								token = sb();
 								lastIndex = i + 1;
 
@@ -271,7 +298,7 @@ public class Tokenizer {
 		return new StringBuilder();
 	}
 	
-	private int findInSequence(int idx, StringBuilder sb, char next, int lastIndex) {
+	private int lookahead(int idx, StringBuilder sb, char next, int lastIndex) {
 		int nxtIdx = idx + 1, len = stream.length();
 		char ch = stream.charAt(idx);
 
@@ -303,11 +330,31 @@ public class Tokenizer {
 		}
 	}
 	
+	private int lookbehind(int idx, StringBuilder sb, int lastLength, char ...prev) {
+		int listIdx = tokenList.size() - 1;
+		
+		if (idx > 0 && listIdx >= 0) {
+			Tuple<String, Integer> tuple = tokenList.get(listIdx);
+			
+			for (char ch : prev) {
+				String l = tuple.getA();
+				if (l.charAt(l.length() - 1) == ch) {
+					tokenList.add(t(""+stream.charAt(idx), lastLength));
+					return idx + 1;
+				}
+			}
+		}
+
+		sb.append(stream.charAt(idx));
+
+		return lastLength;
+	}
+	
 	public String getStream() {
 		return stream;
 	}
 	
 	private Tuple<String, Integer> t(String token, int index) {
-		return new Tuple<String, Integer>(token, index);
+		return new Tuple<>(token, index);
 	}
 }

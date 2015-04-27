@@ -9,9 +9,9 @@ import commenttemplate.loader.TemplateStream;
  * @author thiago
  */
 public class RetieverDB implements TemplateRetrieve {
-	
+
 	private TemplateDAO dao;
-	
+
 	public RetieverDB(TemplateDAO dao) {
 		this.dao = dao;
 	}

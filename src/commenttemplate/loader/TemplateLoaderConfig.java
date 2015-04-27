@@ -8,7 +8,7 @@ import commenttemplate.loader.db.TemplateDAO;
  */
 public abstract class TemplateLoaderConfig {
 	
-	private LoaderType type;
+	private LoaderTypeInterface type;
 	private TemplateDAO dao;
 	private String [] foldersPath;
 	
@@ -19,7 +19,7 @@ public abstract class TemplateLoaderConfig {
 		this.type = type;
 	}
 
-	public LoaderType getType() {
+	public LoaderTypeInterface getType() {
 		return type;
 	}
 

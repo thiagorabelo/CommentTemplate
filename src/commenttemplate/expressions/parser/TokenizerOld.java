@@ -27,18 +27,19 @@ import commenttemplate.util.Tuple;
  *
  * @author thiago
  */
-public class Tokenizer2 {
+public class TokenizerOld {
 
 	private final String stream;
 	private List<Tuple<String, Integer>> tokenList;
 	private boolean executed = false;
 	
 	// @TODO: Lançar exceção caso a string seja nula?
-	public Tokenizer2(String stream) {
+	public TokenizerOld(String stream) {
 		this.stream = stream;
 	}
 	
-	// @TODO: Permitir o uso de escapes com "\"
+	// @TODO: A expressão <'olá mundo'.length>, não vira a lista de tokens ['olá mundo', ., length]
+	//        Ver também na LazeTokenizer
 	public List<Tuple<String, Integer>> tokenList() {
 		if (!executed) {
 			tokenList = new ArrayList<>();
@@ -75,6 +76,9 @@ public class Tokenizer2 {
 
 								break;
 
+							case '$': // Tokeniza, mas não é usado
+							case '{': // Tokeniza, mas não é usado
+							case '}': // Tokeniza, mas não é usado
 							case '(':
 							case ')':
 							case '/':
@@ -107,7 +111,7 @@ public class Tokenizer2 {
 
 								break;
 
-							case '&': // &
+							case '&': // &&
 								i = lookahead(i, token, '&', lastIndex);
 								token = sb();
 								lastIndex = i + 1;
@@ -329,9 +333,9 @@ public class Tokenizer2 {
 	private int lookbehind(int idx, StringBuilder sb, char prev, int lastLength) {
 		int listIdx = tokenList.size() - 1;
 		
-		if (idx > 0 && listIdx > 0) {
+		if (idx > 0 && listIdx >= 0) {
 			Tuple<String, Integer> tuple = tokenList.get(listIdx);
-			
+
 			if (tuple.getA().equals(""+prev)) {
 				tokenList.add(t(""+stream.charAt(idx), lastLength));
 				return idx + 1;

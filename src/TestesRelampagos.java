@@ -2,10 +2,11 @@
 import commenttemplate.util.MyHashMap;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
+import commenttemplate.expressions.parser.LazeTokenizer;
 import commenttemplate.expressions.parser.Parser;
 import commenttemplate.expressions.parser.Semantic;
-import commenttemplate.expressions.parser.Tokenizer2;
-import commenttemplate.expressions.parser.TokensToExp2;
+import commenttemplate.expressions.parser.Tokenizer;
+import commenttemplate.expressions.parser.TokensToExp;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Join;
@@ -15,6 +16,10 @@ import commenttemplate.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 import commenttemplate.util.maps.*;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,8 +30,121 @@ import java.util.regex.Pattern;
  * @author thiago
  */
 public class TestesRelampagos {
-
+	
 	public static void main(String[] args) {
+		String exp = "(70+10**-2)<2*-6/num.val||!(length('olá mundo')!=num.val)";
+		List<Tuple<String, Integer>> l = new Tokenizer(exp).tokenList();
+		List<Tuple<String, Integer>> tokens = new ArrayList<>();
+		
+		l.stream().forEach(u -> {
+			tokens.add(u);
+			System.out.println(u.getA());
+		});
+		
+		System.out.println(exp);
+		for (int i = 0, j = 0; i < exp.length(); i++) {
+			if (tokens.get(j).getB() == i) {
+				System.out.print("^");
+				j++;
+			} else {
+				System.out.print(" ");
+			}
+		}
+		
+		System.out.println("\n-----------------");
+		
+		tokens.clear();
+		for (Tuple<String, Integer> t : new LazeTokenizer(exp)) {
+			tokens.add(t);
+			System.out.println(t.getA()+":"+t.getB());
+		}
+		
+		System.out.println("\n"+exp);
+		for (int i = 0, j = 0; i < exp.length(); i++) {
+//			System.out.println(tokens.get(j).getB());
+			if (tokens.get(j).getB() == i) {
+				System.out.print("^");
+				j++;
+			} else {
+				System.out.print(" ");
+			}
+		}
+		System.out.println("");
+	}
+	
+	public static int length(String content, int begin) throws Exception {
+		String part = content.substring(begin);
+		List<Tuple<String, Integer>> l = new Tokenizer(part).tokenList();
+		String open = "${";
+		String close = "}";
+		String closeOpen = "}${";
+		
+		for (Tuple<String, Integer> t : l) {
+			String x = t.getA();
+			if (x.equals(close) || x.equals(closeOpen)) {
+				return t.getB();
+			}
+			
+			if (x.equals(open)) {
+				return -1;
+			}
+		}
+		
+		return -1;
+	}
+	
+	public static void teste13(String[] args) throws Exception  {
+		List<Tuple<String, Integer>> tokens = new Tokenizer("append('${', na|me, '}'").tokenList();
+		
+		tokens.stream().forEach(t -> {
+			System.out.println(t.getA());
+		});
+		
+		System.out.println("-----------------------");
+		
+		String plain = "${'oi'}\n		${append('${', na|me, '}')}${'teste'}\n" +
+"\n" +
+" vai tomar banho	${append('[', name, ']')}";
+		System.out.println(Utils.concat("[",plain,"]"));
+		
+		Pattern openExpPattern = Pattern.compile("\\$\\{");
+		Matcher m = openExpPattern.matcher(plain);
+		int lastEnd = 0;
+
+		System.out.println("Encontrando...");
+		while (m.find()) {
+			if (m.start() >= lastEnd) {
+				int e = length(plain, m.end());
+				log(plain.substring(lastEnd, m.start()));
+				log(plain.substring(m.end(), m.end() + e));
+				lastEnd = m.end() + e + 1;
+				System.out.println("---------------------------");
+			}
+		}
+	}
+	
+	public static void teste12(String[] args) {
+		Pattern SPLIT_TAG_CLASS = Pattern.compile("((?<tagname>\\w+)\\s*,\\s*)?(?<tagclass>[\\w|\\.]+)");
+		Pattern SPLIT_BY_COMMA = Pattern.compile("\\s*,\\s*");
+		
+		String padrao = "for,commenttemplate.template.tags.builtin.ForTemplateTag,!list,var,step,counter";
+		
+		Matcher m = SPLIT_TAG_CLASS.matcher(padrao);
+		
+		if (m.find()) {
+			System.out.println(m.group("tagname"));
+			System.out.println(m.group("tagclass"));
+			
+			String p = padrao.substring(m.end()).trim().substring(1);
+			System.out.println(p);
+			
+			String [] params = SPLIT_BY_COMMA.split(p);
+			
+			Arrays.asList(params).stream().forEach(u -> System.out.println(u));
+		}
+	}
+
+	public static void teste11(String[] args) {
 		Pattern p = Pattern.compile("<\\!\\-\\-(\\w+)\\s*(.*?)\\s*\\-\\->");
 		Pattern param = Pattern.compile("(\\w+)\\=\"([^\"]*)\"");
 		String tag = " <!--tag foo=\"param1\" bar=\"param2\" --> ";
@@ -51,8 +169,8 @@ public class TestesRelampagos {
 		map.put("a", 10.0);
 		map.put("text", "Hellor, World");
 		
-		List<Tuple<String, Integer>> tokens = new Tokenizer2(exp).tokenList();
-		List<Exp> exprs = new TokensToExp2(tokens, exp).convert();
+		List<Tuple<String, Integer>> tokens = new Tokenizer(exp).tokenList();
+		List<Exp> exprs = new TokensToExp(tokens, exp).convert();
 		new Semantic(exprs, exp, tokens).analise();
 		Parser p = new Parser();
 		MyStack<Exp> stack = p.buildStack(exprs);
@@ -67,13 +185,13 @@ public class TestesRelampagos {
 		String expression = "a + b.c + d.e + length('my.eggs').toInt.value + z.y";
 //		String expression = "a + b.c + d.e + empty('my.eggs') + z.y";
 		//                                          ^ - Tá apontando que começa no 23, mas é 22
-		List<Tuple<String, Integer>> tokens = new Tokenizer2(expression).tokenList();
+		List<Tuple<String, Integer>> tokens = new Tokenizer(expression).tokenList();
 		
 		for (Tuple<String, Integer> token : tokens) {
 			System.out.println(String.format("%s::%d", token.getA(), token.getB()));
 		}
 		
-		List<Exp> exprs = new TokensToExp2(tokens, expression).convert();
+		List<Exp> exprs = new TokensToExp(tokens, expression).convert();
 		System.out.println("----------------\n");
 		for (Exp exp : exprs) {
 			System.out.println(Utils.concat("[", exp, "]"));
@@ -367,5 +485,9 @@ public class TestesRelampagos {
 		System.out.println(Join.path().skipNulls().join(list, array, "g", null, "h", "i", null).join("j", "k", "l"));
 		
 		System.out.println(Utils.concat("olá", "mundo", "cruel"));
+	}
+	
+	public static void log(String ...str) {
+		System.out.println(Join.with("").join("[", str, "]"));
 	}
 }

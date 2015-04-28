@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import commenttemplate.expressions.exceptions.ExpressionException;
+import commenttemplate.expressions.parser.LazeTokenizer;
 import commenttemplate.expressions.parser.Parser;
-import commenttemplate.expressions.parser.Tokenizer;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
@@ -17,7 +17,6 @@ import commenttemplate.template.tags.TagContainer;
 import commenttemplate.util.MyStack;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Wrap;
-import java.util.List;
 
 /**
  *
@@ -248,7 +247,7 @@ public class TemplateParser {
 	//        Talvez seja bom criar um LazeTokenizer.
 	protected static int expContentEnd(String content, int begin) {
 		String part = content.substring(begin);
-		List<Tuple<String, Integer>> l = new Tokenizer(part).tokenList();
+		LazeTokenizer l = new LazeTokenizer(part);
 		String close = "}";
 		String []opening = { "$", "{" };
 		boolean isopening = false;

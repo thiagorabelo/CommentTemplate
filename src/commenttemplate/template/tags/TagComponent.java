@@ -69,6 +69,7 @@ public class TagComponent {
 	}
 
 	protected String name;
+//	protected String elseName = "else";
 	protected final Class<? extends TemplateTag> tagClass;
 	protected final Tuple<Boolean, String> []params;
 	
@@ -156,14 +157,21 @@ public class TagComponent {
 		this.tagClass = tagClass;
 		this.params = setParams(params);
 	}
+	
+//	public TagComponent(String name, String elseName, Class<? extends TemplateTag> tagClass, String ...params) {
+//		this.name = name;
+//		this.tagClass = tagClass;
+//		this.params = setParams(params);
+//		this.elseName = elseName;
+//	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+//	public String getElseName() {
+//		return elseName;
+//	}
 
 	public Class<? extends TemplateTag> getTagClass() {
 		return tagClass;

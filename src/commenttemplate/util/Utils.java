@@ -136,7 +136,20 @@ public class Utils {
 		return true;
 	}
 
-	public static Method getMethod(Class klass, String name, Class ...paramsTypes) throws NoSuchMethodException {
+	public static Method getMethod(Class klass, String name, Class ...paramsTypes) {
+		IterateByMethods im = new IterateByMethods(klass);
+		
+		String internedName = name.intern();
+		for (Method m : im) {
+			if (m.getName() == internedName && compareParams(paramsTypes, m.getParameterTypes())) {
+				return m;
+			}
+		}
+
+		return null;
+	}
+
+	public static Method getMethod2(Class klass, String name, Class ...paramsTypes) throws NoSuchMethodException {
 		IterateByMethods im = new IterateByMethods(klass);
 		
 		String internedName = name.intern();
@@ -156,7 +169,20 @@ public class Utils {
 		));
 	}
 
-	private static Field getField(Class klass, String name) throws NoSuchFieldException {
+	private static Field getField(Class klass, String name) {
+		IterateByFields it = new IterateByFields(klass);
+		
+		String internedName = name.intern();
+		for (Field f : it) {
+			if (f.getName() == internedName) {
+				return f;
+			}
+		}
+		
+		return null;
+	}
+
+	private static Field getField2(Class klass, String name) throws NoSuchFieldException {
 		IterateByFields it = new IterateByFields(klass);
 		
 		String internedName = name.intern();
@@ -173,59 +199,56 @@ public class Utils {
 		String []prefixes = {"get", "is", "has"};
 		Class klass = target.getClass();
 		String capitalized = capitalize(propertyName);
+		Method method;
 
 		// Tenta captura o valor da propriedade pelos métodos
 		// get, is e has.
 		for (int i = 0, len = prefixes.length; i < len;) {
-			String prefix = prefixes[i];
-			String methodName = prefix + capitalized;
 
-			try {
-				Method method = getMethod(klass, methodName);
-
+			if ((method = getMethod(klass, prefixes[i] + capitalized)) != null) {
 				if (force) {
 					method.setAccessible(true);
 				}
 
-				return method.invoke(target);
-			} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-				i += 1;
-			} catch (Exception ex) {
-				throw new RuntimeException(ex);
+				try {
+					return method.invoke(target);
+				} catch (Exception ex) {
+					throw new RuntimeException(ex);
+				}
 			}
 		}
 		
 		// Caso não tenha conseguido através da invocação dos métodos com prefixies,
 		// tenta encontrar algum metódo com o nome.
-		try {
-			Method method = getMethod(klass, propertyName);
-
+		if ((method = getMethod(klass, propertyName)) != null) {
 			if (force) {
 				method.setAccessible(true);
 			}
 
-			return method.invoke(target);
-		} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-			// não faz nada.
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
+			try {
+				return method.invoke(target);
+			} catch (Exception ex) {
+				throw new RuntimeException(ex);
+			}
 		}
 
 		// Caso não tenha conseguido através da invocação dos métodos,
 		// tenta encontrar algum atributo com o nome.
-		try {
-			Field field = getField(klass, propertyName);
+		Field field;
 
+		if ((field = getField(klass, propertyName)) != null) {
 			if (force) {
 				field.setAccessible(true);
 			}
 
-			return field.get(target);
-		} catch(NoSuchFieldException | IllegalArgumentException | IllegalAccessException ex) {
-			return null;
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
+			try {
+				return field.get(target);
+			} catch (Exception ex) {
+				throw new RuntimeException(ex);
+			}
 		}
+
+		return null;
 	}
 
 	public static Object setProperty(Object instance, String propertyName, Object value)
@@ -235,13 +258,13 @@ public class Utils {
 		String prefix = "set";
 		String methodName = prefix + capitalize(propertyName);
 
-		Method setter = getMethod(instance.getClass(), methodName, value.getClass());
+		Method setter = getMethod2(instance.getClass(), methodName, value.getClass());
 		return setter.invoke(instance, value);
 	}
 	
 	public static String capitalize(String str) {
 		if (str.length() > 1) {
-			return concat(str.substring(0, 1).toUpperCase(), str.substring(1));
+			return concat(Character.toUpperCase(str.charAt(0)), str.substring(1));
 		}
 
 		return str.toUpperCase();

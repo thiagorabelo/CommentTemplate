@@ -10,6 +10,7 @@ import commenttemplate.template.tags.TemplateTag;
 import commenttemplate.context.ContextWriterMap;
 import commenttemplate.template.writer.VoidWriter;
 import commenttemplate.template.writer.Writer;
+import java.util.List;
 
 /**
  *
@@ -41,23 +42,19 @@ public class ExtendsTemplateTag extends TemplateTag {
 			String templateName = exp.eval(context).toString();
 			TemplateBlockBase base = TemplateLoader.get(templateName);
 
-			TemplateBlock inner = getNextInner();
+			List<TemplateBlock> inner = getBlockList();
 			VoidWriter vw = new VoidWriter();
 			ContextWriterMap cwm = new ContextWriterMap(context);
 
 			cwm.setMode(ContextWriterMap.Mode.STORE);
 
 			if (inner != null) {
-				inner.eval(cwm, vw);
+				loopBlockList(inner, context, sb);
 			}
 
 			cwm.setMode(ContextWriterMap.Mode.RENDER);
 			base.eval(cwm, sb);
 
-			TemplateBlock next = getNext();
-			if (next != null) {
-				next.eval(context, sb);
-			}
 		} catch (TemplateException ex) {
 			// @TODO: fazer o quê?
 			throw new RuntimeException(ex);

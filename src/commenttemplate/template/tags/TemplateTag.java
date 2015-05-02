@@ -3,6 +3,10 @@ package commenttemplate.template.tags;
 import commenttemplate.template.TemplateBlock;
 import commenttemplate.context.Context;
 import commenttemplate.template.writer.Writer;
+import commenttemplate.util.Join;
+import commenttemplate.util.Utils;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -34,29 +38,35 @@ public abstract class TemplateTag extends TemplateBlock {
 	}
 
 	public abstract int evalParams(Context context, Writer sb);
+	
+	protected void loopBlockList(List<TemplateBlock> blockList, Context context, Writer sb) {
+		for (TemplateBlock t : blockList) {
+			t.eval(context, sb);
+		}
+	}
 
 	@Override
 	public void eval(Context context, Writer sb) {
 		int whomEvaluate = evalParams(context, sb);
-		TemplateBlock inner = getNextInner();
-		TemplateBlock innerElse = getNextInnerElse();
+		List<TemplateBlock> blockList = getBlockList();
+		List<TemplateBlock> blockListElse = getBlockListElse();
 
 		switch (whomEvaluate) {
 			case EVAL_BODY:
-				if (inner != null) {
+				if (blockList != null) {
 					start(context, sb);
 
-					evalBody(context, sb);
+					loopBlockList(blockList, context, sb);
 
 					end(context, sb);
 				}
 				break;
 
 			case EVAL_ELSE:
-				if (innerElse != null) {
+				if (blockListElse != null) {
 					start(context, sb);
 
-					evalElse(context, sb);
+					loopBlockList(blockListElse, context, sb);
 
 					end(context, sb);
 				}
@@ -67,28 +77,6 @@ public abstract class TemplateTag extends TemplateBlock {
 
 			default:
 				break;
-		}
-
-		TemplateBlock next = getNext();
-
-		if (next != null) {
-			next.eval(context, sb);
-		}
-	}
-
-	protected void evalBody(Context context, Writer sb) {
-		TemplateBlock inner = getNextInner();
-
-		if (inner != null) {
-			inner.eval(context, sb);
-		}
-	}
-
-	protected void evalElse(Context context, Writer sb) {
-		TemplateBlock innerElse = getNextInnerElse();
-
-		if (innerElse != null) {
-			innerElse.eval(context, sb);
 		}
 	}
 
@@ -101,26 +89,39 @@ public abstract class TemplateTag extends TemplateBlock {
 	}
 	
 	public String paramsToString() {
-		return "";
+		String []params = TagContainer.instance().getByTagName(tagName).getParams();
+		ArrayList<String> l = new ArrayList<String>();
+		
+		for (String p : params) {
+			Object param = Utils.getProperty(this, p, true);
+			if (param != null) {
+				l.add(Utils.concat(p, "=\"", param.toString(), '"'));
+			}
+		}
+		
+		return Join.with(" ").join(l).toString();
 	}
 	
 	@Override
 	public void toString(StringBuilder sb) {
-		if (getNextInner() != null) {
-			sb.append("<!--").append(tagName).append(" ").append(paramsToString()).append("-->");
-			getNextInner().toString(sb);
-
-			if (getNextInnerElse() != null) {
-				sb.append("<!--else-->");
-				getNextInnerElse().toString(sb);
+		sb.append("<!--").append(tagName).append(" ").append(paramsToString()).append("-->");
+		
+		List<TemplateBlock> l;
+		
+		if ((l = getBlockList()) != null) {
+			for (TemplateBlock t : l) {
+				t.toString(sb);
 			}
-
-			sb.append("<!--end").append(tagName).append("-->");
+		}
+		
+		if ((l = getBlockListElse()) != null) {
+			sb.append("<!--else-->");
+			for (TemplateBlock t : l) {
+				t.toString(sb);
+			}
 		}
 
-		if (getNext() != null) {
-			getNext().toString(sb);
-		}
+		sb.append("<!--end").append(tagName).append("-->");
 	}
 	
 	@Override

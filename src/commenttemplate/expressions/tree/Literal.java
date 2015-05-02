@@ -31,11 +31,17 @@ public class Literal implements Token {
 	
 	@Override
 	public String toString() {
-		return val.toString();
+		StringBuilder sb;
+		toString(sb = new StringBuilder());
+		return sb.toString();
 	}
 
 	@Override
 	public void toString(StringBuilder sb) {
-		sb.append(val);
+		if (val instanceof String) {
+			sb.append("'").append(val).append("'");
+		} else {
+			sb.append(val);
+		}
 	}
 }

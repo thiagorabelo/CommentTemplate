@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
+import commenttemplate.template.TemplateBlock;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Utils;
 import java.lang.reflect.Array;
@@ -172,6 +173,8 @@ public class ForTemplateTag extends TemplateTag {
 		if (counter != null && (c = counter.eval(context)) == null) {
 			c = counter.toString();
 		}
+		
+		List<TemplateBlock> blockList = getBlockList();
 
 		for (int el : nlist.eval(context)) {
 			if (v != null) {
@@ -181,7 +184,10 @@ public class ForTemplateTag extends TemplateTag {
 				context.put(c.toString(), iterations);
 			}
 
-			evalBody(context, sb);
+			//evalBody(context, sb);
+			if (blockList != null) {
+				loopBlockList(blockList, context, sb);
+			}
 
 			iterations++;
 		}
@@ -196,8 +202,8 @@ public class ForTemplateTag extends TemplateTag {
 
 			if (iterable.getClass().isArray()) {
 				it = new ObjectArrayIterator(iterable);
-			} else if (iterable instanceof List) {
-				it = ((List)iterable).iterator();
+			} else if (iterable instanceof Iterable) {
+				it = ((Iterable)iterable).iterator();
 			}
 
 			if (it != null) {
@@ -212,6 +218,8 @@ public class ForTemplateTag extends TemplateTag {
 				if (counter != null && (c = counter.eval(context)) == null) {
 					c = counter.toString();
 				}
+				
+				List<TemplateBlock> blockList = getBlockList();
 
 				while (it.hasNext()) {
 					Object el = it.next();
@@ -223,7 +231,9 @@ public class ForTemplateTag extends TemplateTag {
 						context.put(c.toString(), i);
 					}
 
-					evalBody(context, sb);
+					if (blockList != null) {
+						loopBlockList(blockList, context, sb);
+					}
 
 					i += 1;
 				}

@@ -252,4 +252,14 @@ public class TagComponent {
 
 		return tag;
 	}
+
+	public String[] getParams() {
+		String []ret = new String[params.length];
+
+		for (int i = 0, len = params.length; i < len; i++) {
+			ret[i] = params[i].getB();
+		}
+
+		return ret;
+	}
 }

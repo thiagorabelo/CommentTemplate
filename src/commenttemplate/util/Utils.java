@@ -40,13 +40,7 @@ public class Utils {
 	}
 	
 	public static String concat(Object ...args) {
-		int sum = 0;
-
-		for (int i = 0, len = args.length; i < len; i++) {
-			sum += 1;
-		}
-
-		StringBuilder sb = new StringBuilder(sum);
+		StringBuilder sb = new StringBuilder();
 
 		for (Object o : args) {
 			sb.append(o);

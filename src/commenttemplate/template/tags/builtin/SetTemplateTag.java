@@ -4,7 +4,9 @@ import commenttemplate.template.tags.TemplateTag;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.writer.TemplateWriter;
 import commenttemplate.context.Context;
+import commenttemplate.template.TemplateBlock;
 import commenttemplate.template.writer.Writer;
+import java.util.List;
 
 /**
  *
@@ -36,13 +38,14 @@ public class SetTemplateTag extends TemplateTag {
 		
 		if (name != null && !name.equals("")) {
 			Object result;
+			List<TemplateBlock> blockList;
 
 			if (attr != null) {
 				result = attr.eval(context);
 				context.put(name, result);
-			} else if (getNextInner() != null){
+			} else if ((blockList = getBlockList()) != null){
 				TemplateWriter tw = new TemplateWriter();
-				evalBody(context, tw);
+				loopBlockList(blockList, context, sb);
 
 				if (!tw.isEmpty()) {
 					context.put(name, tw.toString());

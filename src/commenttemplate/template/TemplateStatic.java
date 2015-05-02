@@ -16,6 +16,11 @@ public class TemplateStatic extends TemplateBlock {
 		public PlainText(String text) {
 			super(text);
 		}
+
+		@Override
+		public String toString() {
+			return getVal().toString();
+		}
 	};
 	
 	private Exp []content;
@@ -23,12 +28,6 @@ public class TemplateStatic extends TemplateBlock {
 	public TemplateStatic() {
 	}
 	
-	@Override
-	@Deprecated
-	public void setNextInner(TemplateBlock nextInner) {
-		super.setNextInner(null);
-	}
-
 	public Exp []getContent() {
 		return content;
 	}
@@ -57,10 +56,6 @@ public class TemplateStatic extends TemplateBlock {
 	@Override
 	public void toString(StringBuilder sb) {
 		sb.append(this.toString());
-
-		if (getNext() != null) {
-			getNext().toString(sb);
-		}
 	}
 
 	// Falta ajeitar essa onça
@@ -68,10 +63,6 @@ public class TemplateStatic extends TemplateBlock {
 	public void eval(Context context, Writer sb) {
 		for (Exp exp : content) {
 			sb.append(exp.eval(context));
-		}
-
-		if (getNext() != null) {
-			getNext().eval(context, sb);
 		}
 	}
 }

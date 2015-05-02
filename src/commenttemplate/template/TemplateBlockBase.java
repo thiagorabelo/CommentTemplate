@@ -6,6 +6,8 @@ import commenttemplate.context.Context;
 import commenttemplate.context.ContextPreprocessor;
 import commenttemplate.context.preprocessor.PreprocessorCache;
 import commenttemplate.template.writer.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -34,17 +36,15 @@ public class TemplateBlockBase extends TemplateBlock {
 
 	@Override
 	public void toString(StringBuilder sb) {
-		if (getNextInner() != null) {
-			getNextInner().toString(sb);
+		List<TemplateBlock> blockList = getBlockList();
 
-			if (getNextInnerElse() != null) {
-				getNextInnerElse().toString(sb);
-			}
+		for (TemplateBlock t : blockList) {
+			t.toString(sb);
 		}
+	}
 
-		if (getNext() != null) {
-			getNextInner().toString(sb);
-		}
+	public void slimLists() {
+		
 	}
 
 	public String eval(Map<String, Object> params) {
@@ -71,7 +71,11 @@ public class TemplateBlockBase extends TemplateBlock {
 			p.before(context);
 		}
 
-		getNextInner().eval(context, sb);
+		List<TemplateBlock> list = getBlockList();
+		
+		for (int i = 0, len = list.size(); i < len; i++) {
+			list.get(i).eval(context, sb);
+		}
 
 		for (ContextPreprocessor p : PreprocessorCache.instance()) {
 			p.after(sb, context);

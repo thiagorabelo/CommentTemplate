@@ -6,6 +6,7 @@ import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
 import commenttemplate.template.tags.TemplateTag;
 import commenttemplate.template.writer.Writer;
+import java.util.List;
 
 /**
  *
@@ -43,15 +44,15 @@ public class BlockTemplateTag extends TemplateTag {
 			String blockName = exp.eval(context).toString();
 			Writer w = cwm.getWriter(blockName);
 			
-			TemplateBlock inner;
+			List<TemplateBlock> blockList;
 			int whomEvaluate = evalParams(cwm, w);
 			
 			switch (whomEvaluate) {
 				case EVAL_BODY_WITH_MAPPED_WRITER:
-					inner = getNextInner();
-					if (inner != null) {
+					blockList = getBlockList();
+					if (blockList != null) {
 						context.push();
-						evalBody(cwm, w);
+						loopBlockList(blockList, context, sb);
 						context.pop();
 					}
 					break;
@@ -61,22 +62,16 @@ public class BlockTemplateTag extends TemplateTag {
 					break;
 
 				case EVAL_BODY:
-					inner = getNextInner();
-					if (inner != null) {
+					blockList = getBlockList();
+					if (blockList != null) {
 						context.push();
-						evalBody(cwm, sb);
+						loopBlockList(blockList, context, sb);
 						context.pop();
 					}
 					break;
 
 				default:
 					break;
-			}
-
-			TemplateBlock next = getNext();
-
-			if (next != null) {
-				next.eval(context, sb);
 			}
 		}
 	}

@@ -49,7 +49,7 @@ public class ExtendsTemplateTag extends TemplateTag {
 			cwm.setMode(ContextWriterMap.Mode.STORE);
 
 			if (inner != null) {
-				loopBlockList(inner, context, sb);
+				loopBlockList(inner, cwm, vw);
 			}
 
 			cwm.setMode(ContextWriterMap.Mode.RENDER);

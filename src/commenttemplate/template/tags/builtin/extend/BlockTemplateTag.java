@@ -52,7 +52,7 @@ public class BlockTemplateTag extends TemplateTag {
 					blockList = getBlockList();
 					if (blockList != null) {
 						context.push();
-						loopBlockList(blockList, context, sb);
+						loopBlockList(blockList, cwm, w);
 						context.pop();
 					}
 					break;
@@ -65,7 +65,7 @@ public class BlockTemplateTag extends TemplateTag {
 					blockList = getBlockList();
 					if (blockList != null) {
 						context.push();
-						loopBlockList(blockList, context, sb);
+						loopBlockList(blockList, cwm, sb);
 						context.pop();
 					}
 					break;

@@ -8,8 +8,8 @@ import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.context.Context;
 import commenttemplate.template.tags.TemplateTag;
 import commenttemplate.context.ContextWriterMap;
-import commenttemplate.template.writer.VoidWriter;
 import commenttemplate.template.writer.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +30,19 @@ public class ExtendsTemplateTag extends TemplateTag {
 	public int evalParams(Context context, Writer sb) {
 		return EVAL_BODY;
 	}
+	
+	@Override
+	public void append(TemplateBlock other) {
+		ArrayList<TemplateBlock> blockList;
+
+		if ((blockList = getBlockList()) == null) {
+			setBlockList(blockList = new ArrayList<>());
+		}
+
+		if (other instanceof BlockTemplateTag) {
+			blockList.add(other);
+		}
+	}
 
 	/*
 	
@@ -43,13 +56,12 @@ public class ExtendsTemplateTag extends TemplateTag {
 			TemplateBlockBase base = TemplateLoader.get(templateName);
 
 			List<TemplateBlock> inner = getBlockList();
-			VoidWriter vw = new VoidWriter();
 			ContextWriterMap cwm = new ContextWriterMap(context);
 
 			cwm.setMode(ContextWriterMap.Mode.STORE);
 
 			if (inner != null) {
-				loopBlockList(inner, cwm, vw);
+				loopBlockList(inner, cwm, sb);
 			}
 
 			cwm.setMode(ContextWriterMap.Mode.RENDER);

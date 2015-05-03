@@ -39,9 +39,7 @@ public class BlockTemplateTag extends TemplateTag {
 	public void eval(Context context, Writer sb) {
 		if (context instanceof ContextWriterMap) {
 			ContextWriterMap cwm = (ContextWriterMap)context;
-			Exp exp = name;
-			
-			String blockName = exp.eval(context).toString();
+			String blockName = name.eval(context).toString();
 			Writer w = cwm.getWriter(blockName);
 			
 			List<TemplateBlock> blockList;

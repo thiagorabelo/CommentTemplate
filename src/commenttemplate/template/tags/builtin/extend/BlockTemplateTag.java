@@ -6,7 +6,6 @@ import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
 import commenttemplate.template.tags.TemplateTag;
 import commenttemplate.template.writer.Writer;
-import java.util.List;
 
 /**
  *
@@ -42,7 +41,7 @@ public class BlockTemplateTag extends TemplateTag {
 			String blockName = name.eval(context).toString();
 			Writer w = cwm.getWriter(blockName);
 			
-			List<TemplateBlock> blockList;
+			TemplateBlock []blockList;
 			int whomEvaluate = evalParams(cwm, w);
 			
 			switch (whomEvaluate) {

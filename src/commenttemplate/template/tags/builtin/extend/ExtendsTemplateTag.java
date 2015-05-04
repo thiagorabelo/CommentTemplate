@@ -8,9 +8,8 @@ import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.context.Context;
 import commenttemplate.template.tags.TemplateTag;
 import commenttemplate.context.ContextWriterMap;
+import commenttemplate.template.MountingHelper;
 import commenttemplate.template.writer.Writer;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -31,19 +30,6 @@ public class ExtendsTemplateTag extends TemplateTag {
 		return EVAL_BODY;
 	}
 	
-	@Override
-	public void append(TemplateBlock other) {
-		ArrayList<TemplateBlock> blockList;
-
-		if ((blockList = getBlockList()) == null) {
-			setBlockList(blockList = new ArrayList<>());
-		}
-
-		if (other instanceof BlockTemplateTag) {
-			blockList.add(other);
-		}
-	}
-
 	/*
 	
 	*/
@@ -55,7 +41,7 @@ public class ExtendsTemplateTag extends TemplateTag {
 			String templateName = exp.eval(context).toString();
 			TemplateBlockBase base = TemplateLoader.get(templateName);
 
-			List<TemplateBlock> inner = getBlockList();
+			TemplateBlock []inner = getBlockList();
 			ContextWriterMap cwm = new ContextWriterMap(context);
 
 			cwm.setMode(ContextWriterMap.Mode.STORE);
@@ -79,5 +65,24 @@ public class ExtendsTemplateTag extends TemplateTag {
 
 	public void setName(Exp name) {
 		this.name = name;
+	}
+	
+	private class MountingExtendsHelper extends MountingHelper {
+
+		public MountingExtendsHelper(TemplateBlock b) {
+			super(b);
+		}
+
+		@Override
+		public void append(TemplateBlock other) {
+			if (other instanceof BlockTemplateTag) {
+				super.append(other);
+			}
+		}
+	}
+
+	@Override
+	public MountingHelper createMountingHelper() {
+		return new MountingExtendsHelper(this);
 	}
 }

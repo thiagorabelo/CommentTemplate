@@ -64,10 +64,10 @@ public class TemplateParser {
 
 		TemplateBlockBase base = new TemplateBlockBase(initialBufferSize);
 		Matcher tagMatcher = openPattern.matcher(input);
-		MyStack<TemplateBlock> stack = new MyStack<TemplateBlock>();
+		MyStack<MountingHelper> stack = new MyStack<MountingHelper>();
 		MyStack<Boolean> usingElse = new MyStack<Boolean>();
 
-		stack.push(base);
+		stack.push(base.createMountingHelper());
 		usingElse.push(false);
 
 		mountTemplateTreeAux(input, lastLength, tagMatcher, stack, usingElse);
@@ -78,13 +78,13 @@ public class TemplateParser {
 	// @TODO: Ignorar comentários html. Os cometários serão caracterizados como tendo um espaço depois de abrir a tag
 	// <!-- espaço antes daprimeira palavra -->
 	// Faz o trabalho sujo de mountTemplateTree.
-	private static void mountTemplateTreeAux(String input, Wrap<Integer> lastLength, Matcher tagMatcher, MyStack<TemplateBlock> stack, MyStack<Boolean> usingElse) throws TemplateException {
+	private static void mountTemplateTreeAux(String input, Wrap<Integer> lastLength, Matcher tagMatcher, MyStack<MountingHelper> stack, MyStack<Boolean> usingElse) throws TemplateException {
 
 		try {
 			// Procura o próximo bloco.
 			while (tagMatcher.find()) {
 				// Obtem, mas não remove, o bloco que está no topo da pilha.
-				TemplateBlock block = stack.peek();
+				MountingHelper block = stack.peek();
 
 				// @TODO: Pode ser que não haja este trecho "estático". Verificar isto!
 				// Copiar tudo que esteja entre "lastLength" e o bloco encontrado, para
@@ -126,17 +126,18 @@ public class TemplateParser {
 						block.appendToElse(tag);
 					}
 
-					stack.push(tag);
+					stack.push(tag.createMountingHelper());
 					usingElse.push(false);
 				} else if (isElse) {
 					usingElse.replaceTop(true);
 				} else { // Caso contrário, remova um bloco que esteja em cima da pilha.
-					stack.pop();
+					stack.pop().buildBlock();
 					usingElse.pop();
 				}
 			}
 
 			String text = input.substring(lastLength.getValue());
+			MountingHelper block = stack.pop();
 
 			if (!text.isEmpty()) {
 				// Adicione o resto do template através de um bloco estátio ao bloco que
@@ -144,9 +145,10 @@ public class TemplateParser {
 				TemplateStatic sttc = new TemplateStatic();
 				sttc.setContent(text);
 
-				TemplateBlock block = stack.pop();
 				block.append(sttc);
 			}
+
+			block.buildBlock();
 		} catch (ExpressionException ex) {
 
 			throw new TemplateException(ex.getMessage(), lineCounter(input.substring(0, tagMatcher.start())), ex.show(), ex);

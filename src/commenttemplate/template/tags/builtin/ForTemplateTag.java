@@ -174,7 +174,7 @@ public class ForTemplateTag extends TemplateTag {
 			c = counter.toString();
 		}
 		
-		List<TemplateBlock> blockList = getBlockList();
+		TemplateBlock []blockList = getBlockList();
 
 		for (int el : nlist.eval(context)) {
 			if (v != null) {
@@ -219,7 +219,7 @@ public class ForTemplateTag extends TemplateTag {
 					c = counter.toString();
 				}
 				
-				List<TemplateBlock> blockList = getBlockList();
+				TemplateBlock []blockList = getBlockList();
 
 				while (it.hasNext()) {
 					Object el = it.next();

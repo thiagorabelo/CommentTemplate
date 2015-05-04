@@ -36,15 +36,11 @@ public class TemplateBlockBase extends TemplateBlock {
 
 	@Override
 	public void toString(StringBuilder sb) {
-		List<TemplateBlock> blockList = getBlockList();
+		TemplateBlock []blockList = getBlockList();
 
 		for (TemplateBlock t : blockList) {
 			t.toString(sb);
 		}
-	}
-
-	public void slimLists() {
-		
 	}
 
 	public String eval(Map<String, Object> params) {
@@ -71,10 +67,10 @@ public class TemplateBlockBase extends TemplateBlock {
 			p.before(context);
 		}
 
-		List<TemplateBlock> list = getBlockList();
+		TemplateBlock []list = getBlockList();
 		
-		for (int i = 0, len = list.size(); i < len; i++) {
-			list.get(i).eval(context, sb);
+		for (int i = 0, len = list.length; i < len; i++) {
+			list[i].eval(context, sb);
 		}
 
 		for (ContextPreprocessor p : PreprocessorCache.instance()) {

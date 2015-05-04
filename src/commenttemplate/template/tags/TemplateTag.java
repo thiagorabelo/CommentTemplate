@@ -39,7 +39,7 @@ public abstract class TemplateTag extends TemplateBlock {
 
 	public abstract int evalParams(Context context, Writer sb);
 	
-	protected void loopBlockList(List<TemplateBlock> blockList, Context context, Writer sb) {
+	protected void loopBlockList(TemplateBlock []blockList, Context context, Writer sb) {
 		for (TemplateBlock t : blockList) {
 			t.eval(context, sb);
 		}
@@ -48,8 +48,8 @@ public abstract class TemplateTag extends TemplateBlock {
 	@Override
 	public void eval(Context context, Writer sb) {
 		int whomEvaluate = evalParams(context, sb);
-		List<TemplateBlock> blockList = getBlockList();
-		List<TemplateBlock> blockListElse = getBlockListElse();
+		TemplateBlock []blockList = getBlockList();
+		TemplateBlock []blockListElse = getBlockListElse();
 
 		switch (whomEvaluate) {
 			case EVAL_BODY:
@@ -106,7 +106,7 @@ public abstract class TemplateTag extends TemplateBlock {
 	public void toString(StringBuilder sb) {
 		sb.append("<!--").append(tagName).append(" ").append(paramsToString()).append("-->");
 		
-		List<TemplateBlock> l;
+		TemplateBlock []l;
 		
 		if ((l = getBlockList()) != null) {
 			for (TemplateBlock t : l) {

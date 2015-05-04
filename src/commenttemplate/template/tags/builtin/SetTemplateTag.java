@@ -38,7 +38,7 @@ public class SetTemplateTag extends TemplateTag {
 		
 		if (name != null && !name.equals("")) {
 			Object result;
-			List<TemplateBlock> blockList;
+			TemplateBlock []blockList;
 
 			if (attr != null) {
 				result = attr.eval(context);

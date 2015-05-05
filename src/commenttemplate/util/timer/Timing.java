@@ -25,6 +25,6 @@ package commenttemplate.util.timer;
  */
 public interface Timing {
 
-	public void run() throws Exception ;
+	public void run(int iteration) throws Exception ;
 
 }

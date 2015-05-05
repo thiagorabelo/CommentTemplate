@@ -9,61 +9,99 @@ import java.util.List;
  * @param <T>
  */
 public class MyStack<T> {
+	
+	private class StackNode {
+		private T item;
+		private StackNode ancestral;
 
-	private final List<T> stack;
+		public StackNode(T item) {
+			this.item = item;
+		}
+
+		public StackNode(T item, StackNode ancestral) {
+			this(item);
+			this.ancestral = ancestral;
+		}
+	}
+	
+	private StackNode top = null;
+	private int size = 0;
 
 	public MyStack() {
-		stack = new ArrayList<>();
 	}
 
 	public MyStack(MyStack other) {
-		stack = new ArrayList<>(other.stack);
+		copyStack(other);
 	}
 
-	public MyStack(List<T> list) {
-		stack = new ArrayList<>(list);
+//	public MyStack(List<T> list) {
+//		stack = new ArrayList<>(list);
+//	}
+	
+	private void copyStack(MyStack<T> source) {
+		if (source != null && source.top != null) {
+			StackNode top = source.top;
+			StackNode t = new StackNode(top.item);
+			size++;
+
+			while (top.ancestral != null) {
+				t.ancestral = new StackNode(top.ancestral.item);
+				t = t.ancestral;
+				top = top.ancestral;
+				size++;
+			}
+		}
 	}
 
 	public T pop() {
-		int top = stack.size() - 1;
-		return (top >= 0) ? stack.remove(top) : null;
+		if (top != null) {
+			StackNode t = top;
+			top = top.ancestral;
+			size--;
+
+			return t.item;
+		}
+
+		return null;
 	}
 
 	public T peek() {
-		int top = stack.size() - 1;
-		return (top >= 0) ? stack.get(top) : null;
+		if (top != null) {
+			return top.item;
+		}
+
+		return null;
 	}
 
 	public T replaceTop(T newTop) {
-		int top = stack.size() - 1;
-
-		if (top >= 0) {
-			return stack.set(top, newTop);
+		if (top != null) {
+			T old = top.item;
+			top.item = newTop;
+			return old;
 		}
-
-		stack.add(newTop);
 
 		return null;
 	}
 
 	public MyStack<T> push(T item) {
-		stack.add(item);
+		top = new StackNode(item, top);
+		size++;
 		return this;
 	}
 
 	public int size() {
-		return stack.size();
+		return size;
 	}
 
 	public void clear() {
-		stack.clear();
+//		stack.clear();
 	}
 
 	public boolean isEmpty() {
-		return stack.isEmpty();
+		return size > 0;
 	}
 
-	public List<T> getList() {
-		return stack;
-	}
+//	public List<T> getList() {
+//		return stack;
+//	}
 }

@@ -73,7 +73,7 @@ public class TimeIt implements Iterable<Long> {
 		try {
 			for (; i < _total; i++) {
 				before = System.nanoTime();
-				t.run();
+				t.run(i);
 				after = System.nanoTime();
 				deltas.add(after - before);
 			}

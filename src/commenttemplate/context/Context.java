@@ -92,6 +92,7 @@ public class Context implements Map<String, Object> {
 	
 	public Context() {
 		contextStack = new MyStack<>();
+		contextStack.push(new MyHashMap<>());
 		retrieverDataMap = defaultRetrieverDataMap;
 	}
 

@@ -16,10 +16,7 @@ import commenttemplate.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
 import commenttemplate.util.maps.*;
-import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,6 +29,47 @@ import java.util.regex.Pattern;
 public class TestesRelampagos {
 	
 	public static void main(String[] args) {
+		MyStack<Character> stack = new MyStack<>();
+		
+		stack.push('a');
+		stack.push('b');
+		stack.push('c');
+		stack.push('d');
+		stack.push('e');
+		stack.push('f');
+		
+		for (Character c : stack) {
+			System.out.print(c);
+		}
+		
+		System.out.println("");
+		
+		MyStack<Character> stack2 = new MyStack<>(stack);
+		
+		System.out.println(stack2.size());
+
+		while (!stack2.isEmpty()) {
+			System.out.print(stack2.pop());
+		}
+		
+		MyStack<Character> stack3 = new MyStack<>();
+
+		stack3.push('g');
+		stack3.push('h');
+		stack3.push('i');
+		stack3.push('j');
+		stack3.push('k');
+		stack3.push('l');
+		
+		stack3.pushAll(stack);
+
+		System.out.println("");
+		for (Character c : stack3) {
+			System.out.print(c);
+		}
+	}
+	
+	public static void teste14(String[] args) {
 		String exp = "(70+10**-2)<2*-6/num.val||!(length('olá mundo')!=num.val)";
 		List<Tuple<String, Integer>> l = new Tokenizer(exp).tokenList();
 		List<Tuple<String, Integer>> tokens = new ArrayList<>();
@@ -202,11 +240,9 @@ public class TestesRelampagos {
 		Parser p = new Parser();
 		
 		MyStack<Exp> stack = p.buildStack(exprs);
-		List<Exp> st = stack.getList();
 		
 		System.out.println("----------------\n");
-		for (int i = st.size(); i-- > 0;) {
-			Exp e = st.get(i);
+		for (Exp e : stack) {
 			System.out.println(Utils.concat("[", e, ":", e.getClass().getSimpleName(), "]"));
 		}
 		

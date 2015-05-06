@@ -27,7 +27,6 @@ import commenttemplate.util.retrieve.RetrieveDataMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,9 +38,11 @@ public class Context implements Map<String, Object> {
 
 	private static final RetrieveDataMap<Map<String, Object>> defaultRetrieverDataMap = new IterativeRetrieverDataMap();
 
-	private static Object get(List<MyHashMap<String, Object>> maps, Object key) {
-		for (int i = maps.size() - 1; i >= 0; i--) {
-			MyHashMap<String, Object> map = maps.get(i);
+	private static Object get(MyStack<MyHashMap<String, Object>> maps, Object key) {
+		MyStack.Node<MyHashMap<String, Object>> node;
+
+		for (node = maps.getTopNode(); node != null; node = node.getAncestral()) {
+			MyHashMap<String, Object> map = node.getItem();
 
 			Map.Entry<String, Object> e = map.getEntry(key);
 
@@ -53,14 +54,14 @@ public class Context implements Map<String, Object> {
 		return null;
 	}
 	
-	private static int size(List<MyHashMap<String, Object>> maps) {
+	private static int size(MyStack<MyHashMap<String, Object>> maps) {
 		return keySet(maps).size();
 	}
 	
-	private static Set<String> keySet(List<MyHashMap<String, Object>> maps) {
+	private static Set<String> keySet(MyStack<MyHashMap<String, Object>> stack) {
 		HashSet<String> keys = new HashSet<>();
 
-		for (MyHashMap<String, Object> map : maps) {
+		for (MyHashMap<String, Object> map : stack) {
 			keys.addAll(map.keySet());
 		}
 
@@ -134,9 +135,7 @@ public class Context implements Map<String, Object> {
 	public Context(Context other, RetrieveDataMap retrieverDataMap) {
 		this(retrieverDataMap);
 		
-		List<MyHashMap<String, Object>> stack = other.contextStack.getList();
-		
-		for (MyHashMap<String, Object> map : stack) {
+		for (MyHashMap<String, Object> map : other.contextStack) {
 			contextStack.push((MyHashMap<String, Object>)map.clone());
 		}
 
@@ -150,7 +149,7 @@ public class Context implements Map<String, Object> {
 			contextStack.push(new MyHashMap<>()).peek().putAll(params);
 		}
 
-		size = size(contextStack.getList());
+		size = size(contextStack);
 		mapChanged = false;
 
 		return this;
@@ -172,7 +171,7 @@ public class Context implements Map<String, Object> {
 	@Override
 	public int size() {
 		if (mapChanged) {
-			size = size(contextStack.getList());
+			size = size(contextStack);
 			mapChanged = false;
 		}
 
@@ -186,10 +185,8 @@ public class Context implements Map<String, Object> {
 
 	@Override
 	public boolean containsKey(Object key) {
-		List<MyHashMap<String, Object>> maps = contextStack.getList();
 
-		for (int i = maps.size() - 1; i >= 0; i--) {
-			MyHashMap<String, Object> map = maps.get(i);
+		for (MyHashMap<String, Object> map : contextStack) {
 			if (map.containsKey(key)) {
 				return true;
 			}
@@ -200,10 +197,8 @@ public class Context implements Map<String, Object> {
 
 	@Override
 	public boolean containsValue(Object value) {
-		List<MyHashMap<String, Object>> maps = contextStack.getList();
 
-		for (int i = maps.size() - 1; i >= 0; i--) {
-			MyHashMap<String, Object> map = maps.get(i);
+		for (MyHashMap<String, Object> map : contextStack) {
 			if (map.containsValue(value)) {
 				return true;
 			}
@@ -214,12 +209,12 @@ public class Context implements Map<String, Object> {
 
 	@Override
 	public Object get(Object key) {
-		return get(contextStack.getList(), key);
+		return get(contextStack, key);
 	}
 
 	@Override
 	public Object put(String key, Object value) {
-		Object obj = contextStack.peek().put(key, value);
+		Object obj = contextStack.peek().put(key.intern(), value);
 
 		if (obj == null) {
 			mapChanged = true;
@@ -241,23 +236,23 @@ public class Context implements Map<String, Object> {
 
 	@Override
 	public void clear() {
-		contextStack.getList().clear();
+		contextStack.clear();
 		size = 0;
 		mapChanged = false;
 	}
 
 	@Override
 	public Set<String> keySet() {
-		return keySet(contextStack.getList());
+		return keySet(contextStack);
 	}
 
 	@Override
 	public Collection<Object> values() {
-		Set<String> keys = keySet(contextStack.getList());
+		Set<String> keys = keySet(contextStack);
 		ArrayList<Object> objs = new ArrayList<>();
 
 		for (String key : keys) {
-			objs.add(get(contextStack.getList(), key));
+			objs.add(get(contextStack, key));
 		}
 
 		return objs;
@@ -265,10 +260,9 @@ public class Context implements Map<String, Object> {
 
 	@Override
 	public Set<Map.Entry<String, Object>> entrySet() {
-		List<MyHashMap<String, Object>> maps = contextStack.getList();
 		MyHashMap<String, Object> plainMap = new MyHashMap<>();
 		
-		for (MyHashMap<String, Object> map : maps) {
+		for (MyHashMap<String, Object> map : contextStack) {
 			plainMap.putAll(map);
 		}
 

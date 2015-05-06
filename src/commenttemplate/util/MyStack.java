@@ -1,16 +1,22 @@
 package commenttemplate.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  *
  * @author thiago
  * @param <T>
  */
-public class MyStack<T> {
+public class MyStack<T> implements Iterable<T> {
 	
-	private class StackNode {
+	public static interface Node<T> {
+		public T getItem();
+		public Node<T> getAncestral();
+	}
+	
+	private class StackNode implements Node<T> {
 		private T item;
 		private StackNode ancestral;
 
@@ -21,6 +27,16 @@ public class MyStack<T> {
 		public StackNode(T item, StackNode ancestral) {
 			this(item);
 			this.ancestral = ancestral;
+		}
+
+		@Override
+		public T getItem() {
+			return item;
+		}
+
+		@Override
+		public Node<T> getAncestral() {
+			return ancestral;
 		}
 	}
 	
@@ -40,16 +56,21 @@ public class MyStack<T> {
 	
 	private void copyStack(MyStack<T> source) {
 		if (source != null && source.top != null) {
-			StackNode top = source.top;
-			StackNode t = new StackNode(top.item);
-			size++;
+			StackNode topSrc = source.top;
+			StackNode t;
+			StackNode temp = top;
 
-			while (top.ancestral != null) {
-				t.ancestral = new StackNode(top.ancestral.item);
+			top = t = new StackNode(topSrc.item);
+
+			while (topSrc.ancestral != null) {
+				t.ancestral = new StackNode(topSrc.ancestral.item);
 				t = t.ancestral;
-				top = top.ancestral;
-				size++;
+				topSrc = topSrc.ancestral;
 			}
+
+			t.ancestral = temp;
+
+			size += source.size;
 		}
 	}
 
@@ -89,16 +110,67 @@ public class MyStack<T> {
 		return this;
 	}
 
+	public void pushAll(Collection<T> c) {
+		for (T t : c) {
+			push(t);
+		}
+	}
+
+	public void pushAll(MyStack<T> s) {
+		copyStack(s);
+	}
+
 	public int size() {
 		return size;
 	}
 
 	public void clear() {
-//		stack.clear();
+
+		StackNode t;
+
+		while (top.ancestral != null) {
+			t = top.ancestral;
+			top.ancestral = null;
+			top = t;
+		}
+
+		size = 0;
 	}
 
 	public boolean isEmpty() {
-		return size > 0;
+		return size == 0;
+	}
+	
+	public MyStack.Node<T> getTopNode() {
+		return top;
+	}
+	
+	private class StackNodeIterator implements Iterator<T> {
+		
+		private StackNode current = top;
+
+		@Override
+		public boolean hasNext() {
+			return current != null;
+		}
+
+		@Override
+		public T next() {
+			if (current != null) {
+				StackNode t = current;
+				current = t.ancestral;
+
+				return t.item;
+			}
+
+			throw new NoSuchElementException("There is no more elements.");
+		}
+		
+	}
+	
+	@Override
+	public Iterator<T> iterator() {
+		return new StackNodeIterator();
 	}
 
 //	public List<T> getList() {

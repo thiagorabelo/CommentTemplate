@@ -258,7 +258,7 @@ public class Utils {
 	
 	public static String capitalize(String str) {
 		if (str.length() > 1) {
-			return concat(Character.toUpperCase(str.charAt(0)), str.substring(1));
+			return Character.toUpperCase(str.charAt(0)) + str.substring(1);
 		}
 
 		return str.toUpperCase();

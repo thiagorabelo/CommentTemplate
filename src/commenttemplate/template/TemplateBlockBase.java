@@ -3,7 +3,7 @@ package commenttemplate.template;
 import commenttemplate.template.writer.TemplateWriter;
 import java.util.Map;
 import commenttemplate.context.Context;
-import commenttemplate.context.ContextPreprocessor;
+import commenttemplate.context.ContextProcessor;
 import commenttemplate.context.preprocessor.PreprocessorCache;
 import commenttemplate.template.writer.Writer;
 import java.util.ArrayList;
@@ -63,7 +63,7 @@ public class TemplateBlockBase extends TemplateBlock {
 	@Override
 	public void eval(Context context, Writer sb) {
 		
-		for (ContextPreprocessor p : PreprocessorCache.instance()) {
+		for (ContextProcessor p : PreprocessorCache.instance()) {
 			p.before(context);
 		}
 
@@ -73,7 +73,7 @@ public class TemplateBlockBase extends TemplateBlock {
 			list[i].eval(context, sb);
 		}
 
-		for (ContextPreprocessor p : PreprocessorCache.instance()) {
+		for (ContextProcessor p : PreprocessorCache.instance()) {
 			p.after(sb, context);
 		}
 	}

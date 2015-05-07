@@ -22,13 +22,32 @@ package commenttemplate.context;
 import commenttemplate.template.writer.Writer;
 
 /**
- *
+ * Classes that extends {@code ContextProcessor} proccess a {@code Context}
+ * instance before the process of renderization and process the {@code Writer}
+ * and {@code Context} instance after the process renderization.
+ * 
+ * @see commenttemplate.context.Context
+ * @see commenttemplate.template.writer.Writer
+ * 
  * @author thiago
  */
-public abstract class ContextPreprocessor {
+public abstract class ContextProcessor {
 
+	/**
+	 * Used to manipulate de {@code Context} instance before render process
+	 * 
+	 * @param context {@code Context} used to do the renderization of the
+	 * template
+	 */
 	public void before(Context context) {}
-	
+
+	/**
+	 * Used to manipulate the {@code Writer} and {@code Context} intances
+	 * after reder process.
+	 * 
+	 * @param sb Output where the rendered template is buffered
+	 * @param context {@code Context} instance used to render the template
+	 */
 	public void after(Writer sb, Context context) {}
 
 }

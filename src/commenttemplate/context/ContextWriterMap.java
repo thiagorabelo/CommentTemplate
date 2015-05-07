@@ -1,6 +1,5 @@
 package commenttemplate.context;
 
-import commenttemplate.context.Context;
 import commenttemplate.template.writer.TemplateWriter;
 import commenttemplate.template.writer.Writer;
 import java.util.HashMap;
@@ -28,12 +27,12 @@ public class ContextWriterMap extends Context {
 		};
 
 		public Writer getWriter(ContextWriterMap context, String blockName) {
-			throw new UnsupportedOperationException("Not supported."); //To change body of generated methods, choose Tools | Templates.
+			throw new UnsupportedOperationException("Not supported. This method must be overridden.");
 		}
 	};
 
 
-	private final HashMap<String, Writer> writerMap = new HashMap();
+	private final HashMap<String, Writer> writerMap = new HashMap<>();
 	private Mode mode = Mode.RENDER;
 	
 	public ContextWriterMap(Context context) {

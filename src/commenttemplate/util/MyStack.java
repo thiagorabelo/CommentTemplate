@@ -74,6 +74,7 @@ public class MyStack<T> implements Iterable<T> {
 		}
 	}
 
+	// TODO: Lançar alguma exceção?
 	public T pop() {
 		if (top != null) {
 			StackNode t = top;

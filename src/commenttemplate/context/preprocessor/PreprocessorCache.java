@@ -19,28 +19,35 @@
 
 package commenttemplate.context.preprocessor;
 
-import commenttemplate.context.ContextPreprocessor;
-import java.util.Collection;
+import commenttemplate.context.ContextProcessor;
 import java.util.LinkedList;
 
 /**
  *
+ * Contains de set of ContextPreprocessors that will be applyed to all Templates.
+ * 
+ * 
  * @author thiago
  */
-public class PreprocessorCache extends LinkedList<ContextPreprocessor> {
+public class PreprocessorCache extends LinkedList<ContextProcessor> {
 	
 	static {
 		INSTANCE = new PreprocessorCache();
 	}
 	
+	/**
+	 * Keep a unique instance of this class.
+	 */
 	private static final PreprocessorCache INSTANCE;
 	
+	/**
+	 * Return a unique instance o this class.
+	 * 
+	 * @return {@code PreprocessorCache}
+	 */
 	public static PreprocessorCache instance() {
 		return INSTANCE;
 	}
 	
 	private PreprocessorCache() {}
-	private PreprocessorCache(Collection<? extends ContextPreprocessor> c) {
-        super(c);
-    }
 }

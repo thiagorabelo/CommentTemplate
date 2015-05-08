@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  */
 
-package commenttemplate.context.preprocessor;
+package commenttemplate.context.processor;
 
 import commenttemplate.context.ContextProcessor;
 import java.util.LinkedList;

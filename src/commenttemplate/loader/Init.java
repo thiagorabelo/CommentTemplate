@@ -19,7 +19,7 @@
 package commenttemplate.loader;
 
 import commenttemplate.context.ContextProcessor;
-import commenttemplate.context.preprocessor.ContextProcessorCache;
+import commenttemplate.context.processor.ContextProcessorCache;
 import commenttemplate.expressions.function.Function;
 import commenttemplate.expressions.function.FunctionsRegister;
 import commenttemplate.template.tags.TagComponent;

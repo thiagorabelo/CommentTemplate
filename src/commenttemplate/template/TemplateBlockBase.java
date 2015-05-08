@@ -4,7 +4,7 @@ import commenttemplate.template.writer.TemplateWriter;
 import java.util.Map;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextProcessor;
-import commenttemplate.context.preprocessor.ContextProcessorCache;
+import commenttemplate.context.processor.ContextProcessorCache;
 import commenttemplate.template.writer.Writer;
 import java.util.ArrayList;
 import java.util.List;

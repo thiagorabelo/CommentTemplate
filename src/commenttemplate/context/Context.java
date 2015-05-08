@@ -300,10 +300,6 @@ public class Context implements Map<String, Object> {
 	/**
 	 * Create a new level on {@code Context} allowing work on isolated scope.
 	 * 
-	 * @param params A other {@code Map} of names to put on new scope. If is
-	 * instance of {@code MyHashMap} is pushed directly as new scope otherwise
-	 * is copied to the new scope.
-	 * 
 	 * @return {@code this} {@code Context}
 	 * 
 	 * @see commenttemplate.util.MyHashMap

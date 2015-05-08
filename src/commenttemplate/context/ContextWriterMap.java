@@ -24,17 +24,34 @@ import commenttemplate.template.writer.Writer;
 import java.util.HashMap;
 
 /**
- *
+ * Is a {@code Context} used to render a template, but is used too to store a {@code Writer} indexed
+ * by name or to get a {@code Writer} by a name, depending if is in mode {@code STORE} or in mode
+ * {@code RENDER}.
+ * 
+ * Util when a <b>Tag</b> wants to render the his own output and store this value in a separated
+ * {@code Writer} (<i>STORE</i>). And than Another <b>Tag</b> wants to get the output from the
+ * previous <b>Tag</b>, by passing a name (<i>RENDER</i>).
+ * 
  * @author thiago
  */
 public class ContextWriterMap extends Context {
 	
+	/**
+	 * Determines the mode of operation of the {@code Context}. If it is in mode
+	 * {@code STORE} or in mode {@code RENDER}.
+	 */
 	public static enum Mode {
+		
 		STORE {
 			@Override
 			public Writer getWriter(ContextWriterMap context, String blockName) {
-				Writer w = new TemplateWriter();
-				context.writerMap.put(blockName, w);
+				Writer w;
+
+				if ((w = context.writerMap.get(blockName)) == null) {
+					w = new TemplateWriter();
+					context.writerMap.put(blockName, w);
+				}
+
 				return w;
 			}
 		},

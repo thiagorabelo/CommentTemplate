@@ -19,7 +19,7 @@
 package commenttemplate.loader;
 
 import commenttemplate.context.ContextProcessor;
-import commenttemplate.context.preprocessor.PreprocessorCache;
+import commenttemplate.context.preprocessor.ContextProcessorCache;
 import commenttemplate.expressions.function.Function;
 import commenttemplate.expressions.function.FunctionsRegister;
 import commenttemplate.template.tags.TagComponent;
@@ -101,7 +101,7 @@ public class Init extends TemplateLoaderConfig {
 		if (preprocessors.length > 0) {
 			for (String preprocessor : preprocessors) {
 				Class<? extends ContextProcessor> preClass = (Class<? extends ContextProcessor>)Class.forName(preprocessor);
-				PreprocessorCache.instance().add(preClass.newInstance());
+				ContextProcessorCache.instance().add(preClass.newInstance());
 			}
 		}
 		

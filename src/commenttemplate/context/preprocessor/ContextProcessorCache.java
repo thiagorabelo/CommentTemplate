@@ -29,25 +29,25 @@ import java.util.LinkedList;
  * 
  * @author thiago
  */
-public class PreprocessorCache extends LinkedList<ContextProcessor> {
+public class ContextProcessorCache extends LinkedList<ContextProcessor> {
 	
 	static {
-		INSTANCE = new PreprocessorCache();
+		INSTANCE = new ContextProcessorCache();
 	}
 	
 	/**
 	 * Keep a unique instance of this class.
 	 */
-	private static final PreprocessorCache INSTANCE;
+	private static final ContextProcessorCache INSTANCE;
 	
 	/**
 	 * Return a unique instance o this class.
 	 * 
 	 * @return {@code PreprocessorCache}
 	 */
-	public static PreprocessorCache instance() {
+	public static ContextProcessorCache instance() {
 		return INSTANCE;
 	}
 	
-	private PreprocessorCache() {}
+	private ContextProcessorCache() {}
 }

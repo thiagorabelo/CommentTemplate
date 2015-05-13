@@ -1,5 +1,7 @@
 package commenttemplate.expressions.exceptions;
 
+import commenttemplate.util.Utils;
+
 /**
  *
  * @author thiago
@@ -7,13 +9,7 @@ package commenttemplate.expressions.exceptions;
 public abstract class ExpressionException extends Exception {
 
 	public static String concat(Object ...objs) {
-		StringBuilder sb = new StringBuilder();
-		
-		for (Object obj : objs) {
-			sb.append(obj.toString());
-		}
-
-		return sb.toString();
+		return Utils.concat(objs);
 	}
 
 	private int index;

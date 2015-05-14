@@ -69,16 +69,16 @@ public class Parser {
 		// Quanto mais alto na tablena (menor o índice do array),
 		// e mais à esquerda (menor o índice do subarray) maior a prescedência.
 		precedence = new Object[][] {
-			new Object[] { LParenthesis.class, RParenthesis.class },
-			new Object[] { Property.class },
-			new Object[] { Not.class, Positive.class, Negative.class },
-			new Object[] { Power.class },
-			new Object[] { Mult.class, Div.class, Mod.class },
-			new Object[] { Add.class, Diff.class },
-			new Object[] { LessThan.class, LessEqualsThan.class, GreaterThan.class, GreaterEqualsThan.class },
-			new Object[] { Equals.class, NotEquals.class },
-			new Object[] { Xor.class },
-			new Object[] { And.class, Or.class }
+			new Object[] { LParenthesis.class,    RParenthesis.class                                               },
+			new Object[] {     Property.class                                                                      },
+			new Object[] {          Not.class,        Positive.class,     Negative.class                           },
+			new Object[] {        Power.class                                                                      },
+			new Object[] {         Mult.class,             Div.class,          Mod.class                           },
+			new Object[] {          Add.class,            Diff.class                                               },
+			new Object[] {     LessThan.class,  LessEqualsThan.class,  GreaterThan.class,  GreaterEqualsThan.class },
+			new Object[] {       Equals.class,       NotEquals.class                                               },
+			new Object[] {          Xor.class                                                                      },
+			new Object[] {          And.class,              Or.class                                               }
 		};
 	}
 

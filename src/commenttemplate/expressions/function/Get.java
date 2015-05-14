@@ -4,12 +4,11 @@ import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
 
 import java.lang.reflect.Array;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by thiago on 23/05/14.
+ * @author thiago
  */
 public class Get extends Function {
 

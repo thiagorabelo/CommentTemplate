@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by thiago on 27/04/14.
+ * 
+ * 
+ * @author thiago
  */
 public class Empty extends Function {
 

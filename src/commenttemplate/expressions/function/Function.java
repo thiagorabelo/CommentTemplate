@@ -6,7 +6,7 @@ import java.util.List;
 import commenttemplate.expressions.tree.Exp;
 
 /**
- * Created by thiago on 27/04/14.
+ * @author thiago
  */
 public abstract class Function implements Exp {
 

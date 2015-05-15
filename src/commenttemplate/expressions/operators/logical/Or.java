@@ -2,6 +2,7 @@ package commenttemplate.expressions.operators.logical;
 
 import commenttemplate.expressions.operators.core.BinaryOperator;
 import commenttemplate.context.Context;
+import commenttemplate.expressions.primitivehandle.NumHandle;
 
 /**
  *
@@ -26,18 +27,22 @@ public class Or extends BinaryOperator {
 	}
 	
 	public static Object execute(Object left, Object right) {
-		if (isBool(left)) {
-			if (isBool(right)) {
-				return bool_bool(left, right);
+		if (!(NumHandle.isLongOrIntOrShortOrByte(left) && NumHandle.isLongOrIntOrShortOrByte(right))) {
+			if (isBool(left)) {
+				if (isBool(right)) {
+					return bool_bool(left, right);
+				} else {
+					return bool_object(left, right);
+				}
 			} else {
-				return bool_object(left, right);
+				if (isBool(right)) {
+					return object_bool(left, right);
+				} else {
+					return object_object(left, right);
+				}
 			}
 		} else {
-			if (isBool(right)) {
-				return object_bool(left, right);
-			} else {
-				return object_object(left, right);
-			}
+			return NumHandle.intShortByteToLong(left) | NumHandle.intShortByteToLong(right);
 		}
 	}
 

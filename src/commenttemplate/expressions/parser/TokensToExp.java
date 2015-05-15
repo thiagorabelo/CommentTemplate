@@ -302,7 +302,7 @@ public class TokensToExp {
 	
 	public static Number getNumber(String str) {
 		int len = str.length(), lastIdx = len - 1, numDots = 0;
-		int isLong = 0, isDouble = 0, isFloat = 0;
+		int isLong = 0, isDouble = 0, isFloat = 0, isHexa = 0, isBin = 0;
 		
 		char ch0 = str.charAt(0);
 
@@ -349,24 +349,30 @@ public class TokensToExp {
 					isLong += 1;
 					break;
 				
-				// FLOAT
+				// FLOAT | HEXA
 				case 'f':
 				case 'F':
-					if (i < lastIdx) {
+					if (i < lastIdx && isHexa <= 0) {
 						throw new NumberFormatException(str);
 					}
 
-					isFloat += 1;
+					if (isHexa <= 0) {
+						isFloat += 1;
+					}
+
 					break;
 				
-				// DOUBLE
+				// DOUBLE | HEXA
 				case 'd':
 				case 'D':
-					if (i < lastIdx) {
+					if (i < lastIdx && isHexa <= 0) {
 						throw new NumberFormatException(str);
 					}
+					
+					if (isHexa <= 0) {
+						isDouble += 1;
+					}
 
-					isDouble += 1;
 					break;
 				
 				// DOT
@@ -376,6 +382,36 @@ public class TokensToExp {
 					}
 
 					numDots += 1;
+					break;
+				
+				// HEXA
+				case 'x':
+					if (i != 1) {
+						throw new NumberFormatException(str);
+					}
+					isHexa += 1;
+					break;
+				case 'B':
+				case 'b':
+					
+					if (i == 1) {
+						isBin += 1;
+					} else if (!(isHexa > 0)) {
+						throw new NumberFormatException(str);
+					}
+					
+					break;
+
+				case 'A':
+				case 'a':
+				case 'c':
+				case 'C':
+				case 'E':
+				case 'e':
+					if (isHexa <= 0) {
+						throw new NumberFormatException(str);
+					}
+					
 					break;
 				
 				default:
@@ -394,7 +430,11 @@ public class TokensToExp {
 				throw new NumberFormatException(str);
 			}
 		} else {
-			if (isLong > 0) {
+			if (isHexa > 0) {
+				return Long.parseLong(str.substring(2), 16);
+			} else if (isBin > 0) {
+				return Long.parseLong(str.substring(2), 2);
+			} else if (isLong > 0) {
 				return Long.valueOf(str.substring(0, lastIdx));
 			} else if (isDouble > 0) {
 				return Double.valueOf(str);

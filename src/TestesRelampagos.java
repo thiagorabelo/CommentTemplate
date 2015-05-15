@@ -28,7 +28,50 @@ import java.util.regex.Pattern;
  */
 public class TestesRelampagos {
 	
-	public static void main(String[] args) {
+	public static String ExpToStr(Exp exp) {
+		StringBuilder sb = new StringBuilder();
+		exp.toString(sb);
+		return sb.toString();
+	}
+	
+	public static void main(String[] args) throws Exception {
+		Exp []exps = {
+			new Parser("a && b").parse(),
+			new Parser("a || b").parse(),
+			new Parser("a  ^ b").parse(),
+			new Parser("0b10 || 0b01").parse()
+		};
+
+		Object [][][]arrayParams = {
+			{
+				{false, false},
+				{false, true},
+				{true, false},
+				{true, true}
+			},
+			{
+				{0, 0},
+				{0, 1},
+				{1, 0},
+				{1, 1},
+			}
+		};
+		
+		for (Exp exp : exps) {
+			for (Object [][]params : arrayParams) {
+				for (Object []param : params) {
+					Context c = new Context();
+					c.put("a", param[0]);
+					c.put("b", param[1]);
+					System.out.println(Utils.concat(param[0], " ", exp, " ", param[1], " = ", exp.eval(c)));
+				}
+				System.out.println("-------------------------");
+			}
+			System.out.println("End for " + ExpToStr(exp) + "\n\n");
+		}
+	}
+	
+	public static void teste15(String[] args) {
 		MyStack<Character> stack = new MyStack<>();
 		
 		stack.push('a');

@@ -2,6 +2,7 @@ package commenttemplate.expressions.operators.logical;
 
 import commenttemplate.expressions.operators.core.BinaryOperator;
 import commenttemplate.context.Context;
+import commenttemplate.expressions.primitivehandle.NumHandle;
 
 
 /**
@@ -21,7 +22,9 @@ public class Xor extends BinaryOperator {
 	public static Object execute(Object left, Object right) {
 		if (isBool(left) && isBool(right)) {
 				return ((Boolean)left) ^ ((Boolean)right);
-		} else {
+		} if (NumHandle.isLongOrIntOrShortOrByte(left) && NumHandle.isLongOrIntOrShortOrByte(right)) {
+			return NumHandle.intShortByteToLong(left) ^ NumHandle.intShortByteToLong(right);
+		}else {
 			Object l = And.execute(left, Not.execute(right));
 			Object r = And.execute(Not.execute(left), right);
 

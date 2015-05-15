@@ -4,6 +4,7 @@ import commenttemplate.template.tags.TemplateTag;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.writer.TemplateWriter;
 import commenttemplate.context.Context;
+import commenttemplate.expressions.tree.Identifier;
 import commenttemplate.template.TemplateBlock;
 import commenttemplate.template.writer.Writer;
 import java.util.List;
@@ -34,7 +35,13 @@ public class SetTemplateTag extends TemplateTag {
 	public int evalParams(Context context, Writer sb) {
 		Exp attr = value;
 
-		String name = this.var.eval(context).toString();
+		Object n = var.eval(context);
+		String name = n != null
+			? n.toString()
+			: var instanceof Identifier && ((Identifier)var).getKeys().length == 1
+				? var.toString()
+				: null
+		;
 		
 		if (name != null && !name.equals("")) {
 			Object result;

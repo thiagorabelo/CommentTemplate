@@ -1,8 +1,7 @@
 package commenttemplate.template.tags.builtin;
 
-import commenttemplate.template.tags.TemplateTag;
+import commenttemplate.template.tags.Tag;
 import java.util.Iterator;
-import java.util.List;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
 import commenttemplate.template.TemplateBlock;
@@ -15,7 +14,7 @@ import java.util.NoSuchElementException;
  *
  * @author thiago
  */
-public class ForTemplateTag extends TemplateTag {
+public class ForTag extends Tag {
 	
 	private Exp list;
 	private Exp var;
@@ -158,7 +157,7 @@ public class ForTemplateTag extends TemplateTag {
 	}
 	
 	
-	public ForTemplateTag() {
+	public ForTag() {
 	}
 
 	protected int fromBuildingArray(Context context, NumericalList nlist, Writer sb) {

@@ -6,7 +6,7 @@ import commenttemplate.template.TemplateBlock;
 import commenttemplate.template.TemplateBlockBase;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.context.Context;
-import commenttemplate.template.tags.TemplateTag;
+import commenttemplate.template.tags.Tag;
 import commenttemplate.context.ContextWriterMap;
 import commenttemplate.template.MountingHelper;
 import commenttemplate.template.writer.Writer;
@@ -15,11 +15,11 @@ import commenttemplate.template.writer.Writer;
  *
  * @author thiago
  */
-public class ExtendsTemplateTag extends TemplateTag {
+public class ExtendsTag extends Tag {
 	
 	private Exp name;
 	
-	public ExtendsTemplateTag() {
+	public ExtendsTag() {
 	}
 
 	/*
@@ -75,7 +75,7 @@ public class ExtendsTemplateTag extends TemplateTag {
 
 		@Override
 		public void append(TemplateBlock other) {
-			if (other instanceof BlockTemplateTag) {
+			if (other instanceof BlockTag) {
 				super.append(other);
 			}
 		}

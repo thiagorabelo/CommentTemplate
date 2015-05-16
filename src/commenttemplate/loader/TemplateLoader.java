@@ -6,7 +6,7 @@ import java.util.Map;
 import commenttemplate.template.TemplateBlockBase;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.context.Context;
-import commenttemplate.template.tags.TemplateTagInitializer;
+import commenttemplate.template.tags.TagInitializer;
 import commenttemplate.util.retrieve.RecursiveRetrieveDataMap;
 
 /**
@@ -17,7 +17,7 @@ public class TemplateLoader {
 	
 	static {
 		Init.config();
-		TemplateTagInitializer.config();
+		TagInitializer.config();
 	}
 	
 	public static synchronized void loadtTemplate(Serializable key) throws TemplateException {

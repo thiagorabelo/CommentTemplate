@@ -39,7 +39,7 @@ public class TestesRelampagos {
 			new Parser("a && b").parse(),
 			new Parser("a || b").parse(),
 			new Parser("a  ^ b").parse(),
-			new Parser("0b10 || 0b01").parse()
+			//new Parser("0b10 || 0b01").parse()
 		};
 
 		Object [][][]arrayParams = {

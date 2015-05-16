@@ -70,7 +70,7 @@ public class TagComponent {
 
 	protected String name;
 //	protected String elseName = "else";
-	protected final Class<? extends TemplateTag> tagClass;
+	protected final Class<? extends Tag> tagClass;
 	protected final Tuple<Boolean, String> []params;
 	
 	protected class ParamsChecker {
@@ -152,7 +152,7 @@ public class TagComponent {
 		}
 	}
 	
-	public TagComponent(String name, Class<? extends TemplateTag> tagClass, String ...params) {
+	public TagComponent(String name, Class<? extends Tag> tagClass, String ...params) {
 		this.name = name;
 		this.tagClass = tagClass;
 		this.params = setParams(params);
@@ -173,7 +173,7 @@ public class TagComponent {
 //		return elseName;
 //	}
 
-	public Class<? extends TemplateTag> getTagClass() {
+	public Class<? extends Tag> getTagClass() {
 		return tagClass;
 	}
 	
@@ -216,9 +216,9 @@ public class TagComponent {
 		return params;
 	}
 	
-	protected TemplateTag newInstance() throws CouldNotInstanciateTagException {
+	protected Tag newInstance() throws CouldNotInstanciateTagException {
 		try {
-			TemplateTag tag = tagClass.newInstance();
+			Tag tag = tagClass.newInstance();
 			tag.setTagName(name);
 			return tag;
 		} catch (IllegalAccessException | InstantiationException ex) {
@@ -226,7 +226,7 @@ public class TagComponent {
 		}
 	}
 	
-	protected void populateParameters(TemplateTag tag, List<Tuple<String, Exp>> parameters) throws CouldNotSetTagParameterException{
+	protected void populateParameters(Tag tag, List<Tuple<String, Exp>> parameters) throws CouldNotSetTagParameterException{
 		for (Tuple<String, Exp> t : parameters) {
 			try {
 				Utils.setProperty(tag, t.getA(), t.getB());
@@ -240,11 +240,11 @@ public class TagComponent {
 		}
 	}
 
-	public TemplateTag populateParameters(String parameters)
+	public Tag populateParameters(String parameters)
 			throws CouldNotInstanciateTagException, CouldNotSetTagParameterException,
 			BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected {
 
-		TemplateTag tag = newInstance();
+		Tag tag = newInstance();
 		List<Tuple<String, Exp>> params = paramsList(parameters);
 		params = singleParameterVerifies(params, parameters);
 		new ParamsChecker().check(params);

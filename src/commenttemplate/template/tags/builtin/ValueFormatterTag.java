@@ -1,6 +1,6 @@
 package commenttemplate.template.tags.builtin;
 
-import commenttemplate.template.tags.TemplateTag;
+import commenttemplate.template.tags.Tag;
 import commenttemplate.context.Context;
 import commenttemplate.template.writer.Writer;
 
@@ -8,9 +8,10 @@ import commenttemplate.template.writer.Writer;
  *
  * @author thiago
  */
-public class ValueFormatterTemplateTag extends TemplateTag {
+// TODO: Construir Formatadores básicos.
+public class ValueFormatterTag extends Tag {
 	
-	public ValueFormatterTemplateTag() {
+	public ValueFormatterTag() {
 	}
 
 	@Override

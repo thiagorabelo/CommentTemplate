@@ -6,13 +6,12 @@ import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Join;
 import commenttemplate.util.Utils;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
  * @author thiago
  */
-public abstract class TemplateTag extends TemplateBlock {
+public abstract class Tag extends TemplateBlock {
 
 	public static final int SKIP_BODY = 0;
 	public static final int EVAL_BODY = 1;
@@ -28,7 +27,7 @@ public abstract class TemplateTag extends TemplateBlock {
 	
 	private String tagName;
 
-	public TemplateTag() {
+	public Tag() {
 	}
 	
 	public void start(Context context, Writer sb) {

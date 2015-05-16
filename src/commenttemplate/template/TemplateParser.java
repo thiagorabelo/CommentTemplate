@@ -9,7 +9,7 @@ import commenttemplate.expressions.parser.Parser;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
-import commenttemplate.template.tags.TemplateTag;
+import commenttemplate.template.tags.Tag;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.template.exceptions.TemplateNestingException;
 import commenttemplate.template.tags.TagComponent;
@@ -118,7 +118,7 @@ public class TemplateParser {
 
 					TagComponent component = TagContainer.instance().getByTagName(expressions[0]);
 					// @TODO: Fazer a validação das exceções aqui lançadas
-					TemplateTag tag = component.populateParameters(expressions[1]);
+					Tag tag = component.populateParameters(expressions[1]);
 
 					if (!usingElse.peek()) {
 						block.append(tag);

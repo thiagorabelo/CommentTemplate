@@ -1,6 +1,6 @@
 package commenttemplate.template.tags.builtin;
 
-import commenttemplate.template.tags.TemplateTag;
+import commenttemplate.template.tags.Tag;
 import commenttemplate.expressions.primitivehandle.NumHandle;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
@@ -10,11 +10,11 @@ import commenttemplate.template.writer.Writer;
  *
  * @author thiago
  */
-public class IfTemplateTag extends TemplateTag {
+public class IfTag extends Tag {
 
 	private Exp test;
 
-	public IfTemplateTag() {
+	public IfTag() {
 	}
 
 	protected boolean isBool(Object ob) {

@@ -1,24 +1,23 @@
 package commenttemplate.template.tags.builtin;
 
-import commenttemplate.template.tags.TemplateTag;
+import commenttemplate.template.tags.Tag;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.writer.TemplateWriter;
 import commenttemplate.context.Context;
 import commenttemplate.expressions.tree.Identifier;
 import commenttemplate.template.TemplateBlock;
 import commenttemplate.template.writer.Writer;
-import java.util.List;
 
 /**
  *
  * @author thiago
  */
-public class SetTemplateTag extends TemplateTag {
+public class SetTag extends Tag {
 	
 	private Exp var;
 	private Exp value;
 	
-	public SetTemplateTag() {
+	public SetTag() {
 	}
 
 	@Override

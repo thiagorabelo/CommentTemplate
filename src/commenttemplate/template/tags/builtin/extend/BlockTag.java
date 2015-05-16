@@ -4,21 +4,21 @@ import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.TemplateBlock;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
-import commenttemplate.template.tags.TemplateTag;
+import commenttemplate.template.tags.Tag;
 import commenttemplate.template.writer.Writer;
 
 /**
  *
  * @author thiago
  */
-public class BlockTemplateTag extends TemplateTag {
+public class BlockTag extends Tag {
 
 	public static final int EVAL_WRITER = 4;
 	public static final int EVAL_BODY_WITH_MAPPED_WRITER = 5;
 
 	private Exp name;
 
-	public BlockTemplateTag() {
+	public BlockTag() {
 	}
 
 	@Override

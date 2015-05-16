@@ -9,6 +9,7 @@ import commenttemplate.context.Context;
 import commenttemplate.template.tags.Tag;
 import commenttemplate.context.ContextWriterMap;
 import commenttemplate.template.MountingHelper;
+import commenttemplate.template.tags.TypeEval;
 import commenttemplate.template.writer.Writer;
 
 /**
@@ -26,7 +27,7 @@ public class ExtendsTag extends Tag {
 	
 	*/
 	@Override
-	public int evalParams(Context context, Writer sb) {
+	public TypeEval evalParams(Context context, Writer sb) {
 		return EVAL_BODY;
 	}
 	

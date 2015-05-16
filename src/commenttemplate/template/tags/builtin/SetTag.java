@@ -6,6 +6,7 @@ import commenttemplate.template.writer.TemplateWriter;
 import commenttemplate.context.Context;
 import commenttemplate.expressions.tree.Identifier;
 import commenttemplate.template.TemplateBlock;
+import commenttemplate.template.tags.TypeEval;
 import commenttemplate.template.writer.Writer;
 
 /**
@@ -31,7 +32,7 @@ public class SetTag extends Tag {
 	}
 
 	@Override
-	public int evalParams(Context context, Writer sb) {
+	public TypeEval evalParams(Context context, Writer sb) {
 		Exp attr = value;
 
 		Object n = var.eval(context);

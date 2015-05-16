@@ -1,10 +1,10 @@
 package commenttemplate.template.tags.builtin.extend;
 
 import commenttemplate.expressions.tree.Exp;
-import commenttemplate.template.TemplateBlock;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
 import commenttemplate.template.tags.Tag;
+import commenttemplate.template.tags.TypeEval;
 import commenttemplate.template.writer.Writer;
 
 /**
@@ -12,9 +12,19 @@ import commenttemplate.template.writer.Writer;
  * @author thiago
  */
 public class BlockTag extends Tag {
+	
+	private  enum TypeEvalBlock implements TypeEval {
 
-	public static final int EVAL_WRITER = 4;
-	public static final int EVAL_BODY_WITH_MAPPED_WRITER = 5;
+		EVAL_WRITER,
+		EVAL_BODY_WITH_MAPPED_WRITER,
+		EVAL_BODY
+		;
+
+		@Override
+		public void doEval(Tag tag, Context context, Writer sb) {
+			EVAL_BODY.doEval(tag, context, sb);
+		}
+	}
 
 	private Exp name;
 
@@ -22,16 +32,16 @@ public class BlockTag extends Tag {
 	}
 
 	@Override
-	public int evalParams(Context context, Writer sb) {
+	public TypeEval evalParams(Context context, Writer sb) {
 		ContextWriterMap cwm = (ContextWriterMap)context;
-		
+
 		if (cwm.getMode() == ContextWriterMap.Mode.STORE) {
-			return EVAL_BODY_WITH_MAPPED_WRITER;
+			return TypeEvalBlock.EVAL_BODY_WITH_MAPPED_WRITER;
 		} else if (sb != null && !sb.isEmpty()) {
-			return EVAL_WRITER;
+			return TypeEvalBlock.EVAL_WRITER;
 		}
-		
-		return EVAL_BODY;
+
+		return TypeEvalBlock.EVAL_BODY;
 	}
 	
 	@Override
@@ -40,18 +50,12 @@ public class BlockTag extends Tag {
 			ContextWriterMap cwm = (ContextWriterMap)context;
 			String blockName = name.eval(context).toString();
 			Writer w = cwm.getWriter(blockName);
+
+			TypeEvalBlock type = (TypeEvalBlock)evalParams(cwm, w);
 			
-			TemplateBlock []blockList;
-			int whomEvaluate = evalParams(cwm, w);
-			
-			switch (whomEvaluate) {
+			switch (type) {
 				case EVAL_BODY_WITH_MAPPED_WRITER:
-					blockList = getBlockList();
-					if (blockList != null) {
-						context.push();
-						loopBlockList(blockList, cwm, w);
-						context.pop();
-					}
+					EVAL_BODY.doEval(this, cwm, w);
 					break;
 
 				case EVAL_WRITER:
@@ -59,12 +63,7 @@ public class BlockTag extends Tag {
 					break;
 
 				case EVAL_BODY:
-					blockList = getBlockList();
-					if (blockList != null) {
-						context.push();
-						loopBlockList(blockList, cwm, sb);
-						context.pop();
-					}
+					EVAL_BODY.doEval(this, cwm, sb);
 					break;
 
 				default:

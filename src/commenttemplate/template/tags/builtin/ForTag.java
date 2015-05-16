@@ -5,6 +5,7 @@ import java.util.Iterator;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
 import commenttemplate.template.TemplateBlock;
+import commenttemplate.template.tags.TypeEval;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Utils;
 import java.lang.reflect.Array;
@@ -245,7 +246,7 @@ public class ForTag extends Tag {
 	}
 
 	@Override
-	public int evalParams(Context context, Writer sb) {
+	public TypeEval evalParams(Context context, Writer sb) {
 		Exp result = list;
 		int iterations;
 

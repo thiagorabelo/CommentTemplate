@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 
 /**
- * TESTE
+ * 
  * @author thiago
  */
 public class TestesRelampagos {

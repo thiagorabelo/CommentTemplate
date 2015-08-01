@@ -197,7 +197,7 @@ public class Utils {
 
 		// Tenta captura o valor da propriedade pelos métodos
 		// get, is e has.
-		for (int i = 0, len = prefixes.length; i < len;) {
+		for (int i = 0, len = prefixes.length; i < len; i++) {
 
 			if ((method = getMethod(klass, prefixes[i] + capitalized)) != null) {
 				if (force) {

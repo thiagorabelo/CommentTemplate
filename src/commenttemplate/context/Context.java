@@ -169,8 +169,7 @@ public class Context implements Map<String, Object> {
 	}
 
 	/**
-	 * Create a {@code Context} with onde scope with a specified
-	 * {@code RetrivieDataMap}.
+	 * Create a {@code Context} with a specified {@code RetrivieDataMap}.
 	 * 
 	 * @param retrieverDataMap An instance of {@code RetrieveDataMap}. A object
 	 * that do the job of compute de value of cheined properties, like

@@ -55,7 +55,8 @@ public class ForComponent extends TagComponent {
 		super("for", ForTag.class, "!list", "var", "step", "counter");
 	}
 
-	public Exp parseExpression(ForTag tag, String paramName, String expression) throws ExpectedOperator, ExpectedExpression, BadExpression, Unexpected, FunctionDoesNotExists {
+	public Exp parseExpression(ForTag tag, String paramName, String expression)
+			throws ExpectedOperator, ExpectedExpression, BadExpression, Unexpected, FunctionDoesNotExists {
 		if (!paramName.equals(LIST)) {
 			return parseExpression(expression);
 		}
@@ -72,7 +73,8 @@ public class ForComponent extends TagComponent {
 		return parseExpression(expression);
 	}
 	
-	public List<Tuple<String, Exp>> paramsList(ForTag tag, String parameters) throws BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected {
+	public List<Tuple<String, Exp>> paramsList(ForTag tag, String parameters)
+			throws BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected {
 		LinkedList<Tuple<String, Exp>> params = new LinkedList<>();
 		Matcher m = PARAMS_PATTERN.matcher(parameters);
 

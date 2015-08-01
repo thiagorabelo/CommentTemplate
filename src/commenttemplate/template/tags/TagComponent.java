@@ -125,7 +125,12 @@ public class TagComponent {
 			}
 			
 			// TODO: MELHORAR EXCEÇÃO
-			throw new RuntimeException(Utils.concat("The Tag [", TagComponent.this.name, "] does not accept a param named ", name));
+			throw new RuntimeException(Utils.concat(
+				"The Tag [", 
+				TagComponent.this.name,
+				"] does not accept a param named ",
+				name
+			));
 		}
 		
 		public void check(List<Tuple<String, Exp>> params) {
@@ -226,7 +231,8 @@ public class TagComponent {
 		}
 	}
 	
-	protected void populateParameters(Tag tag, List<Tuple<String, Exp>> parameters) throws CouldNotSetTagParameterException{
+	protected void populateParameters(Tag tag, List<Tuple<String, Exp>> parameters)
+			throws CouldNotSetTagParameterException{
 		for (Tuple<String, Exp> t : parameters) {
 			try {
 				Utils.setProperty(tag, t.getA(), t.getB());

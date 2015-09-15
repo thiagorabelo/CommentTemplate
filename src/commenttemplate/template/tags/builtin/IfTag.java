@@ -33,6 +33,10 @@ public class IfTag extends Tag {
 	protected boolean isEmptyStr(String obj) {
 		return ((String)obj).isEmpty();
 	}
+	
+	public void setTest(Exp test) {
+		this.test = test;
+	}
 
 	@Override
 	public TypeEval evalParams(Context context, Writer sb) {

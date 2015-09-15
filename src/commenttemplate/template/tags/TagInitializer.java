@@ -1,12 +1,12 @@
 package commenttemplate.template.tags;
 
 import commenttemplate.template.tags.builtin.IfTag;
+import commenttemplate.template.tags.builtin.IncludeTag;
 import commenttemplate.template.tags.builtin.SetTag;
 import commenttemplate.template.tags.builtin.WithTag;
 import commenttemplate.template.tags.builtin.extend.ExtendsTag;
 import commenttemplate.template.tags.builtin.extend.BlockTag;
 import commenttemplate.template.tags.builtin.customcomponent.ForComponent;
-import commenttemplate.template.tags.builtin.customcomponent.WithComponent;
 import commenttemplate.util.Utils;
 
 /**
@@ -46,7 +46,9 @@ public class TagInitializer {
 	
 	private void initBuildin() {
 		TagContainer.instance().addBuiltinTag(new ForComponent());
-		TagContainer.instance().addBuiltinTag(new WithComponent());
+//		TagContainer.instance().addBuiltinTag(new WithComponent());
+		TagContainer.instance().addBuiltinTag(new MappableTagComponent("with", WithTag.class));
+		TagContainer.instance().addBuiltinTag(new MappableTagComponent("include", IncludeTag.class,  "!template"));
 		TagContainer.instance().addBuiltinTag(new TagComponent("if", IfTag.class, "!test"));
 		TagContainer.instance().addBuiltinTag(new TagComponent("set", SetTag.class, "!var", "value"));
 //		TemplateTag.addBuiltinTag(new ValueFormatterTemplateTag());

@@ -74,10 +74,10 @@ public class TagComponent {
 	protected final Tuple<Boolean, String> []params;
 	
 	protected class ParamsChecker {
-		private final Tuple<Boolean, String> []requiredParams;
-		private final Tuple<Boolean, String> []othersParans;
-		private int iR; // index required
-		private int iO; // index others
+		protected final Tuple<Boolean, String> []requiredParams;
+		protected final Tuple<Boolean, String> []othersParans;
+		protected int iR; // index required
+		protected int iO; // index others
 		
 		public ParamsChecker() {
 			int r = 0, o = 0;
@@ -109,22 +109,22 @@ public class TagComponent {
 		public void check(String name) {
 
 			for (int i = 0; i <= iR; i++) {
-				if (requiredParams[i].getB().equals(name)) {
-					requiredParams[i] = requiredParams[iR];
-					requiredParams[iR--] = null;
+				if (requiredParams[i].getB().equals(name)) { // Doing this for i=1, iR=4:
+					requiredParams[i] = requiredParams[iR];  // [A, B, C, D] -> [A, D, C, null]
+					requiredParams[iR--] = null;             //     ^ iR bacomes 3
 					return;
 				}
 			}
 
 			for (int i = 0; i <= iO; i++) {
-				if (othersParans[i].getB().equals(name)) {
+				if (othersParans[i].getB().equals(name)) { // Doing the same logic above
 					othersParans[i] = othersParans[iO];
 					othersParans[iO--] = null;
 					return;
 				}
 			}
 			
-			// TODO: MELHORAR EXCEÇÃO
+			// TODO: DO IT BETTER
 			throw new RuntimeException(Utils.concat(
 				"The Tag [", 
 				TagComponent.this.name,
@@ -143,7 +143,7 @@ public class TagComponent {
 				requireds.add(requiredParams[i].getB());
 			}
 			
-			// TODO: MELHORAR EXCEÇÃO
+			// TODO: DO IT BETTER
 			if (!requireds.isEmpty()) {
 				StringBuilder sb = new StringBuilder();
 				sb.append("The parameters ")

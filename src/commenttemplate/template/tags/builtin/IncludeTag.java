@@ -21,36 +21,43 @@ package commenttemplate.template.tags.builtin;
 
 import commenttemplate.context.Context;
 import commenttemplate.expressions.tree.Exp;
-import commenttemplate.template.tags.Tag;
+import commenttemplate.loader.TemplateLoader;
+import commenttemplate.template.TemplateBlockBase;
+import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.template.tags.TypeEval;
+import commenttemplate.template.writer.TemplateWriter;
 import commenttemplate.template.writer.Writer;
-import commenttemplate.util.MyHashMap;
-import java.util.Map;
 
 /**
  *
  * @author thiago
  */
-public class WithTag extends Tag {
+public class IncludeTag extends WithTag {
 	
-	protected MyHashMap<String, Exp> params = new MyHashMap<>();
+	private Exp template;
+	
+	public void setTemplate(Exp template) {
+		this.template = template;
+	}
 	
 	@Override
 	public TypeEval evalParams(Context context, Writer sb) {
-		return EVAL_BODY;
+		return SKIP_BODY;
 	}
 	
 	@Override
-	public void start(Context context, Writer sb) {
-		context.push();
+	public void eval(Context context, Writer sb) {
+		try {
+			TemplateBlockBase block = TemplateLoader.get(template.eval(context).toString());
 
-		for (Map.Entry<String, Exp> e : params.entrySet()) {
-			context.put(e.getKey(), e.getValue().eval(context));
+			start(context, sb);
+			String result = block.eval(context);
+			end(context, sb);
+
+			sb.append(result);
+		} catch (TemplateException ex) {
+			// @TODO: fazer o quê?
+			throw new RuntimeException(ex);
 		}
-	}
-
-	@Override
-	public void end(Context context, Writer sb) {
-		context.pop();
 	}
 }

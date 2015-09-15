@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 public class Identifier implements Token {
 	private static final Pattern splitter = Pattern.compile("\\s*\\.\\s*");
 	
-//	private String id;
 	private String [] keys;
 	
 	public Identifier() {

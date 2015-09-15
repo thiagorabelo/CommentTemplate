@@ -49,7 +49,8 @@ import commenttemplate.util.Tuple;
  * 
  * - operadores por ordem de precedência:
  *		- (,) #futuramente -> []
- *		- !, (modificadores de sinal) -, +
+ *		- . (operador de propriedade)
+ *		- !, - (modificador de sinal), + (modificador de sinal)
  *		- ** (potenciação)
  *		- *, /, %
  *		- +, -
@@ -103,7 +104,7 @@ public class Parser {
 	 * TODO:
 	 *      1 - Buscar a chamada de funções na expressão
 	 *      2 - O Tokenizer deve retornar uma função na seguinte forma:
-	 *          "func", (", "arg1", "arg2", ... "arg_n", ")"
+	 *          "func", "(", "arg1", "arg2", ... "arg_n", ")"
 	 *      3 - TokenToExp deve:
 	 *          Exp<func>, Exp<(>, Exp<arg1>, Exp<arg2>, ... Exp<arg_n>, Exp<)>
 	 */

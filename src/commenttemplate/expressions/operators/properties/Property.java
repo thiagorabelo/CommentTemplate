@@ -45,12 +45,6 @@ public class Property extends BinaryOperator {
 		return ".";
 	}
 
-	/*
-	 * TODO: Não está muito legal esta o argumento direito deste operador.
-	 *       Ele é gerando como um Identifier, mas não deveria ser.
-	 *       Pensar em algo que seja mais elegante, como um tipo diferente
-	 *       para ser usado neste operador.
-	 */
 	@Override
 	public Object eval(Context context) {
 		Object left = getLeft().eval(context);

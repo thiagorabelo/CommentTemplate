@@ -52,7 +52,7 @@ public class SetTag extends Tag {
 				context.put(name, result);
 			} else if ((blockList = getBlockList()) != null){
 				TemplateWriter tw = new TemplateWriter();
-				loopBlockList(blockList, context, sb);
+				loopBlockList(blockList, context, tw);
 
 				if (!tw.isEmpty()) {
 					context.put(name, tw.toString());

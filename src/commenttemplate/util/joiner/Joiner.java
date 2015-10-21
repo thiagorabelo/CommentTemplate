@@ -25,6 +25,7 @@ import java.util.Iterator;
  *
  * @author thiago
  */
+// TODO: Adicionar a opção "flatten"
 public abstract class Joiner {
 	
 	protected String joiner;

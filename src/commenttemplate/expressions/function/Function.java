@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import commenttemplate.expressions.tree.Exp;
+import commenttemplate.util.Join;
 
 /**
  * A function is a class that extends this Function class and implements the
@@ -84,11 +85,7 @@ public abstract class Function implements Exp {
 		sb.append("(");
 		String c = "";
 
-		for (Exp arg : args) {
-			sb.append(c);
-			arg.toString(sb);
-			c = ", ";
-		}
+		sb.append(Join.with(", ").join(args));
 
 		sb.append(")");
 	}

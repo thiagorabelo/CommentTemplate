@@ -40,7 +40,7 @@ public class Init extends TemplateLoaderConfig {
 //	private static final String RETRIEVER_CLASS = "commenttemplate.retriever_class";
 	private static final String RETRIEVER = "commenttemplate.retriever_type";
 	private static final String RESOURCES = "commenttemplate.resource_folder";
-	private static final String PREPROCESSOR = "commenttemplate.preprocessor";
+	private static final String CONTEXTPROCESSOR = "commenttemplate.contextprocessor";
 	private static final String CUSTOM_TAG = "commenttemplate.custom_tag";
 	private static final String CUSTOM_FUNCTION = "commenttemplate.custom_function";
 //	private static final String CONFIG_CLASS = "commenttemplate.config_class";
@@ -97,7 +97,7 @@ public class Init extends TemplateLoaderConfig {
 		setType(LoaderType.valueOf(prop.getProperty(RETRIEVER).toUpperCase()));
 		setFolderPath(res);
 		
-		String []preprocessors = prop.getAsArray(PREPROCESSOR);
+		String []preprocessors = prop.getAsArray(CONTEXTPROCESSOR);
 		if (preprocessors.length > 0) {
 			for (String preprocessor : preprocessors) {
 				Class<? extends ContextProcessor> preClass = (Class<? extends ContextProcessor>)Class.forName(preprocessor);

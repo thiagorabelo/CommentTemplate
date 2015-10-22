@@ -23,7 +23,6 @@ import commenttemplate.util.Utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Optional;
 
 /**
  *
@@ -95,7 +94,20 @@ public class TimeIt implements Iterable<Long> {
 			return total;
 		}
 
-		return total = deltas.stream().reduce((a, b) -> a + b).get();
+		// For example only, an accumulation without stream
+//		int len = deltas.size();
+//		if (len > 1) {
+//			total = deltas.get(0);
+//			for (int i = 1; i < len; i++) {
+//				total += deltas.get(i);
+//			}
+//		} else if (len == 1) {
+//			total = deltas.get(0);
+//		} else {
+//			total = 0;
+//		}
+		
+		return total = deltas.stream().reduce((a, b) -> a + b).get(); // Java 8
 	}
 	
 	public double totalMilis() {

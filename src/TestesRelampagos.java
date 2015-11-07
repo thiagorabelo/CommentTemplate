@@ -345,7 +345,7 @@ public class TestesRelampagos {
 		map.put("malesuada", "nisl");
 		map.put("adipiscing", "Sed");
 		map.put("dui", "aliquam");
-
+		
 		context.push(map);
 
 		System.out.println("Context size: " + context.size());
@@ -358,6 +358,8 @@ public class TestesRelampagos {
 		
 		map = (MyHashMap<String, Object>)map.clone();
 		System.out.println("\n------ CLONE ------\nSize: " + map.size());
+		map.print();
+		map.put("ksdhh", "testa no teclado");
 		map.print();
 	}
 	
@@ -523,17 +525,35 @@ public class TestesRelampagos {
 		}
 	}
 
-	public static void teste3() {
-		System.out.println(Integer.toBinaryString(1001));
+	public static void teste3(String []args) {
+		int a = 1431655765;  // 01010101010101010101010101010101
+		int b = -1431655766; // 10101010101010101010101010101010
 
-		// "come" os bits mais a direita
-		System.out.println(Integer.toBinaryString(1001 >>> 1));
+		System.out.println("a -> " + Integer.toBinaryString(a));
+		System.out.println("b -> " + Integer.toBinaryString(b));
 		
-		// move os bits para direita (acrescenta zeros à esquerda)
-		System.out.println(Integer.toBinaryString(1001 << 1));
+		System.out.println();
+
+		// Operador <<: desloca bits para a esquerda e completa os espaços
+		// deixados na direita com 0.
+		System.out.println("a << 3 -> " + Integer.toBinaryString(a << 3)); // 10101010101010101010101010101000
+		System.out.println("b << 3 -> " + Integer.toBinaryString(b << 3)); // 01010101010101010101010101010000
 		
-		// move os bits para a esquerda (como os bits mais a direita)
-		System.out.println(Integer.toBinaryString(1001 >> 1));	
+		System.out.println();
+
+		// Operador >>>: desloca bits para a direita e completa os espaços
+		// deixados na esquerda com 0.
+		System.out.println("a >>> 3 -> " + Integer.toBinaryString(a >>> 3)); // 00001010101010101010101010101010
+		System.out.println("b >>> 3 -> " + Integer.toBinaryString(b >>> 3)); // 00010101010101010101010101010101
+		
+		System.out.println();
+
+		// Operador >>: desloca bits para a direita e completa os espaços
+		// deixados na esquerda com o bit de sinal (bit mais significativo),
+		// ou seja, se o bit de sinal for 1 preenche os espaços com 1, caso
+		// contrário preenche os espaços com 0.
+		System.out.println("a >> 3 -> " + Integer.toBinaryString(a >> 3)); // 00001010101010101010101010101010
+		System.out.println("b >> 3 -> " + Integer.toBinaryString(b >> 3)); // 11110101010101010101010101010101
 	}
 	
 	public static void teste2() {

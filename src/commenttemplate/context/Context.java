@@ -90,9 +90,21 @@ public class Context implements Map<String, Object> {
 	private static Object get(MyStack<MyHashMap<String, Object>> maps, Object key) {
 		MyStack.Node<MyHashMap<String, Object>> node;
 
-		for (node = maps.getTopNode(); node != null; node = node.getAncestral()) {
+		for (node = maps.topNode(); node != null; node = node.previus()) {
 			Map.Entry<String, Object> e;
 
+			/**
+			 * Why the need to return an Entry from map and doesn't use the
+			 * HashMap from Java?
+			 * Because we want know when a variable was set to {@code null} and
+			 * not be confused with "value does not found".
+			 * 
+			 * This stops the search into deep scopes when find a variable with
+			 * null value.
+			 * 
+			 * And when a variable is not found in a scope (that also would
+			 * return null) the search keep in the following scope.
+			 */
 			if ((e = node.getItem().getEntry(key)) != null) {
 				return e.getValue();
 			}

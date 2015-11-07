@@ -13,7 +13,7 @@ public class MyStack<T> implements Iterable<T> {
 	
 	public static interface Node<T> {
 		public T getItem();
-		public Node<T> getAncestral();
+		public Node<T> previus();
 	}
 	
 	private class StackNode implements Node<T> {
@@ -35,7 +35,7 @@ public class MyStack<T> implements Iterable<T> {
 		}
 
 		@Override
-		public Node<T> getAncestral() {
+		public Node<T> previus() {
 			return ancestral;
 		}
 	}
@@ -88,11 +88,7 @@ public class MyStack<T> implements Iterable<T> {
 	}
 
 	public T peek() {
-		if (top != null) {
-			return top.item;
-		}
-
-		return null;
+		return top != null ? top.item : null;
 	}
 
 	public T replaceTop(T newTop) {
@@ -126,7 +122,6 @@ public class MyStack<T> implements Iterable<T> {
 	}
 
 	public void clear() {
-
 		StackNode t;
 
 		while (top.ancestral != null) {
@@ -142,7 +137,7 @@ public class MyStack<T> implements Iterable<T> {
 		return size == 0;
 	}
 	
-	public MyStack.Node<T> getTopNode() {
+	public MyStack.Node<T> topNode() {
 		return top;
 	}
 	

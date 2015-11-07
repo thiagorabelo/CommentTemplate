@@ -46,18 +46,20 @@ public class MyHashMap<K, V> implements Map<K, V> {
 	private static int DEFAULT_INITIAL_SIZE = 1 << 4;
 	
 	private class Node<K, V> implements Map.Entry<K, V> {
-		private K key;
+		private final K key;
+		private final int hash;
 		private V value;
-		private int hash = 0;
 		private Node<K, V> next = null;
-
-		public Node(K k, V v) {
-			key = k;
-			value = v;
+		
+		public Node(K key, V value) {
+			this.key = key;
+			this.value = value;
+			this.hash = 0;
 		}
 		
-		public Node(int hash, K k, V v) {
-			this(k, v);
+		public Node(int hash, K key, V value) {
+			this.key = key;
+			this.value = value;
 			this.hash = hash;
 		}
 		
@@ -125,7 +127,8 @@ public class MyHashMap<K, V> implements Map<K, V> {
 		resize(map.size());
 		
 		for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
-			putEntry(new Node((Node<? extends K, ? extends V>) entry));
+			Node e = (Node<? extends K, ? extends V>) entry;
+			putEntry(e.hash, (K)e.key, (V)e.value);
 		}
 	}
 
@@ -133,34 +136,31 @@ public class MyHashMap<K, V> implements Map<K, V> {
 		resize(map.size());
 		
 		for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
-			putEntry(new Node(hash(entry.getKey()), entry.getKey(), entry.getValue()));
+			putEntry(hash(entry.getKey()), entry.getKey(), entry.getValue());
 		}
 	}
 	
 	private int index(int hash) {
-		return hash % table.length;
-		//return  (table.length - 1) & hash;
+		//return hash % table.length;
+		return  (table.length - 1) & hash;
 	}
 	
 	private int hash(Object key) {
-		return key != null ? (key.hashCode() & Integer.MAX_VALUE) : 0;
-		//int h;
-        //return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+		//return key != null ? (key.hashCode() & Integer.MAX_VALUE) : 0;
+		int h;
+        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
 	}
 	
 	public Map.Entry<K, V> getEntry(Object key) {
 		int hash = hash(key);
-		int index = index(hash);
+		Node<K, V> f = table[index(hash)];
 
-		if (table[index] != null) {
-			Node<K, V> f = table[index];
-			while (f != null) {
-				if (f.hash == hash && ((key == f.key) || ((key != null) && (f.key.equals(key))))) {
-					return f;
-				}
-
-				f = f.next;
+		while (f != null) {
+			if (f.hash == hash && ((key == f.key) || ((key != null) && (f.key.equals(key))))) {
+				return f;
 			}
+
+			f = f.next;
 		}
 
 		return null;
@@ -185,6 +185,32 @@ public class MyHashMap<K, V> implements Map<K, V> {
 		resize(0);
 	}
 
+//	private void resize(int extraSize) {
+//		Node<K, V>[] oldTab = table;
+//
+//		int newSize = extraSize <= 0
+//				? oldTab != null
+//						? table.length << 1
+//						: initialSize
+//				: oldTab != null
+//						? (int) ((size + extraSize) / loadFactor)
+//						: (int) (extraSize / loadFactor);
+//
+//		table = new Node[newSize % 2 == 0 ? newSize : newSize + 1];
+//
+//		if (oldTab != null) {
+//			copyTable(table, oldTab);
+//		}
+//
+//		threshold = (int) (table.length * loadFactor);
+//	}
+
+	/* 
+	 * @TODO:
+	 * Aparentemente o método abaixo, que possui código duplicado,
+	 * roda mais rápido que o que está comentado logo acima.
+	 * Testar isso em outros computadores.
+	 */
 	private void resize(int extraSize) {
 		Node<K, V> []oldTab = table;
 
@@ -260,35 +286,14 @@ public class MyHashMap<K, V> implements Map<K, V> {
 		System.out.println(sb.append("\n----------------------------------------\n"));
 	}
 
-	public Map.Entry<K, V> putEntry(Node<K, V> e) {
-		int index = index(e.hash);
+	protected V putEntry(int hash, K key, V value) {
+		int index;
+		Node<K, V> f = table[index = index(hash)];
+		Node<K, V> l = null;
 		
-		if (table[index] != null) {
-			Node<K, V> f = table[index];
-			Node<K, V> l = null;
+		if (f == null) {
+			table[index] = new Node<K, V>(hash, key, value);
 
-			while (f != null) {
-				if (f.hash == e.hash && (f.key == e.key) || ((e.key != null) && (f.key.equals(e.key)))) {
-					if (l != null) {
-						e.next = f.next;
-						f.next = null;
-						l.next = e;
-					} else {
-						e.next = f.next;
-						table[index] = e;
-					}
-//					print();
-					return f;
-				}
-				
-				l = f;
-				f = f.next;
-			}
-			
-			// Nunca é nulo
-			l.next = e;
-			e.next = null;
-			
 			if (++size > threshold) {
 				resize();
 			}
@@ -296,8 +301,21 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
 			return null;
 		} else {
-			table[index] = e;
-
+			while (f != null) {
+				if (f.hash == hash && (f.key == key) || ((key != null) && (f.key.equals(key)))) {
+					V old = f.value;
+					f.value = value;
+//					print();
+					return old;
+				}
+				
+				l = f;
+				f = f.next;
+			}
+			
+			// l nunca é nulo
+			l.next = new Node<K, V>(hash, key, value);
+			
 			if (++size > threshold) {
 				resize();
 			}
@@ -337,8 +355,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
 
 	@Override
 	public V put(K key, V value) {
-		Map.Entry<K, V> e;
-		return (e = putEntry(new Node<>(hash(key), key, value))) != null ? e.getValue() : null;
+		return putEntry(hash(key), key, value);
 	}
 
 	@Override
@@ -467,14 +484,11 @@ public class MyHashMap<K, V> implements Map<K, V> {
 	}
 
 	private Node<K, V> interruptableCrossTable(LoopNodes<K, V> action) {
-		Node<K, V> f;
 		if (table != null) {
 			for (int i = 0, len = table.length; i < len; i++) {
-				if ((f = table[i]) != null) {
-					for (; f != null; f = f.next) {
-						if (action.action(f, i)) {
-							return f;
-						}
+				for (Node<K, V> f = table[i]; f != null; f = f.next) {
+					if (action.action(f, i)) {
+						return f;
 					}
 				}
 			}
@@ -496,29 +510,29 @@ public class MyHashMap<K, V> implements Map<K, V> {
 		}
 
 		@Override
-        public final boolean contains(Object o) {
+		public final boolean contains(Object o) {
 			return getEntry(o) != null;
 		}
 
 		@Override
 		public final boolean remove(Object key) {
-            return removeEntry(key) != null;
-        }
-		
+			return removeEntry(key) != null;
+		}
+
 		@Override
 		public final Iterator<K> iterator() {
 			return new KeyIterator();
 		}
 		
 		@Override
-        public final void forEach(Consumer<? super K> action) {
+		public final void forEach(Consumer<? super K> action) {
 			throw new UnsupportedOperationException("Not supported yet.");
-        }
+		}
 
 		@Override
-        public final Spliterator<K> spliterator() {
+		public final Spliterator<K> spliterator() {
 			throw new UnsupportedOperationException("Not supported yet.");
-        }
+		}
 	}
 
 	@Override
@@ -535,7 +549,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
 	
 	private class ValuesCollection extends AbstractCollection<V> {
 		@Override
-        public final int size() {
+		public final int size() {
 			return size;
 		}
 
@@ -545,21 +559,21 @@ public class MyHashMap<K, V> implements Map<K, V> {
 		}
 
 		@Override
-        public final Iterator<V> iterator() {
+		public final Iterator<V> iterator() {
 			return new ValueIterator();
 		}
 
 		@Override
-        public final boolean contains(Object o) {
+		public final boolean contains(Object o) {
 			return getEntry(o) != null;
 		}
 
-        public final Spliterator<V> spliterator() {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-        public final void forEach(Consumer<? super V> action) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }	
+		public final Spliterator<V> spliterator() {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+		public final void forEach(Consumer<? super V> action) {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
 	}
 
 	@Override
@@ -587,27 +601,27 @@ public class MyHashMap<K, V> implements Map<K, V> {
 		}
 
 		@Override
-        public final boolean contains(Object o) {
+		public final boolean contains(Object o) {
 			return getEntry(o) != null;
 		}
 
 		@Override
 		public final boolean remove(Object key) {
-            return removeEntry(key) != null;
-        }
+			return removeEntry(key) != null;
+		}
 		
 		@Override
 		public final Iterator<Map.Entry<K, V>> iterator() {
 			return new EntryIteratorImpl();
 		}
 
-        public final void forEach(Consumer<? super Map.Entry<K, V>> action) {
+		public final void forEach(Consumer<? super Map.Entry<K, V>> action) {
 			throw new UnsupportedOperationException("Not supported yet.");
-        }
+		}
 
-        public final Spliterator<Map.Entry<K, V>> spliterator() {
+		public final Spliterator<Map.Entry<K, V>> spliterator() {
 			throw new UnsupportedOperationException("Not supported yet.");
-        }
+		}
 	}
 
 	@Override

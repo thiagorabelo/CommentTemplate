@@ -18,15 +18,15 @@ public class MyStack<T> implements Iterable<T> {
 	
 	private class StackNode implements Node<T> {
 		private T item;
-		private StackNode ancestral;
+		private StackNode previus;
 
 		public StackNode(T item) {
 			this.item = item;
 		}
 
-		public StackNode(T item, StackNode ancestral) {
+		public StackNode(T item, StackNode previus) {
 			this(item);
-			this.ancestral = ancestral;
+			this.previus = previus;
 		}
 
 		@Override
@@ -36,7 +36,7 @@ public class MyStack<T> implements Iterable<T> {
 
 		@Override
 		public Node<T> previus() {
-			return ancestral;
+			return previus;
 		}
 	}
 	
@@ -62,13 +62,13 @@ public class MyStack<T> implements Iterable<T> {
 
 			top = t = new StackNode(topSrc.item);
 
-			while (topSrc.ancestral != null) {
-				t.ancestral = new StackNode(topSrc.ancestral.item);
-				t = t.ancestral;
-				topSrc = topSrc.ancestral;
+			while (topSrc.previus != null) {
+				t.previus = new StackNode(topSrc.previus.item);
+				t = t.previus;
+				topSrc = topSrc.previus;
 			}
 
-			t.ancestral = temp;
+			t.previus = temp;
 
 			size += source.size;
 		}
@@ -78,7 +78,7 @@ public class MyStack<T> implements Iterable<T> {
 	public T pop() {
 		if (top != null) {
 			StackNode t = top;
-			top = top.ancestral;
+			top = top.previus;
 			size--;
 
 			return t.item;
@@ -124,9 +124,9 @@ public class MyStack<T> implements Iterable<T> {
 	public void clear() {
 		StackNode t;
 
-		while (top.ancestral != null) {
-			t = top.ancestral;
-			top.ancestral = null;
+		while (top.previus != null) {
+			t = top.previus;
+			top.previus = null;
 			top = t;
 		}
 
@@ -154,7 +154,7 @@ public class MyStack<T> implements Iterable<T> {
 		public T next() {
 			if (current != null) {
 				StackNode t = current;
-				current = t.ancestral;
+				current = t.previus;
 
 				return t.item;
 			}

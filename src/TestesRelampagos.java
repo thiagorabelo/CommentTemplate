@@ -28,13 +28,17 @@ import java.util.regex.Pattern;
  */
 public class TestesRelampagos {
 	
+	public static void main(String[] args)throws Exception {
+		teste16();
+	}
+	
 	public static String ExpToStr(Exp exp) {
 		StringBuilder sb = new StringBuilder();
 		exp.toString(sb);
 		return sb.toString();
 	}
 	
-	public static void main(String[] args) throws Exception {
+	public static void teste16() throws Exception {
 		Exp []exps = {
 			new Parser("a && b").parse(),
 			new Parser("a || b").parse(),
@@ -71,7 +75,7 @@ public class TestesRelampagos {
 		}
 	}
 	
-	public static void teste15(String[] args) {
+	public static void teste15() {
 		MyStack<Character> stack = new MyStack<>();
 		
 		stack.push('a');
@@ -112,7 +116,7 @@ public class TestesRelampagos {
 		}
 	}
 	
-	public static void teste14(String[] args) {
+	public static void teste14() {
 		String exp = "(70+10**-2)<2*-6/num.val||!(length('olá mundo')!=num.val)";
 		List<Tuple<String, Integer>> l = new Tokenizer(exp).tokenList();
 		List<Tuple<String, Integer>> tokens = new ArrayList<>();
@@ -174,7 +178,7 @@ public class TestesRelampagos {
 		return -1;
 	}
 	
-	public static void teste13(String[] args) throws Exception  {
+	public static void teste13() throws Exception  {
 		List<Tuple<String, Integer>> tokens = new Tokenizer("append('${', na|me, '}'").tokenList();
 		
 		tokens.stream().forEach(t -> {
@@ -204,7 +208,7 @@ public class TestesRelampagos {
 		}
 	}
 	
-	public static void teste12(String[] args) {
+	public static void teste12() {
 		Pattern SPLIT_TAG_CLASS = Pattern.compile("((?<tagname>\\w+)\\s*,\\s*)?(?<tagclass>[\\w|\\.]+)");
 		Pattern SPLIT_BY_COMMA = Pattern.compile("\\s*,\\s*");
 		
@@ -225,7 +229,7 @@ public class TestesRelampagos {
 		}
 	}
 
-	public static void teste11(String[] args) {
+	public static void teste11() {
 		Pattern p = Pattern.compile("<\\!\\-\\-(\\w+)\\s*(.*?)\\s*\\-\\->");
 		Pattern param = Pattern.compile("(\\w+)\\=\"([^\"]*)\"");
 		String tag = " <!--tag foo=\"param1\" bar=\"param2\" --> ";
@@ -242,7 +246,7 @@ public class TestesRelampagos {
 	}
 
 
-	public static void teste10(String[] args) throws Exception {
+	public static void teste10() throws Exception {
 		String exp = "a + length(text).floatValue * 2";
 		
 		HashMap<String, Object> map = new HashMap<>();
@@ -260,7 +264,7 @@ public class TestesRelampagos {
 		System.out.println(tree.eval(new Context(map)));
 	}
 	
-	public static void teste9(String[] args) throws Exception {
+	public static void teste9() throws Exception {
 		//                   0         10        20        30        40        50
 		//                   0123456789012345678901234567890123456789012345678901234567890
 		String expression = "a + b.c + d.e + length('my.eggs').toInt.value + z.y";
@@ -297,7 +301,7 @@ public class TestesRelampagos {
 		System.out.println(sb);
 	}
 	
-	public static void teste8(String[] args) {
+	public static void teste8() {
 		MyHashMap<String, Object> map = new MyHashMap<>();
 
 		map.put("Duis", "Curabitur");
@@ -363,7 +367,7 @@ public class TestesRelampagos {
 		map.print();
 	}
 	
-	public static void teste7(String[] args) {
+	public static void teste7() {
 		HashMap<String, String> _map = new HashMap<>();
 		int max = 15;
 
@@ -405,7 +409,7 @@ public class TestesRelampagos {
 //		}
 	}
 	
-	public static void teste6(String[] args) {
+	public static void teste6() {
 		
 		int n = 8; // a mascara só funciona em múltipos de 2
 		System.out.println(completacom("0", 8, n));
@@ -437,7 +441,7 @@ public class TestesRelampagos {
 		return sb.append(snum).toString();
 	}
 	
-	public static void teste5(String[] args) {
+	public static void teste5() {
 		HashMap<Object, Object> mapa;
 		System.out.println("     " + completacom("0", 1));
 		System.out.println("     " + completacom("0", 1 << 4));
@@ -464,7 +468,7 @@ public class TestesRelampagos {
 		}
 	}
 		
-	public static void teste4(String[] args) throws Exception {
+	public static void teste4() throws Exception {
 		Context c = new Context().push();
 		c.put("nome", "thiago");
 		c.put("sobrenome", "rabelo");
@@ -525,7 +529,7 @@ public class TestesRelampagos {
 		}
 	}
 
-	public static void teste3(String []args) {
+	public static void teste3() {
 		int a = 1431655765;  // 01010101010101010101010101010101
 		int b = -1431655766; // 10101010101010101010101010101010
 

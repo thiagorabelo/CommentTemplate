@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 public class TestesRelampagos {
 	
 	public static void main(String[] args)throws Exception {
-		teste16();
+		teste8();
 	}
 	
 	public static String ExpToStr(Exp exp) {

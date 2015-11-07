@@ -148,7 +148,7 @@ public class MyHashMap<K, V> implements Map<K, V> {
 	private int hash(Object key) {
 		//return key != null ? (key.hashCode() & Integer.MAX_VALUE) : 0;
 		int h;
-        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+		return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
 	}
 	
 	public Map.Entry<K, V> getEntry(Object key) {

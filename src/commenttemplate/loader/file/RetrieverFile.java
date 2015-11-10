@@ -29,7 +29,7 @@ public class RetrieverFile implements TemplateRetrieve {
 	public TemplateStream get(Serializable key) {
 		try {
 			for (int i = 0, len = paths.length; i < len;) {
-				String fullPath = Join.path().join(paths[i], key.toString()).toString();
+				String fullPath = Join.path().these(paths[i], key.toString()).toString();
 
 				try {
 					String content = Utils.getContent(fullPath);

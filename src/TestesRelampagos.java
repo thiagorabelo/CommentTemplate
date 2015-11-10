@@ -15,8 +15,8 @@ import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
 import java.util.ArrayList;
 import java.util.List;
-import commenttemplate.util.maps.*;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -415,7 +415,7 @@ public class TestesRelampagos {
 		System.out.println(completacom("0", 8, n));
 		
 		for (int i = 0; i < 32; i++) {
-			System.out.println(Join.with("\n").join(
+			System.out.println(Join.with("\n").these(
 				completacom("0", 8, i),
 				completacom("0", 8, n - 1),
 				completacom("0", 8, (n - 1) & i),
@@ -579,18 +579,18 @@ public class TestesRelampagos {
 		
 		String [] array = new String[] {null, "d", "e", null, "f", null};
 		
-		System.out.println(Join.with(",").join("a", "b", "c", new Object[]{"d", "e", new Object[]{"f", "g"}}));
+		System.out.println(Join.with(",").these("a", "b", "c", new Object[]{"d", "e", new Object[]{"f", "g"}}));
 		
-		System.out.println(Join.path().skipNulls().join(list.iterator()).toString());
+		System.out.println(Join.path().skipNulls().these(list.iterator()).toString());
 
-		System.out.println(Join.path().skipNulls().join(array).toString());
+		System.out.println(Join.path().skipNulls().these(array).toString());
 
-		System.out.println(Join.path().skipNulls().join(list, array, "g", null, "h", "i", null).join("j", "k", "l"));
+		System.out.println(Join.path().skipNulls().these(list, array, "g", null, "h", "i", null).these("j", "k", "l"));
 		
 		System.out.println(Utils.concat("olá", "mundo", "cruel"));
 	}
 	
 	public static void log(String ...str) {
-		System.out.println(Join.with("").join("[", str, "]"));
+		System.out.println(Join.with("").these("[", str, "]"));
 	}
 }

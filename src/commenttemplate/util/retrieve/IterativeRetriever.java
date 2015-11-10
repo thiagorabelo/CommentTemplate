@@ -31,6 +31,20 @@ public abstract class IterativeRetriever<T> implements RetrieveDataMap<T> {
 	
 	protected abstract int beginLoopIndex();
 	
+	protected Object getProperty(Object obj, String key) {
+		return Utils.getProperty(obj, key);
+	}
+
+	protected Object loopProperties(int begin, int length, Object obj, String []keys) {
+		for (int i = begin; i < length; i++) {
+			if ((obj = getProperty(obj, keys[i])) == null) {
+				break;
+			}
+		}
+		
+		return obj;
+	}
+	
 	@Override
 	public Object getValue(T target, String ...keys) {
 		int len = keys.length;
@@ -39,11 +53,7 @@ public abstract class IterativeRetriever<T> implements RetrieveDataMap<T> {
 			Object obj;
 
 			if ((obj = getSource(target, keys[0])) != null) {
-				for (int i = beginLoopIndex(); i < len; i++) {
-					if ((obj = Utils.getProperty(obj, keys[i])) == null) {
-						break;
-					}
-				}
+				obj = loopProperties(beginLoopIndex(), len, obj, keys);
 			}
 
 			return obj;

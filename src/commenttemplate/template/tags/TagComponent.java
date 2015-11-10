@@ -147,7 +147,7 @@ public class TagComponent {
 			if (!requireds.isEmpty()) {
 				StringBuilder sb = new StringBuilder();
 				sb.append("The parameters ")
-				  .append(Join.with(", ").join(requireds).s())
+				  .append(Join.with(", ").these(requireds).s())
 				  .append(" are mandatory to the Tag [")
 				  .append(TagComponent.this.name)
 				  .append("]")

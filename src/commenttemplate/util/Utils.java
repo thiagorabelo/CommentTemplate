@@ -163,7 +163,7 @@ public class Utils {
 		));
 	}
 
-	private static Field getField(Class klass, String name) {
+	public static Field getField(Class klass, String name) {
 		IterateByFields it = new IterateByFields(klass);
 		
 		String internedName = name.intern();
@@ -176,7 +176,7 @@ public class Utils {
 		return null;
 	}
 
-	private static Field getField2(Class klass, String name) throws NoSuchFieldException {
+	public static Field getField2(Class klass, String name) throws NoSuchFieldException {
 		IterateByFields it = new IterateByFields(klass);
 		
 		String internedName = name.intern();

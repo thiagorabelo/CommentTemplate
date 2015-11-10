@@ -102,7 +102,7 @@ public abstract class Tag extends TemplateBlock {
 			}
 		}
 		
-		return Join.with(" ").join(l).toString();
+		return Join.with(" ").these(l).toString();
 	}
 	
 	@Override

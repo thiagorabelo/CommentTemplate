@@ -85,7 +85,7 @@ public abstract class Function implements Exp {
 		sb.append("(");
 		String c = "";
 
-		sb.append(Join.with(", ").join(args));
+		sb.append(Join.with(", ").these(args));
 
 		sb.append(")");
 	}

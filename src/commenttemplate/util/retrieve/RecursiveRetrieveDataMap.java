@@ -37,7 +37,7 @@ public class RecursiveRetrieveDataMap implements RetrieveDataMap<Map<String, Obj
 	//Entrada é VAR_PATH, saída é o valor encontrado. Vazio é retornado se nada for encontrado.
 	@Override
 	public Object getValue(Map<String,Object> mapValues, String ...keys) {
-		return getValue(mapValues, "", Join.with(".").join(keys).toString());
+		return getValue(mapValues, "", Join.with(".").these(keys).toString());
 	}
 
 	/**

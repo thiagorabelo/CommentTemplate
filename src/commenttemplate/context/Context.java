@@ -22,6 +22,7 @@ package commenttemplate.context;
 
 import commenttemplate.util.MyStack;
 import commenttemplate.util.MyHashMap;
+import commenttemplate.util.retrieve.CacheableRetrieverDataMap;
 import commenttemplate.util.retrieve.IterativeRetrieverDataMap;
 import commenttemplate.util.retrieve.RetrieveDataMap;
 import java.util.ArrayList;
@@ -71,7 +72,10 @@ public class Context implements Map<String, Object> {
 	 * @see commenttemplate.util.retrieve.IterativeRetrieverDataMap
 	 * @see commenttemplate.util.retrieve.RetrieveDataMap
 	 */
-	private static final RetrieveDataMap<Map<String, Object>> defaultRetrieverDataMap = new IterativeRetrieverDataMap();
+	private static RetrieveDataMap<Map<String, Object>> defaultRetrieverDataMap() {
+//		return new IterativeRetrieverDataMap();
+		return new CacheableRetrieverDataMap();
+	}
 
 	/**
 	 * Returns the first reference of an objetc found on the stack of scopes.
@@ -177,7 +181,7 @@ public class Context implements Map<String, Object> {
 	public Context() {
 		contextStack = new MyStack<>();
 		contextStack.push(new MyHashMap<>());
-		retrieverDataMap = defaultRetrieverDataMap;
+		retrieverDataMap = defaultRetrieverDataMap();
 	}
 
 	/**
@@ -191,8 +195,7 @@ public class Context implements Map<String, Object> {
 	 * @see commenttemplate.util.MyHashMap
 	 */
 	public Context(RetrieveDataMap retrieverDataMap) {
-		contextStack = new MyStack<>();
-		contextStack.push(new MyHashMap<>());
+		(contextStack = new MyStack<>()).push(new MyHashMap<>());
 		this.retrieverDataMap = retrieverDataMap;
 	}
 	
@@ -208,7 +211,7 @@ public class Context implements Map<String, Object> {
 	 */
 	public Context(Map<String, Object> params) {
 		contextStack = new MyStack<>();
-		retrieverDataMap = defaultRetrieverDataMap;
+		retrieverDataMap = defaultRetrieverDataMap();
 
 		if (params instanceof MyHashMap) {
 			contextStack.push((MyHashMap<String, Object>)params);
@@ -256,7 +259,8 @@ public class Context implements Map<String, Object> {
 	 * @param other {@code Context} to be copied.
 	 */
 	public Context(Context other) {
-		this(other, defaultRetrieverDataMap);
+		this(other, null);
+		retrieverDataMap = defaultRetrieverDataMap();
 	}
 
 	/**

@@ -32,11 +32,11 @@ public class DefaultJoiner extends Joiner {
 	}
 
 	@Override
-	public Joiner join(Iterable parts) {
-		return join(parts.iterator());
+	public Joiner these(Iterable parts) {
+		return these(parts.iterator());
 	}
 	
-	private void joinAux(Object part, Wrap<Boolean> skiped) {
+	private void theseAux(Object part, Wrap<Boolean> skiped) {
 		String append = skip(skiped, part);
 		if (appended > 1 && !skiped.getValue()) {
 			sb.append(joiner);
@@ -45,7 +45,7 @@ public class DefaultJoiner extends Joiner {
 	}
 
 	@Override
-	public Joiner join(Iterator iterator) {
+	public Joiner these(Iterator iterator) {
 		Wrap<Boolean> skiped = new Wrap(false);
 		
 		Object part;
@@ -54,13 +54,13 @@ public class DefaultJoiner extends Joiner {
 			part = iterator.next();
 			
 			if (part instanceof Iterable) {
-				join((Iterable)part);
+				these((Iterable)part);
 			} else if (part instanceof Iterator) {
-				join((Iterator)part);
+				these((Iterator)part);
 			} else if (isArray(part)) {
-				join((Object[])part);
+				these((Object[])part);
 			} else {
-				joinAux(part, skiped);
+				theseAux(part, skiped);
 			}
 		}
 		
@@ -68,25 +68,25 @@ public class DefaultJoiner extends Joiner {
 	}
 	
 	@Override
-	public Joiner join(Object[] parts) {
-		return join(0, parts.length, parts);
+	public Joiner these(Object[] parts) {
+		return these(0, parts.length, parts);
 	}
 
 	@Override
-	public Joiner join(int beginIndex, int length, Object[] parts) {
+	public Joiner these(int beginIndex, int length, Object[] parts) {
 		Wrap<Boolean> skiped = new Wrap(false);
 
 		for (int i = 0; i < length; i++) {
 			Object part = parts[i];
 
 			if (part instanceof Iterable) {
-				join((Iterable)part);
+				these((Iterable)part);
 			} else if (part instanceof Iterator) {
-				join((Iterator)part);
+				these((Iterator)part);
 			} else if (isArray(part)) {
-				join((Object[])part);
+				these((Object[])part);
 			} else {
-				joinAux(part, skiped);
+				theseAux(part, skiped);
 			}
 		}
 		
@@ -94,28 +94,28 @@ public class DefaultJoiner extends Joiner {
 	}
 
 	@Override
-	public Joiner join(Object first, Object second, Object ...others) {
+	public Joiner these(Object first, Object second, Object ...others) {
 		if (first instanceof Iterable) {
-			join((Iterable)first);
+			these((Iterable)first);
 		} else if (first instanceof Iterator) {
-			join((Iterator)first);
+			these((Iterator)first);
 		} else if (isArray(first)) {
-			join((Object[])first);
+			these((Object[])first);
 		} else {
-			join(new Object[]{first});
+			these(new Object[]{first});
 		}
 
 		if (second instanceof Iterable) {
-			join((Iterable)second);
+			these((Iterable)second);
 		} else if (second instanceof Iterator) {
-			join((Iterator)second);
+			these((Iterator)second);
 		} else if (isArray(second)) {
-			join((Object[])second);
+			these((Object[])second);
 		} else {
-			join(new Object[]{second});
+			these(new Object[]{second});
 		}
 
-		join(others);
+		these(others);
 
 		return this;
 	}

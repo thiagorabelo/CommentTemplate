@@ -38,15 +38,15 @@ public abstract class Joiner {
 		this.joiner = joiner;
 	}
 
-	public abstract Joiner join(Iterable<?> parts);
+	public abstract Joiner these(Iterable<?> parts);
 
-	public abstract Joiner join(Iterator<?> parts);
+	public abstract Joiner these(Iterator<?> parts);
 
-	public abstract Joiner join(Object[] parts);
+	public abstract Joiner these(Object[] parts);
 
-	public abstract Joiner join(int beginIndex, int length, Object[] parts);
+	public abstract Joiner these(int beginIndex, int length, Object[] parts);
 
-	public abstract Joiner join(Object first, Object second, Object ...others);
+	public abstract Joiner these(Object first, Object second, Object ...others);
 
 	public Joiner skipNulls() {
 		skipNulls = true;
@@ -55,6 +55,7 @@ public abstract class Joiner {
 	
 	public Joiner useNulls() {
 		skipNulls = false;
+		onNull = "null";
 		return this;
 	}
 

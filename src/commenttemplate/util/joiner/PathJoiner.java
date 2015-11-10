@@ -32,7 +32,7 @@ public class PathJoiner extends DefaultJoiner {
 		onNull = "";
 	}
 	
-	private void joinAux(Object part, Wrap<Boolean> skiped, Wrap<Boolean> last) {
+	private void theseAux(Object part, Wrap<Boolean> skiped, Wrap<Boolean> last) {
 		String append = skip(skiped, part);
 		if (appended > 1 && !skiped.getValue()) {
 			sb.append(joiner);
@@ -60,7 +60,7 @@ public class PathJoiner extends DefaultJoiner {
 	
 	// TODO: Ver os casos onde parts[i] pode ser iterado
 	@Override
-	public Joiner join(Iterator iterator) {
+	public Joiner these(Iterator iterator) {
 		Object part;
 		Wrap<Boolean> skiped = new Wrap(false);
 		Wrap<Boolean> last = new Wrap<>(false);
@@ -69,13 +69,13 @@ public class PathJoiner extends DefaultJoiner {
 			part = iterator.next();
 			
 			if (part instanceof Iterable) {
-				join((Iterable)part);
+				these((Iterable)part);
 			} else if (part instanceof Iterator) {
-				join((Iterator)part);
+				these((Iterator)part);
 			} else if (isArray(part)) {
-				join((Object[])part);
+				these((Object[])part);
 			} else {
-				joinAux(part, skiped, last);
+				theseAux(part, skiped, last);
 			}
 		}
 		
@@ -88,7 +88,7 @@ public class PathJoiner extends DefaultJoiner {
 
 	// TODO: Ver os casos onde parts[i] pode ser iterado
 	@Override
-	public Joiner join(Object[] parts) {
+	public Joiner these(Object[] parts) {
 		Object part;
 		Wrap<Boolean> skiped = new Wrap(false);
 		Wrap<Boolean> last = new Wrap<>(false);
@@ -97,13 +97,13 @@ public class PathJoiner extends DefaultJoiner {
 			part = parts[i];
 			
 			if (part instanceof Iterable) {
-				join((Iterable)part);
+				these((Iterable)part);
 			} else if (part instanceof Iterator) {
-				join((Iterator)part);
+				these((Iterator)part);
 			} else if (isArray(part)) {
-				join((Object[])part);
+				these((Object[])part);
 			} else {
-				joinAux(part, skiped, last);
+				theseAux(part, skiped, last);
 			}
 		}
 		

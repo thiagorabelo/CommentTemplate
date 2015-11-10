@@ -2,6 +2,7 @@ package commenttemplate.template.tags;
 
 import commenttemplate.template.tags.builtin.IfTag;
 import commenttemplate.template.tags.builtin.IncludeTag;
+import commenttemplate.template.tags.builtin.Literal;
 import commenttemplate.template.tags.builtin.SetTag;
 import commenttemplate.template.tags.builtin.WithTag;
 import commenttemplate.template.tags.builtin.extend.ExtendsTag;
@@ -51,6 +52,7 @@ public class TagInitializer {
 		TagContainer.instance().addBuiltinTag(new MappableTagComponent("include", IncludeTag.class,  "!template"));
 		TagContainer.instance().addBuiltinTag(new TagComponent("if", IfTag.class, "!test"));
 		TagContainer.instance().addBuiltinTag(new TagComponent("set", SetTag.class, "!var", "value"));
+		TagContainer.instance().addBuiltinTag(new TagComponent("literal", Literal.class));
 //		TemplateTag.addBuiltinTag(new ValueFormatterTemplateTag());
 		TagContainer.instance().addBuiltinTag(new TagComponent("extends", ExtendsTag.class,  "!name"));
 		TagContainer.instance().addBuiltinTag(new TagComponent("block", BlockTag.class, "!name"));

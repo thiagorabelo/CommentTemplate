@@ -65,12 +65,14 @@ public class MountingHelper {
 			TemplateBlock []list = new TemplateBlock[nodeList.size()];
 			nodeList.toArray(list);
 			block.setBlockList(list);
+			nodeList.clear();
 		}
 
 		if (!nodeListElse.isEmpty()) {
 			TemplateBlock []list = new TemplateBlock[nodeListElse.size()];
 			nodeListElse.toArray(list);
 			block.setBlockListElse(list);
+			nodeListElse.clear();
 		}
 
 		return block;

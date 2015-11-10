@@ -39,11 +39,11 @@ public class Identifier implements Token {
 
 	@Override
 	public String toString() {
-		return Join.with(".").join(keys).toString();
+		return Join.with(".").these(keys).toString();
 	}
 
 	@Override
 	public void toString(StringBuilder sb) {
-		sb.append(Join.with(".").join(keys).toString());
+		sb.append(Join.with(".").these(keys).toString());
 	}
 }

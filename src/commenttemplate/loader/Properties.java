@@ -75,7 +75,7 @@ public class Properties extends java.util.Properties {
 				String sval = (oval instanceof String) ? (String)oval : null;
 				return ((sval == null) && (defaults != null)) ? defaults.getProperty(key) : sval;
 			} else {
-				return Join.with(",").join((Object[])oval).toString();
+				return Join.with(",").these((Object[])oval).toString();
 			}
 		} 
 		

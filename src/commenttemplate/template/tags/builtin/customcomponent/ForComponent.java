@@ -78,19 +78,12 @@ public class ForComponent extends TagComponent {
 	public List<Tuple<String, Exp>> paramsList(ForTag tag, String parameters)
 			throws BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
 		LinkedList<Tuple<String, Exp>> params = new LinkedList<>();
-		Matcher m = PARAMS_PATTERN.matcher(parameters);
 
-		while (m.find()) {
-			String paramName = m.group(PARAM_NAME_GROUP);
-			String expression = m.group(PARAM_VALUE_GROUP);
+		for (String []tokens : new TagParamsTokenizer(parameters)) {
+			String paramName = tokens[0];
+			String expression = tokens[1];
 			params.add(new Tuple<>(paramName, parseExpression(tag, paramName, expression)));
 		}
-
-//		for (String []tokens : new TagParamsTokenizer(parameters)) {
-//			String paramName = tokens[0];
-//			String expression = tokens[1];
-//			params.add(new Tuple<>(paramName, parseExpression(tag, paramName, expression)));
-//		}
 
 		return params;
 	}

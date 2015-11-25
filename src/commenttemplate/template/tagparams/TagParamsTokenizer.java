@@ -28,25 +28,29 @@ import java.util.List;
  */
 public class TagParamsTokenizer implements Iterable<String[]> {
 
-	public static void main(String[] args) {
-		String []t = {
-			"foo=\"bar\" thiago= \" rabelo\" torres =\"sales\" abc = \"cde\"",
-			"foo=(bar) thiago= ( rabelo) torres =(sales) abc = (cde)",
-			"foo=( thiago * ( rabelo + torres  % sales ) )",
-			"foo   bar=(name)   no_val    mortal=\"kombat\""
-		};
-
-		for (String s : t) {
-			System.out.println(s);
-			for (String []tks : new TagParamsTokenizer(s)) {
-				System.out.flush();
-				System.out.println("[0]::" + tks[0]);
-				System.out.println("[1]::" + tks[1]);
-				System.out.println("-------------------");
-			}
-			System.out.println("\n===================\n");
-		}
-	}
+//	public static void main(String[] args) {
+//		String []t = {
+//			"foo=\"bar\" one= \" tow\" three =\"four\" abc = \"cde\"",
+//			"foo=(bar) one= ( two) three =(four) abc = (cde)",
+//			"foo=( one * ( two + three ) % four  )",
+//			"foo   bar=(name)   no_val    mortal=\"kombat\"",
+//			" \"extends/cabecalho.html\"",
+//			" 'vish maria'",
+//			" one * ( two + three  % four ) ",
+//			""
+//		};
+//
+//		for (String s : t) {
+//			System.out.println(s);
+//			for (String []tks : new TagParamsTokenizer(s)) {
+//				System.out.flush();
+//				System.out.println("[0]::" + tks[0]);
+//				System.out.println("[1]::" + tks[1]);
+//				System.out.println("-------------------");
+//			}
+//			System.out.println("\n===================\n");
+//		}
+//	}
 
 	//                                                 0    1
 	private static final String []ALLOWED_OPENING = {"\"", "("};
@@ -120,11 +124,13 @@ public class TagParamsTokenizer implements Iterable<String[]> {
 				}
 			}
 
-			if (left.length() > 0) {
+			if (index < (length - 1) && left.length() > 0) {
 				throw new InvalidParamsSintaxException(stream, paramBegin, "Invalid token [", left, "]");
+			} else if (tokens[0] != null) {
+				return tokens;
 			}
 
-			return null;
+			return new String[] {left.toString(), null};
 		}
 
 		protected int buildRight(String []tokens, int startIndex, int length, int paramBegin) {

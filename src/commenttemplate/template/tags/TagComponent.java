@@ -29,24 +29,20 @@ import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.template.tagparams.InvalidParamsSintaxException;
+import commenttemplate.template.tagparams.TagParamsTokenizer;
 import commenttemplate.util.Join;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *
  * @author thiago
  */
 public class TagComponent {
-	//                                                               1          2
-	protected static final Pattern PARAMS_PATTERN = Pattern.compile("(\\w+)\\=\"([^\"]*)\"");
-	protected static final int PARAM_NAME_GROUP = 1;
-	protected static final int PARAM_VALUE_GROUP = 2;
+
 	protected static final char REQUIRED_CHAR = '!';
 	
 	
@@ -191,12 +187,12 @@ public class TagComponent {
 		return p.parse();
 	}
 	
-	public List<Tuple<String, Exp>> singleParameterVerifies(List<Tuple<String, Exp>> params, String parameters)
+	public List<Tuple<String, Exp>> singleParameterVerifier(List<Tuple<String, Exp>> params, String parameters)
 			throws BadExpression, ExpectedExpression, ExpectedOperator, 
 			FunctionDoesNotExists, Unexpected {
 
-		if (params.isEmpty() && this.params.length == 1 && !(parameters = parameters.trim()).isEmpty()) {
-			params.add(new Tuple<>(
+		if (this.params.length == 1 && !(parameters = parameters.trim()).isEmpty() && allValsNullVerifier(params)) {
+			params.set(0, new Tuple<>(
 				this.params[0].getB(),
 				parseExpression(parameters)
 			));
@@ -205,26 +201,26 @@ public class TagComponent {
 		return params;
 	}
 	
+	private boolean allValsNullVerifier(List<Tuple<String, Exp>> params) {
+		boolean test = true;
+		for (Tuple<String, Exp> p : params) {
+			test = test && p.getB() == null;
+		}
+		return test;
+	}
+	
 	public List<Tuple<String, Exp>> paramsList(String parameters)
 			throws BadExpression, ExpectedExpression, ExpectedOperator, 
 			FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
 
 		LinkedList<Tuple<String, Exp>> params = new LinkedList<>();
-		Matcher m = PARAMS_PATTERN.matcher(parameters);
 
-		while (m.find()) {
+		for (String[] tokens : new TagParamsTokenizer(parameters)) {
 			params.add(new Tuple<>(
-				m.group(PARAM_NAME_GROUP),
-				parseExpression(m.group(PARAM_VALUE_GROUP))
+				tokens[0],
+				tokens[1] != null ? parseExpression(tokens[1]) : null
 			));
 		}
-		
-//		for (String[] tokens : new TagParamsTokenizer(parameters)) {
-//			params.add(new Tuple<>(
-//				tokens[0],
-//				parseExpression(tokens[1])
-//			));
-//		}
 
 		return params;
 	}
@@ -260,7 +256,7 @@ public class TagComponent {
 
 		Tag tag = newInstance();
 		List<Tuple<String, Exp>> params = paramsList(parameters);
-		params = singleParameterVerifies(params, parameters);
+		params = singleParameterVerifier(params, parameters);
 		new ParamsChecker().check(params);
 		populateParameters(tag, params);
 

@@ -29,12 +29,12 @@ import java.util.Iterator;
 public class LazeTokenizer implements Iterable<Tuple<String, Integer>> {
 	
 	
-	public static void main(String[] args) {
-		String exp = "concat('vish').length + pessoa.idade";
-		for (Tuple<String, Integer> t : new LazeTokenizer(exp)) {
-			System.out.println(t.getA()+": "+t.getB());
-		}
-	}
+//	public static void main(String[] args) {
+//		String exp = "concat('vish').length + pessoa.idade";
+//		for (Tuple<String, Integer> t : new LazeTokenizer(exp)) {
+//			System.out.println(t.getA()+": "+t.getB());
+//		}
+//	}
 	
 	private static enum Status {
 		BUFFERIZE, KEEP_BUFFERING, AVOID, FLUSH, BUFFERIZE_AND_FLUSH

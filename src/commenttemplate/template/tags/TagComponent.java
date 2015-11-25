@@ -28,6 +28,7 @@ import commenttemplate.expressions.parser.Parser;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
+import commenttemplate.template.tagparams.InvalidParamsSintaxException;
 import commenttemplate.util.Join;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
@@ -206,7 +207,7 @@ public class TagComponent {
 	
 	public List<Tuple<String, Exp>> paramsList(String parameters)
 			throws BadExpression, ExpectedExpression, ExpectedOperator, 
-			FunctionDoesNotExists, Unexpected {
+			FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
 
 		LinkedList<Tuple<String, Exp>> params = new LinkedList<>();
 		Matcher m = PARAMS_PATTERN.matcher(parameters);
@@ -217,6 +218,13 @@ public class TagComponent {
 				parseExpression(m.group(PARAM_VALUE_GROUP))
 			));
 		}
+		
+//		for (String[] tokens : new TagParamsTokenizer(parameters)) {
+//			params.add(new Tuple<>(
+//				tokens[0],
+//				parseExpression(tokens[1])
+//			));
+//		}
 
 		return params;
 	}
@@ -232,7 +240,7 @@ public class TagComponent {
 	}
 	
 	protected void populateParameters(Tag tag, List<Tuple<String, Exp>> parameters)
-			throws CouldNotSetTagParameterException{
+			throws CouldNotSetTagParameterException {
 		for (Tuple<String, Exp> t : parameters) {
 			try {
 				Utils.setProperty(tag, t.getA(), t.getB());
@@ -248,7 +256,7 @@ public class TagComponent {
 
 	public Tag populateParameters(String parameters)
 			throws CouldNotInstanciateTagException, CouldNotSetTagParameterException,
-			BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected {
+			BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
 
 		Tag tag = newInstance();
 		List<Tuple<String, Exp>> params = paramsList(parameters);

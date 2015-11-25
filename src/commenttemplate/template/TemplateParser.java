@@ -12,6 +12,7 @@ import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.template.tags.Tag;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.template.exceptions.TemplateNestingException;
+import commenttemplate.template.tagparams.InvalidParamsSintaxException;
 import commenttemplate.template.tags.TagComponent;
 import commenttemplate.template.tags.TagContainer;
 import commenttemplate.util.MyStack;
@@ -163,7 +164,7 @@ public class TemplateParser {
 
 			throw new TemplateException(ex.getMsg(), lines, ex.getError(), ex);
 
-		} catch (CouldNotInstanciateTagException | CouldNotSetTagParameterException ex) {
+		} catch (CouldNotInstanciateTagException | CouldNotSetTagParameterException | InvalidParamsSintaxException ex) {
 			int lines_before = lastLength.getValue() > 0
 					? lineCounter(input.substring(0, lastLength.getValue()))
 					: 0;

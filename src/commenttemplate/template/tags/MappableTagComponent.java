@@ -27,6 +27,7 @@ import commenttemplate.expressions.exceptions.Unexpected;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
+import commenttemplate.template.tagparams.InvalidParamsSintaxException;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
 import java.lang.reflect.InvocationTargetException;
@@ -119,7 +120,7 @@ public class MappableTagComponent extends TagComponent {
 	@Override
 	public Tag populateParameters(String parameters)
 			throws CouldNotInstanciateTagException, CouldNotSetTagParameterException,
-			BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected {
+			BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
 
 		Tag tag = newInstance();
 		List<Tuple<String, Exp>> params = paramsList(parameters);

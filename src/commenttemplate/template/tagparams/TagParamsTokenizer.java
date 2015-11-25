@@ -19,25 +19,27 @@
 package commenttemplate.template.tagparams;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  *
  * @author thiago
  */
-public class TagParamsTokenizer {
+public class TagParamsTokenizer implements Iterable<String[]> {
+
 	public static void main(String[] args) {
 		String []t = {
 			"foo=\"bar\" thiago= \" rabelo\" torres =\"sales\" abc = \"cde\"",
 			"foo=(bar) thiago= ( rabelo) torres =(sales) abc = (cde)",
-			"foo=( thiago * ( rabelo + torres ) % sales )"
+			"foo=( thiago * ( rabelo + torres  % sales ) )",
+			"foo   bar=(name)   no_val    mortal=\"kombat\""
 		};
 
 		for (String s : t) {
-			TagParamsTokenizer tpt = new TagParamsTokenizer(s);
 			System.out.println(s);
-			List<String[]> list = tpt.tokens();
-			for (String []tks : list) {
+			for (String []tks : new TagParamsTokenizer(s)) {
+				System.out.flush();
 				System.out.println("[0]::" + tks[0]);
 				System.out.println("[1]::" + tks[1]);
 				System.out.println("-------------------");
@@ -59,123 +61,162 @@ public class TagParamsTokenizer {
 		stream = input;
 	}
 
-	public List<String[]> tokens() {
-		List<String[]> listTokens = new ArrayList<String[]>();
-		StringBuilder left = sb();
+	@Override
+	public Iterator<String[]> iterator() {
+		return new TagParamsTokenizerIterator();
+	}
 
-		for (int i = 0, len = stream.length(); i < len; i++) {
-			char ch = stream.charAt(i);
-			
-			if (!Character.isWhitespace(ch)) {
-				if (!ASSIGNMENT.equals("" + ch)) {
+	private class TagParamsTokenizerIterator implements Iterator<String[]> {
+		private final int length = stream.length();
+		private int index = 0;
+
+		@Override
+		public boolean hasNext() {
+			for (; index < length; index++) {
+				if (!Character.isWhitespace(stream.charAt(index))) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		@Override
+		public String[] next() throws InvalidParamsSintaxException {
+			StringBuilder left = sb();
+			int paramBegin = -1;
+			String []tokens = new String[2];
+
+			for (; index < length; index++) {
+				char ch = stream.charAt(index);
+				boolean whiteSpace = Character.isWhitespace(ch);
+
+				if (!whiteSpace && paramBegin > -1) {
+					boolean assigment = ASSIGNMENT.equals("" + ch);
+					if (!assigment && tokens[0] == null) {
+						left.append(ch);
+						if (paramBegin == -1) {
+							paramBegin = index;
+						}
+					} else if (tokens[0] != null && !assigment) {
+						left = null;
+						return tokens;
+					} else {
+						if (tokens[0] == null) {
+							tokens[0] = left.toString();
+						}
+						index = buildRight(tokens, index + 1, length, paramBegin);
+						left = null;
+						return tokens;
+					}
+				} else if (!whiteSpace) {
 					left.append(ch);
-				} else {
-					String []tokens = new String[2];
+					if (paramBegin == -1) {
+						paramBegin = index;
+					}
+				} else if (tokens[0] == null) {
 					tokens[0] = left.toString();
-					i = buildRight(tokens, i + 1, len);
-					listTokens.add(tokens);
 					left = sb();
 				}
 			}
+
+			if (left.length() > 0) {
+				throw new InvalidParamsSintaxException(stream, paramBegin, "Invalid token [", left, "]");
+			}
+
+			return null;
+		}
+
+		protected int buildRight(String []tokens, int startIndex, int length, int paramBegin) {
+			int i, cw = -1;
+
+			for (i = startIndex; i < length; i++) {
+				char ch = stream.charAt(i);
+				String sch = "" + ch;
+
+				if (Character.isWhitespace(ch)) continue;
+
+				if ((cw = closeWith(sch)) > -1) {
+					break;
+				}
+			}
+
+			if (cw == -1) {
+				throw new InvalidParamsSintaxException(stream, startIndex, "Invalid sitax [", stream, "]");
+			}
+
+			if (cw == WITH_QUOTES) {
+				return withQuotes(tokens, i + 1, length, paramBegin);
+			}
+
+			return withParenth(tokens, i + 1, length, paramBegin);
+		}
+
+		private int withParenth(String []tokens, int startIndex, int length, int paramBegin) {
+			StringBuilder right = sb();
+			int i, openedParenth = 0;
+
+			for (i = startIndex; i < length; i++) {
+				String sch = "" + stream.charAt(i);
+
+				if (sch.equals(ALLOWED_CLOSING[WITH_PARENTH]) && openedParenth == 0) {
+					tokens[1] = right.toString();
+					return i + 1;
+				} else {
+					if (sch.equals(ALLOWED_OPENING[WITH_PARENTH])) {
+						openedParenth++;
+					} else if (sch.equals(ALLOWED_CLOSING[WITH_PARENTH])) {
+						openedParenth--;
+					}
+
+					right.append(sch);
+				}
+			}
+
+			throw new InvalidParamsSintaxException(stream, startIndex, "Unbalanced parentheses [", stream, "]");
+		}
+
+		private int withQuotes(String []tokens, int startIndex, int length, int paramBegin) {
+			StringBuilder right = sb();
+			int i;
+
+			for (i = startIndex; i < length; i++) {
+				String sch = "" + stream.charAt(i);
+
+				if (sch.equals(ALLOWED_CLOSING[WITH_QUOTES])) {
+					tokens[1] = right.toString();
+					return i + 1;
+				} else {
+					right.append(sch);
+				}
+			}
+
+			throw new InvalidParamsSintaxException(stream, startIndex, "Unbalanced parentheses [", stream, "]");
+		}
+
+		private int closeWith(String ch) {
+			if (ALLOWED_OPENING[WITH_QUOTES].equals(ch)) {
+				return WITH_QUOTES;
+			} else if (ALLOWED_OPENING[WITH_PARENTH].equals(ch)) {
+				return WITH_PARENTH;
+			}
+
+			return -1;
+		}
+
+		private StringBuilder sb() {
+			return new StringBuilder();
+		}
+	}
+
+	public List<String[]> tokens() {
+		List<String[]> listTokens = new ArrayList<String[]>();
+
+		for (String [] tokens : this) {
+			listTokens.add(tokens);
 		}
 
 		return listTokens;
-	}
-
-	protected int buildRight(String []tokens, int startIndex, int length) {
-		int i, cw = -1;
-		
-		for (i = startIndex; i < length; i++) {
-			char ch = stream.charAt(i);
-			String sch = "" + ch;
-			
-			if (Character.isWhitespace(ch)) continue;
-			
-			if ((cw = closeWith(sch)) > -1) {
-				break;
-			}
-		}
-		
-		if (cw == -1) {
-			// @TODO: Sapora tá faltando tudo!
-			throw new RuntimeException("Err: " + stream + " [" + i + "]");
-		}
-		
-		if (cw == WITH_QUOTES) {
-			return withQuotes(tokens, i + 1, length);
-		}
-		
-		return withParenth(tokens, i + 1, length);
-	}
-
-	private int withParenth(String []tokens, int startIndex, int length) {
-		StringBuilder right = sb();
-		boolean opened = true;
-		int i, openedParenth = 0;
-
-		for (i = startIndex; i < length; i++) {
-			String sch = "" + stream.charAt(i);
-			
-			if (sch.equals(ALLOWED_CLOSING[WITH_PARENTH]) && openedParenth == 0) {
-				opened = false;
-				tokens[1] = right.toString();
-				break;
-			} else {
-				if (sch.equals(ALLOWED_OPENING[WITH_PARENTH])) {
-					openedParenth++;
-				} else if (sch.equals(ALLOWED_CLOSING[WITH_PARENTH])) {
-					openedParenth--;
-				}
-
-				right.append(sch);
-			}
-		}
-
-		if (opened) {
-			// @TODO: Sapora tá faltando tudo!
-			throw new RuntimeException("Err: " + stream + " [" + i + "]");
-		}
-
-		return i;
-	}
-
-	private int withQuotes(String []tokens, int startIndex, int length) {
-		StringBuilder right = sb();
-		boolean opened = true;
-		int i;
-
-		for (i = startIndex; i < length; i++) {
-			String sch = "" + stream.charAt(i);
-			
-			if (sch.equals(ALLOWED_CLOSING[WITH_QUOTES])) {
-				opened = false;
-				tokens[1] = right.toString();
-				break;
-			} else {
-				right.append(sch);
-			}
-		}
-
-		if (opened) {
-			// @TODO: Sapora tá faltando tudo!
-			throw new RuntimeException("Err: " + stream + " [" + i + "]");
-		}
-
-		return i;
-	}
-	
-	private int closeWith(String ch) {
-		if (ALLOWED_OPENING[WITH_QUOTES].equals(ch)) {
-			return WITH_QUOTES;
-		} else if (ALLOWED_OPENING[WITH_PARENTH].equals(ch)) {
-			return WITH_PARENTH;
-		}
-		
-		return -1;
-	}
-
-	private StringBuilder sb() {
-		return new StringBuilder();
 	}
 
 	public String getStream() {

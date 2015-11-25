@@ -34,7 +34,7 @@ public abstract class ExpressionException extends Exception {
 	
 	/**
 	 * Cache to String builded by {@code ExpressionException.show()} method that
-	 * that points to the error in the String that represents the expression.
+	 * points to the error in the String that represents the expression.
 	 * 
 	 * @see commenttemplate.expressions.exceptions.ExpressionException#show()
 	 */

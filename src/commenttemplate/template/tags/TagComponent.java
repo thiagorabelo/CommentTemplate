@@ -192,7 +192,8 @@ public class TagComponent {
 			FunctionDoesNotExists, Unexpected {
 
 		if (this.params.length == 1 && !(parameters = parameters.trim()).isEmpty() && allValsNullVerifier(params)) {
-			params.set(0, new Tuple<>(
+			params.clear();
+			params.add(new Tuple<>(
 				this.params[0].getB(),
 				parseExpression(parameters)
 			));

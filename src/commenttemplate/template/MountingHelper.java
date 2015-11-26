@@ -60,7 +60,8 @@ public class MountingHelper {
 		this.nodeListElse = nodeListElse;
 	}
 	
-	public TemplateBlock buildBlock() {
+	public TemplateBlock buildBlock(String innerContent) {
+		//System.out.println("=====================\n{"+innerContent+"}");
 		if (!nodeList.isEmpty()) {
 			TemplateBlock []list = new TemplateBlock[nodeList.size()];
 			nodeList.toArray(list);

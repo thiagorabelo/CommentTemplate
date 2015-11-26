@@ -65,10 +65,10 @@ public class TemplateParser {
 
 		TemplateBlockBase base = new TemplateBlockBase(initialBufferSize);
 		Matcher tagMatcher = openPattern.matcher(input);
-		MyStack<MountingHelper> stack = new MyStack<MountingHelper>();
+		MyStack<Tuple<Integer, MountingHelper>> stack = new MyStack<Tuple<Integer, MountingHelper>>();
 		MyStack<Boolean> usingElse = new MyStack<Boolean>();
 
-		stack.push(base.createMountingHelper());
+		stack.push(new Tuple<Integer, MountingHelper>(0, base.createMountingHelper()));
 		usingElse.push(false);
 
 		mountTemplateTreeAux(input, lastLength, tagMatcher, stack, usingElse);
@@ -79,13 +79,13 @@ public class TemplateParser {
 	// @TODO: Ignorar comentários html. Os cometários serão caracterizados como tendo um espaço depois de abrir a tag
 	// <!-- espaço antes daprimeira palavra -->
 	// Faz o trabalho sujo de mountTemplateTree.
-	private static void mountTemplateTreeAux(String input, Wrap<Integer> lastLength, Matcher tagMatcher, MyStack<MountingHelper> stack, MyStack<Boolean> usingElse) throws TemplateException {
+	private static void mountTemplateTreeAux(String input, Wrap<Integer> lastLength, Matcher tagMatcher, MyStack<Tuple<Integer, MountingHelper>> stack, MyStack<Boolean> usingElse) throws TemplateException {
 
 		try {
 			// Procura o próximo bloco.
 			while (tagMatcher.find()) {
 				// Obtem, mas não remove, o bloco que está no topo da pilha.
-				MountingHelper block = stack.peek();
+				MountingHelper block = stack.peek().getB();
 
 				// @TODO: Pode ser que não haja este trecho "estático". Verificar isto!
 				// Copiar tudo que esteja entre "lastLength" e o bloco encontrado, para
@@ -127,18 +127,20 @@ public class TemplateParser {
 						block.appendToElse(tag);
 					}
 
-					stack.push(tag.createMountingHelper());
+					stack.push(new Tuple<Integer, MountingHelper>(lastLength.getValue(), tag.createMountingHelper()));
 					usingElse.push(false);
 				} else if (isElse) {
 					usingElse.replaceTop(true);
 				} else { // Caso contrário, remova um bloco que esteja em cima da pilha.
-					stack.pop().buildBlock();
+					Tuple<Integer, MountingHelper> popped = stack.pop();
+					String innerContent = input.substring(popped.getA(), tagMatcher.start());
+					popped.getB().buildBlock(innerContent);
 					usingElse.pop();
 				}
 			}
 
 			String text = input.substring(lastLength.getValue());
-			MountingHelper block = stack.pop();
+			Tuple<Integer, MountingHelper> block = stack.pop();
 
 			if (!text.isEmpty()) {
 				// Adicione o resto do template através de um bloco estátio ao bloco que
@@ -146,10 +148,10 @@ public class TemplateParser {
 				TemplateStatic sttc = new TemplateStatic();
 				sttc.setContent(text);
 
-				block.append(sttc);
+				block.getB().append(sttc);
 			}
 
-			block.buildBlock();
+			block.getB().buildBlock(input);
 		} catch (ExpressionException ex) {
 
 			throw new TemplateException(ex.getMessage(), lineCounter(input.substring(0, tagMatcher.start())), ex.show(), ex);

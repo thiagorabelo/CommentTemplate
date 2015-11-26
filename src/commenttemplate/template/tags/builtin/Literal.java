@@ -49,16 +49,9 @@ public class Literal extends Tag {
 		}
 		
 		@Override
-		public TemplateBlock buildBlock() {
-			TemplateBlock block = super.buildBlock();
-			TemplateBlock [] nodeList = block.getBlockList();
-			StringBuilder sb = new StringBuilder();
-
-			for (TemplateBlock node  : nodeList) {
-				node.toString(sb);
-			}
-
-			Literal.this.stringRepr = sb.toString();
+		public TemplateBlock buildBlock(String innerContent) {
+			TemplateBlock block = super.buildBlock(innerContent);
+			Literal.this.stringRepr = innerContent;
 
 			return block;
 		}

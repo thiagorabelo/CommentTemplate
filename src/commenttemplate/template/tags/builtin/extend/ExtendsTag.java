@@ -6,10 +6,9 @@ import commenttemplate.template.TemplateBlock;
 import commenttemplate.template.TemplateBlockBase;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.context.Context;
-import commenttemplate.template.tags.Tag;
 import commenttemplate.context.ContextWriterMap;
+import commenttemplate.template.tags.Tag;
 import commenttemplate.template.MountingHelper;
-import commenttemplate.template.tags.TypeEval;
 import commenttemplate.template.writer.Writer;
 
 /**
@@ -20,20 +19,6 @@ public class ExtendsTag extends Tag {
 	
 	private Exp name;
 	
-	public ExtendsTag() {
-	}
-
-	/*
-	
-	*/
-	@Override
-	public TypeEval evalParams(Context context, Writer sb) {
-		return EVAL_BODY;
-	}
-	
-	/*
-	
-	*/
 	@Override
 	public void eval(Context context, Writer sb) {
 		try {

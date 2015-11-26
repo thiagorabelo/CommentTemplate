@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @author thiago
  */
 public abstract class Tag extends TemplateBlock {
-
+	
 	public static enum TypeEvalTag implements TypeEval {
 
 		SKIP_BODY {
@@ -53,11 +53,11 @@ public abstract class Tag extends TemplateBlock {
 		}
 		
 	}
-	
+
 	public static final TypeEval SKIP_BODY = TypeEvalTag.SKIP_BODY;
 	public static final TypeEval EVAL_BODY = TypeEvalTag.EVAL_BODY;
 	public static final TypeEval EVAL_ELSE = TypeEvalTag.EVAL_ELSE;
-	
+
 	private String tagName;
 
 	public Tag() {
@@ -69,20 +69,15 @@ public abstract class Tag extends TemplateBlock {
 	public void end(Context context, Writer sb) {
 	}
 
-	public abstract TypeEval evalParams(Context context, Writer sb);
-	
+	@Override
+	public abstract void eval(Context context, Writer sb);
+
 	protected void loopBlockList(TemplateBlock []blockList, Context context, Writer sb) {
 		for (TemplateBlock t : blockList) {
 			t.eval(context, sb);
 		}
 	}
-
-	@Override
-	public void eval(Context context, Writer sb) {
-		TypeEval type = evalParams(context, sb);
-		type.doEval(this, context, sb);
-	}
-
+	
 	public String getTagName() {
 		return tagName;
 	}

@@ -4,6 +4,7 @@ import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
 import commenttemplate.template.tags.Tag;
+import static commenttemplate.template.tags.Tag.EVAL_BODY;
 import commenttemplate.template.tags.TypeEval;
 import commenttemplate.template.writer.Writer;
 
@@ -31,8 +32,7 @@ public class BlockTag extends Tag {
 	public BlockTag() {
 	}
 
-	@Override
-	public TypeEval evalParams(Context context, Writer sb) {
+	private TypeEvalBlock params(Context context, Writer sb) {
 		ContextWriterMap cwm = (ContextWriterMap)context;
 
 		if (cwm.getMode() == ContextWriterMap.Mode.STORE) {
@@ -51,7 +51,7 @@ public class BlockTag extends Tag {
 			String blockName = name.eval(context).toString();
 			Writer w = cwm.getWriter(blockName);
 
-			TypeEvalBlock type = (TypeEvalBlock)evalParams(cwm, w);
+			TypeEvalBlock type = params(cwm, w);
 			
 			switch (type) {
 				case EVAL_BODY_WITH_MAPPED_WRITER:

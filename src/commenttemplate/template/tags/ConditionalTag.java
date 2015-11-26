@@ -16,41 +16,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
-package commenttemplate.template.tags.builtin;
+package commenttemplate.template.tags;
 
 import commenttemplate.context.Context;
-import commenttemplate.expressions.tree.Exp;
-import commenttemplate.template.tags.Tag;
-import commenttemplate.template.tags.TypeEval;
+import commenttemplate.template.TemplateBlock;
 import commenttemplate.template.writer.Writer;
-import commenttemplate.util.MyHashMap;
-import java.util.Map;
 
 /**
  *
  * @author thiago
  */
-public class WithTag extends Tag {
-	
-	protected MyHashMap<String, Exp> params = new MyHashMap<>();
-	
+public abstract class ConditionalTag extends Tag {
+
+	public abstract TypeEval evalParams(Context context, Writer sb);
+
 	@Override
 	public void eval(Context context, Writer sb) {
-		EVAL_BODY.doEval(this, context, sb);
-	}
-	
-	@Override
-	public void start(Context context, Writer sb) {
-		context.push();
-
-		for (Map.Entry<String, Exp> e : params.entrySet()) {
-			context.put(e.getKey(), e.getValue().eval(context));
-		}
-	}
-
-	@Override
-	public void end(Context context, Writer sb) {
-		context.pop();
+		TypeEval type = evalParams(context, sb);
+		type.doEval(this, context, sb);
 	}
 }

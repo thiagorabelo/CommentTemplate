@@ -32,7 +32,7 @@ public class SetTag extends Tag {
 	}
 
 	@Override
-	public TypeEval evalParams(Context context, Writer sb) {
+	public void eval(Context context, Writer sb) {
 		Exp attr = value;
 
 		Object n = var.eval(context);
@@ -63,8 +63,6 @@ public class SetTag extends Tag {
 				context.put(name, null);
 			}
 		}
-		
-		return SKIP_BODY;
 	}
 
 	public Exp getVar() {

@@ -246,7 +246,7 @@ public class ForTag extends Tag {
 	}
 
 	@Override
-	public TypeEval evalParams(Context context, Writer sb) {
+	public void eval(Context context, Writer sb) {
 		Exp result = list;
 		int iterations;
 
@@ -256,7 +256,9 @@ public class ForTag extends Tag {
 			iterations = fromList(context, result.eval(context), sb);
 		}
 
-		return iterations > 0 ? SKIP_BODY : EVAL_ELSE;
+		if (!(iterations > 0)) {
+			EVAL_ELSE.doEval(this, context, sb);
+		}
 	}
 
 	@Override

@@ -1,9 +1,11 @@
 package commenttemplate.template.tags.builtin;
 
-import commenttemplate.template.tags.Tag;
 import commenttemplate.expressions.primitivehandle.NumHandle;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
+import commenttemplate.template.tags.ConditionalTag;
+import static commenttemplate.template.tags.Tag.EVAL_BODY;
+import static commenttemplate.template.tags.Tag.EVAL_ELSE;
 import commenttemplate.template.tags.TypeEval;
 import commenttemplate.template.writer.Writer;
 
@@ -11,7 +13,7 @@ import commenttemplate.template.writer.Writer;
  *
  * @author thiago
  */
-public class IfTag extends Tag {
+public class IfTag extends ConditionalTag {
 
 	private Exp test;
 

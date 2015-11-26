@@ -22,7 +22,6 @@ import commenttemplate.context.Context;
 import commenttemplate.template.MountingHelper;
 import commenttemplate.template.TemplateBlock;
 import commenttemplate.template.tags.Tag;
-import commenttemplate.template.tags.TypeEval;
 import commenttemplate.template.writer.Writer;
 
 /**
@@ -32,11 +31,6 @@ import commenttemplate.template.writer.Writer;
 public class Literal extends Tag {
 	
 	private String stringRepr;
-
-	@Override
-	public TypeEval evalParams(Context context, Writer sb) {
-		throw new UnsupportedOperationException("Do not call this method.");
-	}
 
 	@Override
 	public void eval(Context context, Writer sb) {

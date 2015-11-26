@@ -2,7 +2,6 @@ package commenttemplate.template.tags.builtin;
 
 import commenttemplate.template.tags.Tag;
 import commenttemplate.context.Context;
-import commenttemplate.template.tags.TypeEval;
 import commenttemplate.template.writer.Writer;
 
 /**
@@ -16,7 +15,7 @@ public class ValueFormatterTag extends Tag {
 	}
 
 	@Override
-	public TypeEval evalParams(Context context, Writer sb) {
+	public void eval(Context context, Writer sb) {
 //		TemplateBlock actualBlock = (TemplateBlock) block;
 //		ValueFormatterParams params = (ValueFormatterParams) actualBlock.getParams();
 //		
@@ -54,7 +53,5 @@ public class ValueFormatterTag extends Tag {
 //			
 //			sb.append(tw.toString());
 //		}
-
-		return SKIP_BODY;
 	}
 }

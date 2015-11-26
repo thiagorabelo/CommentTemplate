@@ -41,11 +41,6 @@ public class IncludeTag extends WithTag {
 	}
 	
 	@Override
-	public TypeEval evalParams(Context context, Writer sb) {
-		return SKIP_BODY;
-	}
-	
-	@Override
 	public void eval(Context context, Writer sb) {
 		try {
 			TemplateBlockBase block = TemplateLoader.get(template.eval(context).toString());

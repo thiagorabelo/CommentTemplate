@@ -68,10 +68,10 @@ public class RecursiveRetrieveDataMap implements RetrieveData<Map<String, Object
 			value = getValue(
 				mapValues,
 				key.substring(0,lastPoint),
-				key.substring(
-					lastPoint + 1,
-					key.length()
-				) + (!Utils.empty(fieldPath) ? "." + fieldPath : "")
+				Join.with(".").skipNulls().these(
+					key.substring(lastPoint + 1, key.length()),
+					Utils.empty(fieldPath) ? fieldPath : null
+				).s()
 			);
 		}
 

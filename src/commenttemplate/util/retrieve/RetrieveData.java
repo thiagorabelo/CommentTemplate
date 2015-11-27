@@ -22,7 +22,7 @@ package commenttemplate.util.retrieve;
  *
  * @author thiago
  */
-public interface RetrieveDataMap<T> {
+public interface RetrieveData<T> {
 
 	public Object getValue(T target, String ...key);
 

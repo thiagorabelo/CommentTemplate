@@ -20,23 +20,21 @@ package commenttemplate.expressions.operators.properties;
 
 import commenttemplate.context.Context;
 import commenttemplate.expressions.operators.core.BinaryOperator;
-import commenttemplate.expressions.tree.Identifier;
-import commenttemplate.expressions.tree.PropertyPath;
-import commenttemplate.util.retrieve.IterativeRetrieverProperty;
+import commenttemplate.util.retrieve.IterativeRetrieverDataObject;
 
 /**
  *
  * @author thiago
  */
 public class Property extends BinaryOperator {
-	private static final IterativeRetrieverProperty retriever = new IterativeRetrieverProperty();
+	private static final IterativeRetrieverDataObject retriever = new IterativeRetrieverDataObject();
 
 	public static Object execute(Object l, Object r) {
 		if (!isNull(l)) {
 			String []ids = (String[])r;
 			return retriever.getValue(l, ids);
 		}
-		
+
 		return null;
 	}
 

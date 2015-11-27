@@ -24,7 +24,7 @@ import java.util.Map;
  *
  * @author thiago
  */
-public class IterativeRetrieverDataMap extends IterativeRetriever<Map<String, Object>> {
+public class IterativeRetrieverDataMap extends IterativeRetrieverData<Map<String, Object>> {
 	
 	@Override
 	protected Object getSource(Map<String, Object> target, String key0) {

@@ -25,7 +25,7 @@ import commenttemplate.util.Utils;
  * @author thiago
  * @param <T>
  */
-public abstract class IterativeRetriever<T> implements RetrieveDataMap<T> {
+public abstract class IterativeRetrieverData<T> implements RetrieveData<T> {
 	
 	protected abstract Object getSource(T target, String key0);
 	
@@ -41,7 +41,7 @@ public abstract class IterativeRetriever<T> implements RetrieveDataMap<T> {
 				break;
 			}
 		}
-		
+
 		return obj;
 	}
 	
@@ -60,6 +60,5 @@ public abstract class IterativeRetriever<T> implements RetrieveDataMap<T> {
 		} else {
 			return null;
 		}
-	}
-	
+	}	
 }

@@ -24,7 +24,7 @@ import commenttemplate.util.MyStack;
 import commenttemplate.util.MyHashMap;
 import commenttemplate.util.retrieve.CacheableRetrieverDataMap;
 import commenttemplate.util.retrieve.IterativeRetrieverDataMap;
-import commenttemplate.util.retrieve.RetrieveDataMap;
+import commenttemplate.util.retrieve.RetrieveData;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -70,9 +70,9 @@ public class Context implements Map<String, Object> {
 	 * </ol>
 	 * 
 	 * @see commenttemplate.util.retrieve.IterativeRetrieverDataMap
-	 * @see commenttemplate.util.retrieve.RetrieveDataMap
+	 * @see commenttemplate.util.retrieve.RetrieveData
 	 */
-	private static RetrieveDataMap<Map<String, Object>> defaultRetrieverDataMap() {
+	private static RetrieveData<Map<String, Object>> defaultRetrieverDataMap() {
 //		return new IterativeRetrieverDataMap();
 		return new CacheableRetrieverDataMap();
 	}
@@ -168,9 +168,9 @@ public class Context implements Map<String, Object> {
 	 * 
 	 * In exemple, will compute the result of the name {@code foo.propA.propB}.
 	 * 
-	 * @see commenttemplate.util.retrieve.RetrieveDataMap
+	 * @see commenttemplate.util.retrieve.RetrieveData
 	 */
-	private RetrieveDataMap<Map<String, Object>> retrieverDataMap;
+	private RetrieveData<Map<String, Object>> retrieverDataMap;
 	
 	/**
 	 * Create a default instance of {@code Context} with one scope and the default
@@ -191,10 +191,10 @@ public class Context implements Map<String, Object> {
 	 * that do the job of compute de value of cheined properties, like
 	 * {@code foo.propA.propB}.
 	 * 
-	 * @see commenttemplate.util.retrieve.RetrieveDataMap
+	 * @see commenttemplate.util.retrieve.RetrieveData
 	 * @see commenttemplate.util.MyHashMap
 	 */
-	public Context(RetrieveDataMap retrieverDataMap) {
+	public Context(RetrieveData retrieverDataMap) {
 		(contextStack = new MyStack<>()).push(new MyHashMap<>());
 		this.retrieverDataMap = retrieverDataMap;
 	}
@@ -237,9 +237,9 @@ public class Context implements Map<String, Object> {
 	 * 
 	 * @see commenttemplate.util.MyHashMap
 	 * @see commenttemplate.util.MyStack
-	 * @see commenttemplate.util.retrieve.RetrieveDataMap
+	 * @see commenttemplate.util.retrieve.RetrieveData
 	 */
-	public Context(Map<String, Object> params, RetrieveDataMap retrieverDataMap) {
+	public Context(Map<String, Object> params, RetrieveData retrieverDataMap) {
 		this(retrieverDataMap);
 
 		if (params instanceof MyHashMap) {
@@ -275,9 +275,9 @@ public class Context implements Map<String, Object> {
 	 * 
 	 * @see commenttemplate.util.MyHashMap
 	 * @see commenttemplate.util.MyStack
-	 * @see commenttemplate.util.retrieve.RetrieveDataMap
+	 * @see commenttemplate.util.retrieve.RetrieveData
 	 */
-	public Context(Context other, RetrieveDataMap retrieverDataMap) {
+	public Context(Context other, RetrieveData retrieverDataMap) {
 		this(retrieverDataMap);
 		
 		for (MyHashMap<String, Object> map : other.contextStack) {

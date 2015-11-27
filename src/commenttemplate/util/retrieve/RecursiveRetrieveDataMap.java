@@ -32,7 +32,7 @@ import java.util.Map;
 //     "a.b.c.d"
 //     "a.b.c".getD()
 //     "a.b".getC().getD()
-public class RecursiveRetrieveDataMap implements RetrieveDataMap<Map<String, Object>> {
+public class RecursiveRetrieveDataMap implements RetrieveData<Map<String, Object>> {
 
 	//Entrada é VAR_PATH, saída é o valor encontrado. Vazio é retornado se nada for encontrado.
 	@Override

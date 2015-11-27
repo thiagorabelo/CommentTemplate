@@ -18,7 +18,7 @@
  */
 package commenttemplate.util.retrieve;
 
-import commenttemplate.util.reflection.PropertyCache;
+import commenttemplate.util.reflection.PropertyWrappersCache;
 import commenttemplate.util.reflection.PropertyWrapper;
 import java.util.HashMap;
 
@@ -28,17 +28,17 @@ import java.util.HashMap;
  */
 public class CacheableRetrieverDataMap extends IterativeRetrieverDataMap {
 	
-	private HashMap<Class, PropertyCache> cache = new HashMap<Class, PropertyCache>();
+	private HashMap<Class, PropertyWrappersCache> cache = new HashMap<Class, PropertyWrappersCache>();
 
 	@Override
 	protected Object getProperty(Object obj, String key) {
-		PropertyCache pc = cache.get(obj.getClass());
-		if (pc == null) {
-			pc = new PropertyCache(obj.getClass());
-			cache.put(obj.getClass(), pc);
+		PropertyWrappersCache pwc = cache.get(obj.getClass());
+		if (pwc == null) {
+			pwc = new PropertyWrappersCache(obj.getClass());
+			cache.put(obj.getClass(), pwc);
 		}
 
-		PropertyWrapper pw = pc.findProperty(key);
+		PropertyWrapper pw = pwc.findProperty(key);
 
 		try {
 			return pw != null ? pw.execute(obj) : null;

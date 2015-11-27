@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
  * @author thiago
  */
 public class Identifier implements Token {
+	// @TODO: Não usar mais regex. Usar algum Tokenizer.
 	private static final Pattern splitter = Pattern.compile("\\s*\\.\\s*");
 	
 	private String [] keys;

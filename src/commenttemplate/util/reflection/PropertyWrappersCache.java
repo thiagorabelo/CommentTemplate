@@ -29,13 +29,13 @@ import java.util.Iterator;
  *
  * @author thiago
  */
-public class PropertyCache {
+public class PropertyWrappersCache {
 
 	private final Class cls;
 	
 	private final HashMap<String, PropertyWrapper> cache = new HashMap<String, PropertyWrapper>();
 
-	public PropertyCache(Class cls) {
+	public PropertyWrappersCache(Class cls) {
 		this.cls = cls;
 	}
 
@@ -50,7 +50,7 @@ public class PropertyCache {
 		String capitalized = Utils.capitalize(name);
 		Method method;
 
-		// Tenta captura o valor da propriedade pelos métodos
+		// Tenta capturar o valor da propriedade pelos métodos
 		// get, is e has.
 		for (int i = 0, len = prefixes.length; i < len; i++) {
 			if ((method = Utils.getMethod(cls, prefixes[i] + capitalized, params)) != null) {
@@ -113,7 +113,7 @@ public class PropertyCache {
 	}
 	
 	public static void main(String[] args) {
-		PropertyCache pc = new PropertyCache(PropertyCache.class);
+		PropertyWrappersCache pc = new PropertyWrappersCache(PropertyWrappersCache.class);
 		System.out.println(pc.buildMethodName("buildMethodName", String.class, Class.class));
 	}
 }

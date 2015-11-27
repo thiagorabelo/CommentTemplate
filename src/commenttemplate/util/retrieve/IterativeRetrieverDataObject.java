@@ -22,7 +22,7 @@ package commenttemplate.util.retrieve;
  *
  * @author thiago
  */
-public class IterativeRetrieverProperty extends IterativeRetriever<Object> {
+public class IterativeRetrieverDataObject extends IterativeRetrieverData<Object> {
 
 	@Override
 	protected Object getSource(Object target, String key0) {

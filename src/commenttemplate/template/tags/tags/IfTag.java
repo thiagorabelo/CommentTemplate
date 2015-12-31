@@ -6,8 +6,8 @@ import commenttemplate.context.Context;
 import commenttemplate.template.tags.ConditionalTag;
 import static commenttemplate.template.tags.Tag.EVAL_BODY;
 import static commenttemplate.template.tags.Tag.EVAL_ELSE;
-import commenttemplate.template.tags.TypeEval;
 import commenttemplate.template.writer.Writer;
+import commenttemplate.template.tags.EvalType;
 
 /**
  *
@@ -41,7 +41,7 @@ public class IfTag extends ConditionalTag {
 	}
 
 	@Override
-	public TypeEval evalParams(Context context, Writer sb) {
+	public EvalType evalParams(Context context, Writer sb) {
 		Exp exp = test;
 
 		Object t = exp.eval(context);

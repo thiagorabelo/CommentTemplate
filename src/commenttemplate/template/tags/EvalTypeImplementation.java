@@ -19,19 +19,48 @@
 package commenttemplate.template.tags;
 
 import commenttemplate.context.Context;
+import commenttemplate.template.nodes.Node;
 import commenttemplate.template.writer.Writer;
 
 /**
  *
  * @author thiago
  */
-public abstract class ConditionalTag extends Tag {
+public enum EvalTypeImplementation implements EvalType {
+	SKIP_BODY {
+		@Override
+		public void doEval(Tag tag, Context context, Writer sb) {
+			// do nothing
+		}
+	},
+	EVAL_BODY {
+		@Override
+		public void doEval(Tag tag, Context context, Writer sb) {
+			Node []nodeList;
 
-	public abstract EvalType evalParams(Context context, Writer sb);
+			if ((nodeList = tag.getNodeList()) != null) {
+				tag.start(context, sb);
+				tag.loopBlockList(nodeList, context, sb);
+				tag.end(context, sb);
+			}
+		}
+	},
+	EVAL_ELSE {
+		@Override
+		public void doEval(Tag tag, Context context, Writer sb) {
+			Node []nodeListElse;
+
+			if ((nodeListElse = tag.getNodeListElse()) != null) {
+				tag.start(context, sb);
+				tag.loopBlockList(nodeListElse, context, sb);
+				tag.end(context, sb);
+			}
+		}
+	}
+	;
 
 	@Override
-	public void eval(Context context, Writer sb) {
-		EvalType type = evalParams(context, sb);
-		type.doEval(this, context, sb);
+	public void doEval(Tag tag, Context context, Writer sb) {
+		throw new UnsupportedOperationException("Not supported.");
 	}
 }

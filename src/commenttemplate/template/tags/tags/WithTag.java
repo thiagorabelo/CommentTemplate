@@ -22,10 +22,10 @@ package commenttemplate.template.tags.tags;
 import commenttemplate.context.Context;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.tags.Tag;
-import commenttemplate.template.tags.TypeEval;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.MyHashMap;
 import java.util.Map;
+import commenttemplate.template.tags.EvalType;
 
 /**
  *

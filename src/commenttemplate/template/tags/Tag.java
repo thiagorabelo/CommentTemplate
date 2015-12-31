@@ -14,50 +14,9 @@ import java.util.ArrayList;
  */
 public abstract class Tag extends AbstractNode {
 	
-	public static enum TypeEvalTag implements TypeEval {
-
-		SKIP_BODY {
-			@Override
-			public void doEval(Tag tag, Context context, Writer sb) {
-				// do nothing
-			}
-		},
-		EVAL_BODY {
-			@Override
-			public void doEval(Tag tag, Context context, Writer sb) {
-				Node []nodeList;
-
-				if ((nodeList = tag.getNodeList()) != null) {
-					tag.start(context, sb);
-					tag.loopBlockList(nodeList, context, sb);
-					tag.end(context, sb);
-				}
-			}
-		},
-		EVAL_ELSE {
-			@Override
-			public void doEval(Tag tag, Context context, Writer sb) {
-				Node []nodeListElse;
-
-				if ((nodeListElse = tag.getNodeListElse()) != null) {
-					tag.start(context, sb);
-					tag.loopBlockList(nodeListElse, context, sb);
-					tag.end(context, sb);
-				}
-			}
-		}
-		;
-
-		@Override
-		public void doEval(Tag tag, Context context, Writer sb) {
-			throw new UnsupportedOperationException("Not supported.");
-		}
-		
-	}
-
-	public static final TypeEval SKIP_BODY = TypeEvalTag.SKIP_BODY;
-	public static final TypeEval EVAL_BODY = TypeEvalTag.EVAL_BODY;
-	public static final TypeEval EVAL_ELSE = TypeEvalTag.EVAL_ELSE;
+	public static final EvalType SKIP_BODY = EvalTypeImplementation.SKIP_BODY;
+	public static final EvalType EVAL_BODY = EvalTypeImplementation.EVAL_BODY;
+	public static final EvalType EVAL_ELSE = EvalTypeImplementation.EVAL_ELSE;
 
 	private String tagName;
 

@@ -5,8 +5,8 @@ import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
 import commenttemplate.template.tags.Tag;
 import static commenttemplate.template.tags.Tag.EVAL_BODY;
-import commenttemplate.template.tags.TypeEval;
 import commenttemplate.template.writer.Writer;
+import commenttemplate.template.tags.EvalType;
 
 /**
  *
@@ -14,7 +14,7 @@ import commenttemplate.template.writer.Writer;
  */
 public class BlockTag extends Tag {
 	
-	private  enum TypeEvalBlock implements TypeEval {
+	private  enum TypeEvalBlock implements EvalType {
 
 		EVAL_WRITER,
 		EVAL_BODY_WITH_MAPPED_WRITER,

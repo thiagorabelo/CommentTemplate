@@ -16,39 +16,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.template.node;
+package commenttemplate.template.nodes;
 
 import commenttemplate.context.Context;
-import commenttemplate.template.tags.managers.TagManager;
+import commenttemplate.template.tags.MountingHelper;
 import commenttemplate.template.writer.Writer;
 
 /**
  *
  * @author thiago
  */
-public abstract class NodeImpl implements Node {
+public abstract class AbstractNode implements Node {
 
-	private NodeImpl []nodeList;
-	private NodeImpl []nodeListElse;
-
-	private TagManager tagManager;
+	private Node []nodeList;
+	private Node []nodeListElse;
 
 	@Override
-	public NodeImpl[] getNodeList() {
+	public Node[] getNodeList() {
 		return nodeList;
 	}
 
-	public void setNodeList(NodeImpl[] nodeList) {
+	public void setNodeList(Node[] nodeList) {
 		this.nodeList = nodeList;
 	}
 
 	@Override
-	public NodeImpl[] getNodeListElse() {
+	public Node[] getNodeListElse() {
 		return nodeListElse;
 	}
 
-	public void setNodeListElse(NodeImpl[] nodeListElse) {
+	public void setNodeListElse(Node[] nodeListElse) {
 		this.nodeListElse = nodeListElse;
+	}
+
+	public MountingHelper createMountingHelper() {
+		return new MountingHelper(this);
 	}
 
 	@Override

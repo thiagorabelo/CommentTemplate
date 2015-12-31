@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.template.node;
+package commenttemplate.template.nodes;
 
 import commenttemplate.context.Context;
 import commenttemplate.template.writer.Writer;
@@ -30,6 +30,10 @@ public interface Node {
 	public Node[] getNodeList();
 
 	public Node[] getNodeListElse();
+
+	public void setNodeList(Node[] nodeListElse);
+
+	public void setNodeListElse(Node[] nodeListElse);
 
 	@Override
 	public abstract String toString();

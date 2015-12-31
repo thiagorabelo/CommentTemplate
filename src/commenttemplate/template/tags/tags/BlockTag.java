@@ -1,4 +1,4 @@
-package commenttemplate.template.tags.builtin.extend;
+package commenttemplate.template.tags.tags;
 
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;

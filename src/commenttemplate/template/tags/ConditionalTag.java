@@ -19,7 +19,6 @@
 package commenttemplate.template.tags;
 
 import commenttemplate.context.Context;
-import commenttemplate.template.TemplateBlock;
 import commenttemplate.template.writer.Writer;
 
 /**

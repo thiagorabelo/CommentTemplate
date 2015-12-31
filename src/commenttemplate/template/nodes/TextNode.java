@@ -1,16 +1,17 @@
-package commenttemplate.template;
+package commenttemplate.template.nodes;
 
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.context.Context;
 import commenttemplate.expressions.tree.Literal;
+import commenttemplate.template.TemplateParser;
 import commenttemplate.template.writer.Writer;
 
 /**
  *
  * @author thiago
  */
-public class TemplateStatic extends TemplateBlock {
+public class TextNode extends AbstractNode {
 	
 	public static class PlainText extends Literal {
 		public PlainText(String text) {
@@ -25,7 +26,7 @@ public class TemplateStatic extends TemplateBlock {
 	
 	private Exp []content;
 	
-	public TemplateStatic() {
+	public TextNode() {
 	}
 	
 	public Exp []getContent() {

@@ -1,14 +1,14 @@
-package commenttemplate.template.tags.builtin.extend;
+package commenttemplate.template.tags.tags;
 
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.loader.TemplateLoader;
-import commenttemplate.template.TemplateBlock;
-import commenttemplate.template.TemplateBlockBase;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
 import commenttemplate.template.tags.Tag;
-import commenttemplate.template.MountingHelper;
+import commenttemplate.template.tags.MountingHelper;
+import commenttemplate.template.nodes.Node;
+import commenttemplate.template.nodes.RootNode;
 import commenttemplate.template.writer.Writer;
 
 /**
@@ -25,9 +25,9 @@ public class ExtendsTag extends Tag {
 			Exp exp = name;
 
 			String templateName = exp.eval(context).toString();
-			TemplateBlockBase base = TemplateLoader.get(templateName);
+			RootNode base = TemplateLoader.get(templateName);
 
-			TemplateBlock []inner = getBlockList();
+			Node []inner = getNodeList();
 			ContextWriterMap cwm = new ContextWriterMap(context);
 
 			cwm.setMode(ContextWriterMap.Mode.STORE);
@@ -55,12 +55,12 @@ public class ExtendsTag extends Tag {
 	
 	private class MountingExtendsHelper extends MountingHelper {
 
-		public MountingExtendsHelper(TemplateBlock b) {
+		public MountingExtendsHelper(Node b) {
 			super(b);
 		}
 
 		@Override
-		public void append(TemplateBlock other) {
+		public void append(Node other) {
 			if (other instanceof BlockTag) {
 				super.append(other);
 			}

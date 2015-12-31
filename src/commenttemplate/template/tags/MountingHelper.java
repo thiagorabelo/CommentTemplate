@@ -16,8 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.template;
+package commenttemplate.template.tags;
 
+import commenttemplate.template.nodes.Node;
 import java.util.ArrayList;
 
 /**
@@ -26,64 +27,64 @@ import java.util.ArrayList;
  */
 public class MountingHelper {
 	
-	TemplateBlock block;
-	ArrayList<TemplateBlock> nodeList;
-	ArrayList<TemplateBlock> nodeListElse;
+	Node block;
+	ArrayList<Node> nodeList;
+	ArrayList<Node> nodeListElse;
 	
-	public MountingHelper(TemplateBlock b) {
+	public MountingHelper(Node b) {
 		block = b;
 		nodeList = new ArrayList<>();
 		nodeListElse = new ArrayList<>();
 	}
 
-	public TemplateBlock getBlock() {
+	public Node getBlock() {
 		return block;
 	}
 
-	public void setBlock(TemplateBlock block) {
+	public void setBlock(Node block) {
 		this.block = block;
 	}
 
-	public ArrayList<TemplateBlock> getNodeList() {
+	public ArrayList<Node> getNodeList() {
 		return nodeList;
 	}
 
-	public void setNodeList(ArrayList<TemplateBlock> nodeList) {
+	public void setNodeList(ArrayList<Node> nodeList) {
 		this.nodeList = nodeList;
 	}
 
-	public ArrayList<TemplateBlock> getNodeListElse() {
+	public ArrayList<Node> getNodeListElse() {
 		return nodeListElse;
 	}
 
-	public void setNodeListElse(ArrayList<TemplateBlock> nodeListElse) {
+	public void setNodeListElse(ArrayList<Node> nodeListElse) {
 		this.nodeListElse = nodeListElse;
 	}
 	
-	public TemplateBlock buildBlock(String innerContent) {
+	public Node buildNode(String innerContent) {
 		//System.out.println("=====================\n{"+innerContent+"}");
 		if (!nodeList.isEmpty()) {
-			TemplateBlock []list = new TemplateBlock[nodeList.size()];
+			Node []list = new Node[nodeList.size()];
 			nodeList.toArray(list);
-			block.setBlockList(list);
+			block.setNodeList(list);
 			nodeList.clear();
 		}
 
 		if (!nodeListElse.isEmpty()) {
-			TemplateBlock []list = new TemplateBlock[nodeListElse.size()];
+			Node []list = new Node[nodeListElse.size()];
 			nodeListElse.toArray(list);
-			block.setBlockListElse(list);
+			block.setNodeListElse(list);
 			nodeListElse.clear();
 		}
 
 		return block;
 	}
 	
-	public void append(TemplateBlock b) {
-		nodeList.add(b);
+	public void append(Node n) {
+		nodeList.add(n);
 	}
 
-	public void appendToElse(TemplateBlock b) {
-		nodeListElse.add(b);
+	public void appendToElse(Node n) {
+		nodeListElse.add(n);
 	}
 }

@@ -1,7 +1,8 @@
 package commenttemplate.template.tags;
 
-import commenttemplate.template.TemplateBlock;
 import commenttemplate.context.Context;
+import commenttemplate.template.nodes.AbstractNode;
+import commenttemplate.template.nodes.Node;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Join;
 import commenttemplate.util.Utils;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  *
  * @author thiago
  */
-public abstract class Tag extends TemplateBlock {
+public abstract class Tag extends AbstractNode {
 	
 	public static enum TypeEvalTag implements TypeEval {
 
@@ -24,11 +25,11 @@ public abstract class Tag extends TemplateBlock {
 		EVAL_BODY {
 			@Override
 			public void doEval(Tag tag, Context context, Writer sb) {
-				TemplateBlock []blockList;
+				Node []nodeList;
 
-				if ((blockList = tag.getBlockList()) != null) {
+				if ((nodeList = tag.getNodeList()) != null) {
 					tag.start(context, sb);
-					tag.loopBlockList(blockList, context, sb);
+					tag.loopBlockList(nodeList, context, sb);
 					tag.end(context, sb);
 				}
 			}
@@ -36,11 +37,11 @@ public abstract class Tag extends TemplateBlock {
 		EVAL_ELSE {
 			@Override
 			public void doEval(Tag tag, Context context, Writer sb) {
-				TemplateBlock []blockListElse;
+				Node []nodeListElse;
 
-				if ((blockListElse = tag.getBlockListElse()) != null) {
+				if ((nodeListElse = tag.getNodeListElse()) != null) {
 					tag.start(context, sb);
-					tag.loopBlockList(blockListElse, context, sb);
+					tag.loopBlockList(nodeListElse, context, sb);
 					tag.end(context, sb);
 				}
 			}
@@ -72,8 +73,8 @@ public abstract class Tag extends TemplateBlock {
 	@Override
 	public abstract void eval(Context context, Writer sb);
 
-	protected void loopBlockList(TemplateBlock []blockList, Context context, Writer sb) {
-		for (TemplateBlock t : blockList) {
+	protected void loopBlockList(Node []blockList, Context context, Writer sb) {
+		for (Node t : blockList) {
 			t.eval(context, sb);
 		}
 	}
@@ -87,7 +88,7 @@ public abstract class Tag extends TemplateBlock {
 	}
 	
 	public String paramsToString() {
-		String []params = TagContainer.instance().getByTagName(tagName).getParams();
+		String []params = TagFactoryContainer.instance().getByTagName(tagName).getParams();
 		ArrayList<String> l = new ArrayList<String>();
 		
 		for (String p : params) {
@@ -104,18 +105,18 @@ public abstract class Tag extends TemplateBlock {
 	public void toString(StringBuilder sb) {
 		sb.append("<!--").append(tagName).append(" ").append(paramsToString()).append("-->");
 		
-		TemplateBlock []l;
+		Node []l;
 		
-		if ((l = getBlockList()) != null) {
-			for (TemplateBlock t : l) {
-				t.toString(sb);
+		if ((l = getNodeList()) != null) {
+			for (Node n : l) {
+				n.toString(sb);
 			}
 		}
 		
-		if ((l = getBlockListElse()) != null) {
+		if ((l = getNodeListElse()) != null) {
 			sb.append("<!--else-->");
-			for (TemplateBlock t : l) {
-				t.toString(sb);
+			for (Node n : l) {
+				n.toString(sb);
 			}
 		}
 

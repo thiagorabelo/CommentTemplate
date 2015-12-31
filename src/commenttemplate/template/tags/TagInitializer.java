@@ -1,13 +1,15 @@
 package commenttemplate.template.tags;
 
-import commenttemplate.template.tags.builtin.IfTag;
-import commenttemplate.template.tags.builtin.IncludeTag;
-import commenttemplate.template.tags.builtin.Literal;
-import commenttemplate.template.tags.builtin.SetTag;
-import commenttemplate.template.tags.builtin.WithTag;
-import commenttemplate.template.tags.builtin.extend.ExtendsTag;
-import commenttemplate.template.tags.builtin.extend.BlockTag;
-import commenttemplate.template.tags.builtin.customcomponent.ForComponent;
+import commenttemplate.template.tags.factory.TagFactory;
+import commenttemplate.template.tags.factory.MappableTagFactory;
+import commenttemplate.template.tags.tags.IfTag;
+import commenttemplate.template.tags.tags.IncludeTag;
+import commenttemplate.template.tags.tags.Literal;
+import commenttemplate.template.tags.tags.SetTag;
+import commenttemplate.template.tags.tags.WithTag;
+import commenttemplate.template.tags.tags.ExtendsTag;
+import commenttemplate.template.tags.tags.BlockTag;
+import commenttemplate.template.tags.factory.ForTagFactory;
 import commenttemplate.util.Utils;
 
 /**
@@ -46,21 +48,21 @@ public class TagInitializer {
 	
 	
 	private void initBuildin() {
-		TagContainer.instance().addBuiltinTag(new ForComponent());
+		TagFactoryContainer.instance().addBuiltinTag(new ForTagFactory());
 //		TagContainer.instance().addBuiltinTag(new WithComponent());
-		TagContainer.instance().addBuiltinTag(new MappableTagComponent("with", WithTag.class));
-		TagContainer.instance().addBuiltinTag(new MappableTagComponent("include", IncludeTag.class,  "!template"));
-		TagContainer.instance().addBuiltinTag(new TagComponent("if", IfTag.class, "!test"));
-		TagContainer.instance().addBuiltinTag(new TagComponent("set", SetTag.class, "!var", "value"));
-		TagContainer.instance().addBuiltinTag(new TagComponent("literal", Literal.class));
+		TagFactoryContainer.instance().addBuiltinTag(new MappableTagFactory("with", WithTag.class));
+		TagFactoryContainer.instance().addBuiltinTag(new MappableTagFactory("include", IncludeTag.class,  "!template"));
+		TagFactoryContainer.instance().addBuiltinTag(new TagFactory("if", IfTag.class, "!test"));
+		TagFactoryContainer.instance().addBuiltinTag(new TagFactory("set", SetTag.class, "!var", "value"));
+		TagFactoryContainer.instance().addBuiltinTag(new TagFactory("literal", Literal.class));
 //		TemplateTag.addBuiltinTag(new ValueFormatterTemplateTag());
-		TagContainer.instance().addBuiltinTag(new TagComponent("extends", ExtendsTag.class,  "!name"));
-		TagContainer.instance().addBuiltinTag(new TagComponent("block", BlockTag.class, "!name"));
+		TagFactoryContainer.instance().addBuiltinTag(new TagFactory("extends", ExtendsTag.class,  "!name"));
+		TagFactoryContainer.instance().addBuiltinTag(new TagFactory("block", BlockTag.class, "!name"));
 	}
 	
-	public void addTag(TagComponent component) {
+	public void addTag(TagFactory component) {
 		if (component != null && !Utils.empty(component.getName()) && component.getTagClass() != null) {
-			TagContainer.instance().addCustomTag(component);
+			TagFactoryContainer.instance().addCustomTag(component);
 		}
 	}
 }

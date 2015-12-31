@@ -1,5 +1,7 @@
 package commenttemplate.template;
 
+import commenttemplate.template.nodes.TextNode;
+import commenttemplate.template.tags.MountingHelper;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,9 +14,10 @@ import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.template.tags.Tag;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.template.exceptions.TemplateNestingException;
-import commenttemplate.template.tagparams.InvalidParamsSintaxException;
-import commenttemplate.template.tags.TagComponent;
-import commenttemplate.template.tags.TagContainer;
+import commenttemplate.template.exceptions.InvalidParamsSintaxException;
+import commenttemplate.template.nodes.RootNode;
+import commenttemplate.template.tags.factory.TagFactory;
+import commenttemplate.template.tags.TagFactoryContainer;
 import commenttemplate.util.MyStack;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Wrap;
@@ -41,7 +44,7 @@ public class TemplateParser {
 	private static final Pattern openExpPattern = Pattern.compile("\\$\\{");
 
 	// precisa dizer o que faz?
-	public static TemplateBlockBase compile(String input)  throws TemplateException {
+	public static RootNode compile(String input)  throws TemplateException {
 //		TemplateTagInitializer.instance();
 
 		try {
@@ -54,7 +57,7 @@ public class TemplateParser {
 	}
 
 	// Monta a árvore que representa o template
-	private static TemplateBlockBase mountTemplateTree(String input) throws TemplateException {
+	private static RootNode mountTemplateTree(String input) throws TemplateException {
 
 		// Uma classe Wrap para um inteiro, foi utilizado para poder passar
 		// o parâmetro desse inteiro por referência, já que java não permite
@@ -63,7 +66,7 @@ public class TemplateParser {
 
 		int initialBufferSize = (int)((float)input.length() * 1.3f);
 
-		TemplateBlockBase base = new TemplateBlockBase(initialBufferSize);
+		RootNode base = new RootNode(initialBufferSize);
 		Matcher tagMatcher = openPattern.matcher(input);
 		MyStack<Tuple<Integer, MountingHelper>> stack = new MyStack<Tuple<Integer, MountingHelper>>();
 		MyStack<Boolean> usingElse = new MyStack<Boolean>();
@@ -92,7 +95,7 @@ public class TemplateParser {
 				// um bloco estático
 				String text = input.substring(lastLength.getValue(), tagMatcher.start());
 				if (!text.isEmpty()) {
-					TemplateStatic sttc = new TemplateStatic();
+					TextNode sttc = new TextNode();
 					sttc.setContent(text);
 
 					// Adiciona o bloco estático ao bloco que está altualmente no topo da pilha
@@ -117,7 +120,7 @@ public class TemplateParser {
 				// e empilhe este novo bloco na pilha.
 				if (!startsWithEnd && !isElse) {
 
-					TagComponent component = TagContainer.instance().getByTagName(expressions[0]);
+					TagFactory component = TagFactoryContainer.instance().getByTagName(expressions[0]);
 					// @TODO: Fazer a validação das exceções aqui lançadas
 					Tag tag = component.populateParameters(expressions[1]);
 
@@ -134,7 +137,7 @@ public class TemplateParser {
 				} else { // Caso contrário, remova um bloco que esteja em cima da pilha.
 					Tuple<Integer, MountingHelper> popped = stack.pop();
 					String innerContent = input.substring(popped.getA(), tagMatcher.start());
-					popped.getB().buildBlock(innerContent);
+					popped.getB().buildNode(innerContent);
 					usingElse.pop();
 				}
 			}
@@ -145,13 +148,13 @@ public class TemplateParser {
 			if (!text.isEmpty()) {
 				// Adicione o resto do template através de um bloco estátio ao bloco que
 				// restou na pilha.
-				TemplateStatic sttc = new TemplateStatic();
+				TextNode sttc = new TextNode();
 				sttc.setContent(text);
 
 				block.getB().append(sttc);
 			}
 
-			block.getB().buildBlock(input);
+			block.getB().buildNode(input);
 		} catch (ExpressionException ex) {
 
 			throw new TemplateException(ex.getMessage(), lineCounter(input.substring(0, tagMatcher.start())), ex.show(), ex);
@@ -290,7 +293,7 @@ public class TemplateParser {
 						String plain = content.substring(lastEnd, m.start());
 
 						if (!plain.isEmpty()) {
-							cont.add(new TemplateStatic.PlainText(plain));
+							cont.add(new TextNode.PlainText(plain));
 						}
 
 						String exp = content.substring(m.end(), m.end() + endIndex);
@@ -304,7 +307,7 @@ public class TemplateParser {
 			throw new TemplateException(ex.getMessage(), lineCounter(content.substring(0, m.start())), ex.show());
 		}
 
-		cont.add(new TemplateStatic.PlainText(content.substring(lastEnd)));
+		cont.add(new TextNode.PlainText(content.substring(lastEnd)));
 
 		Exp array [] = new Exp[cont.size()];
 

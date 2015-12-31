@@ -16,47 +16,41 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.template.tags.builtin;
+
+package commenttemplate.template.tags.tags;
 
 import commenttemplate.context.Context;
-import commenttemplate.template.MountingHelper;
-import commenttemplate.template.TemplateBlock;
+import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.tags.Tag;
+import commenttemplate.template.tags.TypeEval;
 import commenttemplate.template.writer.Writer;
+import commenttemplate.util.MyHashMap;
+import java.util.Map;
 
 /**
  *
  * @author thiago
  */
-public class Literal extends Tag {
+public class WithTag extends Tag {
 	
-	private String stringRepr;
-
+	protected MyHashMap<String, Exp> params = new MyHashMap<>();
+	
 	@Override
 	public void eval(Context context, Writer sb) {
-		sb.append(stringRepr);
+		EVAL_BODY.doEval(this, context, sb);
 	}
 	
-	private class MountingLiteralsHelper extends MountingHelper {
-		public MountingLiteralsHelper(TemplateBlock b) {
-			super(b);
-		}
-		
-		@Override
-		public TemplateBlock buildBlock(String innerContent) {
-			TemplateBlock block = super.buildBlock(innerContent);
-			Literal.this.stringRepr = innerContent;
+	@Override
+	public void start(Context context, Writer sb) {
+		context.push();
 
-			return block;
-		}
-		
-		@Override
-		public void appendToElse(TemplateBlock b) {
+		for (Map.Entry<String, Exp> e : params.entrySet()) {
+			context.put(e.getKey(), e.getValue().eval(context));
 		}
 	}
 
 	@Override
-	public MountingHelper createMountingHelper() {
-		return new MountingLiteralsHelper(this);
+	public void end(Context context, Writer sb) {
+		context.pop();
 	}
 }

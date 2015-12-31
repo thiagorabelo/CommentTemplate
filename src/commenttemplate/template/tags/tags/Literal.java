@@ -16,20 +16,47 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.template.tags.managers;
+package commenttemplate.template.tags.tags;
 
+import commenttemplate.context.Context;
+import commenttemplate.template.tags.MountingHelper;
+import commenttemplate.template.nodes.Node;
 import commenttemplate.template.tags.Tag;
+import commenttemplate.template.writer.Writer;
 
 /**
  *
  * @author thiago
  */
-public class InstanciableTagManager implements TagManager {
+public class Literal extends Tag {
+	
+	private String stringRepr;
 
 	@Override
-	public Tag getTagInstance() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public void eval(Context context, Writer sb) {
+		sb.append(stringRepr);
 	}
 	
-	
+	private class MountingLiteralsHelper extends MountingHelper {
+		public MountingLiteralsHelper(Node n) {
+			super(n);
+		}
+		
+		@Override
+		public Node buildNode(String innerContent) {
+			Node node = super.buildNode(innerContent);
+			Literal.this.stringRepr = innerContent;
+
+			return node;
+		}
+		
+		@Override
+		public void appendToElse(Node n) {
+		}
+	}
+
+	@Override
+	public MountingHelper createMountingHelper() {
+		return new MountingLiteralsHelper(this);
+	}
 }

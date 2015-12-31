@@ -22,7 +22,7 @@ import commenttemplate.context.ContextProcessor;
 import commenttemplate.context.processor.ContextProcessorCache;
 import commenttemplate.expressions.function.Function;
 import commenttemplate.expressions.function.FunctionsRegister;
-import commenttemplate.template.tags.TagComponent;
+import commenttemplate.template.tags.factory.TagFactory;
 import commenttemplate.template.tags.Tag;
 import commenttemplate.template.tags.TagInitializer;
 import commenttemplate.util.Utils;
@@ -143,15 +143,15 @@ public class Init extends TemplateLoaderConfig {
 					String className = m.group("class");
 
 					if (Utils.empty(tagName)) {
-						Class<? extends TagComponent> cls = (Class<? extends TagComponent>)Class.forName(className);
-						TagComponent component = cls.newInstance();
+						Class<? extends TagFactory> cls = (Class<? extends TagFactory>)Class.forName(className);
+						TagFactory component = cls.newInstance();
 						TagInitializer.getInstance().addTag(component);
 					} else {
 						Class<? extends Tag> cls = (Class<? extends Tag>)Class.forName(className);
 						String p = u.substring(m.end()).trim().substring(1);
 						String [] params = SPLIT_BY_COMMA.split(p);
 						
-						TagComponent component = new TagComponent(tagName, cls, params);
+						TagFactory component = new TagFactory(tagName, cls, params);
 						TagInitializer.instance().addTag(component);
 					}
 				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {

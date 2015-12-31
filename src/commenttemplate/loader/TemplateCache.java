@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import commenttemplate.template.TemplateBlockBase;
 import commenttemplate.template.TemplateParser;
 import commenttemplate.template.exceptions.TemplateException;
+import commenttemplate.template.nodes.RootNode;
 import commenttemplate.util.Utils;
 
 /**
@@ -15,7 +15,7 @@ import commenttemplate.util.Utils;
  */
 public class TemplateCache {
 	
-	private static Map<Serializable, TemplateBlockBase> templates = new HashMap<Serializable, TemplateBlockBase>();
+	private static Map<Serializable, RootNode> templates = new HashMap<Serializable, RootNode>();
 	
 	public static synchronized void loadTemplates(List<TemplateStream> lstTmpl) throws TemplateException {
 		for (TemplateStream t : lstTmpl) {
@@ -33,8 +33,8 @@ public class TemplateCache {
 		}
 	}
 
-	public static TemplateBlockBase getTemplateBlock(Serializable key) throws TemplateException {
-		TemplateBlockBase t = templates.get(key);
+	public static RootNode getTemplateBlock(Serializable key) throws TemplateException {
+		RootNode t = templates.get(key);
 		return t;
 	}
 }

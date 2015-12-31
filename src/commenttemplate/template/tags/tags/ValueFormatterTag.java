@@ -1,4 +1,4 @@
-package commenttemplate.template.tags.builtin;
+package commenttemplate.template.tags.tags;
 
 import commenttemplate.template.tags.Tag;
 import commenttemplate.context.Context;

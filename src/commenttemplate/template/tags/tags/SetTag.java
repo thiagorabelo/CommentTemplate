@@ -1,12 +1,11 @@
-package commenttemplate.template.tags.builtin;
+package commenttemplate.template.tags.tags;
 
 import commenttemplate.template.tags.Tag;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.writer.TemplateWriter;
 import commenttemplate.context.Context;
 import commenttemplate.expressions.tree.Identifier;
-import commenttemplate.template.TemplateBlock;
-import commenttemplate.template.tags.TypeEval;
+import commenttemplate.template.nodes.Node;
 import commenttemplate.template.writer.Writer;
 
 /**
@@ -45,14 +44,14 @@ public class SetTag extends Tag {
 		
 		if (name != null && !name.equals("")) {
 			Object result;
-			TemplateBlock []blockList;
+			Node []nodeList;
 
 			if (attr != null) {
 				result = attr.eval(context);
 				context.put(name, result);
-			} else if ((blockList = getBlockList()) != null){
+			} else if ((nodeList = getNodeList()) != null){
 				TemplateWriter tw = new TemplateWriter();
-				loopBlockList(blockList, context, tw);
+				loopBlockList(nodeList, context, tw);
 
 				if (!tw.isEmpty()) {
 					context.put(name, tw.toString());

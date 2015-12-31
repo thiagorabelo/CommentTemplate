@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  */
 
-package commenttemplate.template.tags.builtin.customcomponent;
+package commenttemplate.template.tags.factory;
 
 import commenttemplate.expressions.exceptions.BadExpression;
 import commenttemplate.expressions.exceptions.ExpectedExpression;
@@ -28,11 +28,10 @@ import commenttemplate.expressions.parser.Parser;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
-import commenttemplate.template.tagparams.InvalidParamsSintaxException;
+import commenttemplate.template.exceptions.InvalidParamsSintaxException;
 import commenttemplate.template.tagparams.TagParamsTokenizer;
-import commenttemplate.template.tags.TagComponent;
 import commenttemplate.template.tags.Tag;
-import commenttemplate.template.tags.builtin.ForTag;
+import commenttemplate.template.tags.tags.ForTag;
 import commenttemplate.util.Tuple;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,7 +42,7 @@ import java.util.regex.Pattern;
  *
  * @author thiago
  */
-public class ForComponent extends TagComponent {
+public class ForTagFactory extends TagFactory {
 
 	//                                                              1           2
 	private static final Pattern BUILTIN_PATTERN = Pattern.compile("(\\d+)\\.\\.(\\d+)");
@@ -53,7 +52,7 @@ public class ForComponent extends TagComponent {
 	private static final String LIST = "list";
 	
 	
-	public ForComponent() {
+	public ForTagFactory() {
 		super("for", ForTag.class, "!list", "var", "step", "counter");
 	}
 
@@ -76,7 +75,9 @@ public class ForComponent extends TagComponent {
 	}
 	
 	public List<Tuple<String, Exp>> paramsList(ForTag tag, String parameters)
-			throws BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
+			throws BadExpression, ExpectedExpression, ExpectedOperator,
+			FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
+
 		LinkedList<Tuple<String, Exp>> params = new LinkedList<>();
 
 		for (String []tokens : new TagParamsTokenizer(parameters)) {
@@ -91,7 +92,8 @@ public class ForComponent extends TagComponent {
 	@Override
 	public Tag populateParameters(String parameters)
 			throws CouldNotInstanciateTagException, CouldNotSetTagParameterException,
-			BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
+			BadExpression, ExpectedExpression, ExpectedOperator,
+			FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
 
 		ForTag tag = (ForTag)newInstance();
 		List<Tuple<String, Exp>> params = paramsList(tag, parameters);

@@ -1,4 +1,4 @@
-package commenttemplate.template.tags.builtin;
+package commenttemplate.template.tags.tags;
 
 import commenttemplate.expressions.primitivehandle.NumHandle;
 import commenttemplate.expressions.tree.Exp;

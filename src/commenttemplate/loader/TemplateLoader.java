@@ -3,9 +3,9 @@ package commenttemplate.loader;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import commenttemplate.template.TemplateBlockBase;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.context.Context;
+import commenttemplate.template.nodes.RootNode;
 import commenttemplate.template.tags.TagInitializer;
 import commenttemplate.util.retrieve.RecursiveRetrieveDataMap;
 
@@ -25,8 +25,8 @@ public class TemplateLoader {
 		TemplateCache.loadtTemplate(ts);
 	}
 
-	public static TemplateBlockBase get(Serializable key) throws TemplateException {
-		TemplateBlockBase t = TemplateCache.getTemplateBlock(key);
+	public static RootNode get(Serializable key) throws TemplateException {
+		RootNode t = TemplateCache.getTemplateBlock(key);
 
 		if (t == null) {
 			loadtTemplate(key);
@@ -37,7 +37,7 @@ public class TemplateLoader {
 	}
 	
 	public static String render(Serializable key, Map<String, Object> params, boolean recursive) throws TemplateException {
-		TemplateBlockBase t = get(key);
+		RootNode t = get(key);
 
 		String templateOutput;
 		if (!recursive) {

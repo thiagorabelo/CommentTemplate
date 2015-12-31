@@ -17,40 +17,40 @@
  * MA 02110-1301  USA
  */
 
-package commenttemplate.template.tags.builtin;
+package commenttemplate.template.tags.tags;
 
 import commenttemplate.context.Context;
 import commenttemplate.expressions.tree.Exp;
-import commenttemplate.template.tags.Tag;
-import commenttemplate.template.tags.TypeEval;
+import commenttemplate.loader.TemplateLoader;
+import commenttemplate.template.exceptions.TemplateException;
+import commenttemplate.template.nodes.RootNode;
 import commenttemplate.template.writer.Writer;
-import commenttemplate.util.MyHashMap;
-import java.util.Map;
 
 /**
  *
  * @author thiago
  */
-public class WithTag extends Tag {
+public class IncludeTag extends WithTag {
 	
-	protected MyHashMap<String, Exp> params = new MyHashMap<>();
+	private Exp template;
+	
+	public void setTemplate(Exp template) {
+		this.template = template;
+	}
 	
 	@Override
 	public void eval(Context context, Writer sb) {
-		EVAL_BODY.doEval(this, context, sb);
-	}
-	
-	@Override
-	public void start(Context context, Writer sb) {
-		context.push();
+		try {
+			RootNode node = TemplateLoader.get(template.eval(context).toString());
 
-		for (Map.Entry<String, Exp> e : params.entrySet()) {
-			context.put(e.getKey(), e.getValue().eval(context));
+			start(context, sb);
+			String result = node.eval(context);
+			end(context, sb);
+
+			sb.append(result);
+		} catch (TemplateException ex) {
+			// @TODO: fazer o quê?
+			throw new RuntimeException(ex);
 		}
-	}
-
-	@Override
-	public void end(Context context, Writer sb) {
-		context.pop();
 	}
 }

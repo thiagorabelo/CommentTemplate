@@ -1,11 +1,10 @@
-package commenttemplate.template.tags.builtin;
+package commenttemplate.template.tags.tags;
 
 import commenttemplate.template.tags.Tag;
 import java.util.Iterator;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
-import commenttemplate.template.TemplateBlock;
-import commenttemplate.template.tags.TypeEval;
+import commenttemplate.template.nodes.Node;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Utils;
 import java.lang.reflect.Array;
@@ -174,7 +173,7 @@ public class ForTag extends Tag {
 			c = counter.toString();
 		}
 		
-		TemplateBlock []blockList = getBlockList();
+		Node []nodeList = getNodeList();
 
 		for (int el : nlist.eval(context)) {
 			if (v != null) {
@@ -185,8 +184,8 @@ public class ForTag extends Tag {
 			}
 
 			//evalBody(context, sb);
-			if (blockList != null) {
-				loopBlockList(blockList, context, sb);
+			if (nodeList != null) {
+				loopBlockList(nodeList, context, sb);
 			}
 
 			iterations++;
@@ -219,7 +218,7 @@ public class ForTag extends Tag {
 					c = counter.toString();
 				}
 				
-				TemplateBlock []blockList = getBlockList();
+				Node []nodeList = getNodeList();
 
 				while (it.hasNext()) {
 					Object el = it.next();
@@ -231,8 +230,8 @@ public class ForTag extends Tag {
 						context.put(c.toString(), i);
 					}
 
-					if (blockList != null) {
-						loopBlockList(blockList, context, sb);
+					if (nodeList != null) {
+						loopBlockList(nodeList, context, sb);
 					}
 
 					i += 1;

@@ -19,6 +19,7 @@
 
 package commenttemplate.template.tags;
 
+import commenttemplate.template.tags.factory.TagFactory;
 import commenttemplate.template.exceptions.TemplateTagDoesNotExists;
 import commenttemplate.template.exceptions.TemplateWithSameNameAlreadyExistsException;
 import static commenttemplate.util.Utils.concat;
@@ -28,39 +29,39 @@ import java.util.HashMap;
  *
  * @author thiago
  */
-public class TagContainer {
+public class TagFactoryContainer {
 	
 	static {
-		INSTANCE = new TagContainer();
+		INSTANCE = new TagFactoryContainer();
 	}
 
-	private static final TagContainer INSTANCE;
+	private static final TagFactoryContainer INSTANCE;
 
-	public static TagContainer instance() {
+	public static TagFactoryContainer instance() {
 		return INSTANCE;
 	}
 	
 	public final int CUSTOM_TAGS = 0;
 	public final int BUILTIN_TAGS = 1;
 	
-	HashMap<String, TagComponent> []container = new HashMap[] {
+	HashMap<String, TagFactory> []container = new HashMap[] {
 		new HashMap<>(),
 		new HashMap<>()
 	};
 	
-	public TagContainer() {
+	public TagFactoryContainer() {
 
 	}
 	
-	protected HashMap<String, TagComponent> builtin() {
+	protected HashMap<String, TagFactory> builtin() {
 		return container[BUILTIN_TAGS];
 	}
 
-	protected HashMap<String, TagComponent> custom() {
+	protected HashMap<String, TagFactory> custom() {
 		return container[CUSTOM_TAGS];
 	}
 	
-	protected synchronized void addBuiltinTag(TagComponent component) {
+	protected synchronized void addBuiltinTag(TagFactory component) {
 		if (!builtin().containsKey(component.getName())) {
 			builtin().put(component.getName(), component);
 		} else {
@@ -69,7 +70,7 @@ public class TagContainer {
 		}
 	}
 
-	public synchronized void addCustomTag(TagComponent component) {
+	public synchronized void addCustomTag(TagFactory component) {
 		if (builtin().containsKey(component.getName())) {
 			String className = builtin().get(component.getName()).getClass().getName();
 			throw new TemplateWithSameNameAlreadyExistsException(concat("A built in TemplateTag whith the same name (", component.getName(), ") already exists: [", className, "]"));
@@ -81,8 +82,8 @@ public class TagContainer {
 		custom().put(component.getName(), component);
 	}
 
-	public TagComponent getByTagName(String tagName) {
-		TagComponent component;
+	public TagFactory getByTagName(String tagName) {
+		TagFactory component;
 		int i = container.length;
 		
 		while (i-- > 0) {

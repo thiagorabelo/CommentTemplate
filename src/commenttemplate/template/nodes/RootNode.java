@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.template.node;
+package commenttemplate.template.nodes;
 
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextProcessor;
@@ -29,7 +29,7 @@ import java.util.Map;
  *
  * @author thiago
  */
-public class RootNode extends NodeImpl {
+public class RootNode extends AbstractNode {
 
 	private int initialBufferSize;
 
@@ -52,9 +52,9 @@ public class RootNode extends NodeImpl {
 
 	@Override
 	public void toString(StringBuilder sb) {
-		NodeImpl []nodeList = getNodeList();
+		Node []nodeList = getNodeList();
 
-		for (NodeImpl t : nodeList) {
+		for (Node t : nodeList) {
 			t.toString(sb);
 		}
 	}
@@ -83,7 +83,7 @@ public class RootNode extends NodeImpl {
 			p.before(context);
 		}
 
-		NodeImpl []list = getNodeList();
+		Node []list = getNodeList();
 		
 		for (int i = 0, len = list.length; i < len; i++) {
 			list[i].eval(context, sb);

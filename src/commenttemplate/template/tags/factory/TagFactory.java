@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  */
 
-package commenttemplate.template.tags;
+package commenttemplate.template.tags.factory;
 
 import commenttemplate.expressions.exceptions.BadExpression;
 import commenttemplate.expressions.exceptions.ExpectedExpression;
@@ -28,8 +28,9 @@ import commenttemplate.expressions.parser.Parser;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
-import commenttemplate.template.tagparams.InvalidParamsSintaxException;
+import commenttemplate.template.exceptions.InvalidParamsSintaxException;
 import commenttemplate.template.tagparams.TagParamsTokenizer;
+import commenttemplate.template.tags.Tag;
 import commenttemplate.util.Join;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
@@ -41,7 +42,7 @@ import java.util.List;
  *
  * @author thiago
  */
-public class TagComponent {
+public class TagFactory {
 
 	protected static final char REQUIRED_CHAR = '!';
 	
@@ -122,9 +123,8 @@ public class TagComponent {
 			}
 			
 			// TODO: DO IT BETTER
-			throw new RuntimeException(Utils.concat(
-				"The Tag [", 
-				TagComponent.this.name,
+			throw new RuntimeException(Utils.concat("The Tag [", 
+				TagFactory.this.name,
 				"] does not accept a param named ",
 				name
 			));
@@ -146,7 +146,7 @@ public class TagComponent {
 				sb.append("The parameters ")
 				  .append(Join.with(", ").these(requireds).s())
 				  .append(" are mandatory to the Tag [")
-				  .append(TagComponent.this.name)
+				  .append(TagFactory.this.name)
 				  .append("]")
 				;
 				throw new RuntimeException(sb.toString());
@@ -154,7 +154,7 @@ public class TagComponent {
 		}
 	}
 	
-	public TagComponent(String name, Class<? extends Tag> tagClass, String ...params) {
+	public TagFactory(String name, Class<? extends Tag> tagClass, String ...params) {
 		this.name = name;
 		this.tagClass = tagClass;
 		this.params = setParams(params);

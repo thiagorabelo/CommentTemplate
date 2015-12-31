@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  */
 
-package commenttemplate.template.tags;
+package commenttemplate.template.tags.factory;
 
 import commenttemplate.expressions.exceptions.BadExpression;
 import commenttemplate.expressions.exceptions.ExpectedExpression;
@@ -27,7 +27,8 @@ import commenttemplate.expressions.exceptions.Unexpected;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
-import commenttemplate.template.tagparams.InvalidParamsSintaxException;
+import commenttemplate.template.exceptions.InvalidParamsSintaxException;
+import commenttemplate.template.tags.Tag;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
 import java.lang.reflect.InvocationTargetException;
@@ -38,9 +39,9 @@ import java.util.Map;
  *
  * @author thiago
  */
-public class MappableTagComponent extends TagComponent {
+public class MappableTagFactory extends TagFactory {
 
-	public MappableTagComponent(String name, Class<? extends Tag> tagClass, String... params) {
+	public MappableTagFactory(String name, Class<? extends Tag> tagClass, String... params) {
 		super(name, tagClass, params);
 	}
 	

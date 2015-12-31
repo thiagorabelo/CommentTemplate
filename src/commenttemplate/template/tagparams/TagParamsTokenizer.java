@@ -18,6 +18,7 @@
  */
 package commenttemplate.template.tagparams;
 
+import commenttemplate.template.exceptions.InvalidParamsSintaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

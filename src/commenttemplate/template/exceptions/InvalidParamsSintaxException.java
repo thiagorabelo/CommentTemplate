@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 thiago.
+ * Copyright (C) 2015 Thiago Rabelo.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,15 +16,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.template.tags.managers;
+package commenttemplate.template.exceptions;
 
-import commenttemplate.template.tags.Tag;
+import commenttemplate.util.Utils;
 
 /**
  *
  * @author thiago
  */
-public interface TagManager {
+// Must be RuntimeException to be allowed use in TagParamsTokenizer (Iterable)
+public class InvalidParamsSintaxException extends RuntimeException {
 	
-	public abstract Tag getTagInstance();
+	private String params;
+	private int index;
+	
+	public InvalidParamsSintaxException(String params, int index, Object ...msg) {
+		super(msg != null && msg.length > 0 ? Utils.concat(msg) : null);
+		this.params = params;
+		this.index = index;
+	}
+
+	public InvalidParamsSintaxException(String params, int index) {
+		this(params, index, (Object)null);
+	}
+
+	public String getParams() {
+		return params;
+	}
+
+	public int getIndex() {
+		return index;
+	}
 }

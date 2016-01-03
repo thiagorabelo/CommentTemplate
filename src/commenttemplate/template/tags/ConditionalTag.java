@@ -25,7 +25,7 @@ import commenttemplate.template.writer.Writer;
  *
  * @author thiago
  */
-public abstract class ConditionalTag extends Tag {
+public abstract class ConditionalTag extends AbstractTag {
 
 	public abstract EvalType evalParams(Context context, Writer sb);
 

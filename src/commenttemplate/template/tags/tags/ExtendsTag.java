@@ -5,7 +5,7 @@ import commenttemplate.loader.TemplateLoader;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
-import commenttemplate.template.tags.Tag;
+import commenttemplate.template.tags.AbstractTag;
 import commenttemplate.template.tags.MountingHelper;
 import commenttemplate.template.nodes.Node;
 import commenttemplate.template.nodes.RootNode;
@@ -15,7 +15,7 @@ import commenttemplate.template.writer.Writer;
  *
  * @author thiago
  */
-public class ExtendsTag extends Tag {
+public class ExtendsTag extends AbstractTag {
 	
 	private Exp name;
 	
@@ -33,7 +33,7 @@ public class ExtendsTag extends Tag {
 			cwm.setMode(ContextWriterMap.Mode.STORE);
 
 			if (inner != null) {
-				loopBlockList(inner, cwm, sb);
+				loopNodeList(inner, cwm, sb);
 			}
 
 			cwm.setMode(ContextWriterMap.Mode.RENDER);

@@ -4,8 +4,8 @@ import commenttemplate.expressions.primitivehandle.NumHandle;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
 import commenttemplate.template.tags.ConditionalTag;
-import static commenttemplate.template.tags.Tag.EVAL_BODY;
-import static commenttemplate.template.tags.Tag.EVAL_ELSE;
+import static commenttemplate.template.tags.AbstractTag.EVAL_BODY;
+import static commenttemplate.template.tags.AbstractTag.EVAL_ELSE;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.template.tags.EvalType;
 

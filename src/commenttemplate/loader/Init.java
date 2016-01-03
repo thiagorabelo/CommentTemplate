@@ -23,13 +23,17 @@ import commenttemplate.context.processor.ContextProcessorCache;
 import commenttemplate.expressions.function.Function;
 import commenttemplate.expressions.function.FunctionsRegister;
 import commenttemplate.template.tags.factory.TagFactory;
-import commenttemplate.template.tags.Tag;
+import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.template.tags.MappableTag;
 import commenttemplate.template.tags.TagInitializer;
+import commenttemplate.template.tags.factory.MappableTagFactory;
+import commenttemplate.util.Join;
 import commenttemplate.util.Utils;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.regex.Matcher;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -40,9 +44,10 @@ public class Init extends TemplateLoaderConfig {
 //	private static final String RETRIEVER_CLASS = "commenttemplate.retriever_class";
 	private static final String RETRIEVER = "commenttemplate.retriever_type";
 	private static final String RESOURCES = "commenttemplate.resource_folder";
-	private static final String CONTEXTPROCESSOR = "commenttemplate.contextprocessor";
-	private static final String CUSTOM_TAG = "commenttemplate.custom_tag";
-	private static final String CUSTOM_FUNCTION = "commenttemplate.custom_function";
+	private static final String CONTEXTPROCESSOR = "commenttemplate.contextprocessors";
+	private static final String CUSTOM_TAG = "commenttemplate.tag";
+	private static final String CUSTOM_TAG_PARAMS = "params";
+	private static final String CUSTOM_FUNCTION = "commenttemplate.function";
 //	private static final String CONFIG_CLASS = "commenttemplate.config_class";
 	
 	private static final String filename = "commenttemplate.properties";
@@ -85,7 +90,7 @@ public class Init extends TemplateLoaderConfig {
 		prop.load(is);
 
 		// TODO: Providenciar o uso do métodos DB
-		String []res = prop.getAsArray(RESOURCES);
+		String []res = prop.getPropertyAsArray(RESOURCES);
 
 		for (int i = res.length; i-- > 0;) {
 			String r = res[i];
@@ -97,7 +102,7 @@ public class Init extends TemplateLoaderConfig {
 		setType(LoaderType.valueOf(prop.getProperty(RETRIEVER).toUpperCase()));
 		setFolderPath(res);
 		
-		String []preprocessors = prop.getAsArray(CONTEXTPROCESSOR);
+		String []preprocessors = prop.getPropertyAsArray(CONTEXTPROCESSOR);
 		if (preprocessors.length > 0) {
 			for (String preprocessor : preprocessors) {
 				Class<? extends ContextProcessor> preClass = (Class<? extends ContextProcessor>)Class.forName(preprocessor);
@@ -108,60 +113,67 @@ public class Init extends TemplateLoaderConfig {
 		customTags(prop);
 		customFunctions(prop);
 	}
+
+	protected List<String> startsWith(String property, Properties prop) {
+		ArrayList<String> list = new ArrayList<String>(prop.size());
+
+		for (Map.Entry<Object, Object> e : prop.entrySet()) {
+			String key = e.getKey().toString();
+			if (key.startsWith(property) && !key.substring(property.length() + 1).contains(".")) {
+				list.add(key);
+			}
+		}
+
+		return list;
+	}
 	
 	protected void customFunctions(Properties prop) {
-		String []functions = prop.getAsArray(CUSTOM_FUNCTION);
+		List<String> functions = startsWith(CUSTOM_FUNCTION, prop);
 		
-		Arrays.asList(functions).stream().forEach(u -> {
-			Matcher m = SPLIT_NAME_AND_CLASS.matcher(u);
+		for (String funcDef : functions) {
+			int lastDot = funcDef.lastIndexOf(".");
+			String functionName = funcDef.substring(lastDot + 1).trim();
+			String className = prop.getProperty(funcDef);
 			
-			if (m.find()) {
-				try {
-					String functionName = m.group("name");
-					String className = m.group("class");
-
-					if (!Utils.empty(functionName) && !Utils.empty(className)) {
-						Class<? extends Function> fclass = (Class<? extends Function>)Class.forName(className);
-						FunctionsRegister.instance().addFunction(functionName, fclass);
-					}
-				} catch (Exception ex) {
-					throw new RuntimeException(ex);
+			try {
+				// TODO: Lançar exceção
+				if (!Utils.empty(functionName) && !Utils.empty(className)) {
+					Class<? extends Function> fclass = (Class<? extends Function>)Class.forName(className);
+					FunctionsRegister.instance().addFunction(functionName, fclass);
 				}
+			} catch (Exception ex) {
+				throw new RuntimeException(ex);
 			}
-		});
+		}
 	}
 	
 	protected void customTags(Properties prop) {
-		String []tagsParams = prop.getAsArray(CUSTOM_TAG);
-		
-		Arrays.asList(tagsParams).stream().forEach(u -> {
-			Matcher m = SPLIT_NAME_AND_CLASS.matcher(u);
-			
-			if (m.find()) {
-				try {
-					String tagName = m.group("name");
-					String className = m.group("class");
+		List<String> tagsParams = startsWith(CUSTOM_TAG, prop);
 
-					if (Utils.empty(tagName)) {
-						Class<? extends TagFactory> cls = (Class<? extends TagFactory>)Class.forName(className);
-						TagFactory component = cls.newInstance();
-						TagInitializer.getInstance().addTag(component);
+		for (String tagDef : tagsParams) {
+			int lastDot = tagDef.lastIndexOf(".");
+			String tagName = tagDef.substring(lastDot + 1).trim();
+			String className = prop.getProperty(tagDef).trim();
+			String []tagParams = prop.getPropertyAsArray(Join.path(".").these(tagDef, CUSTOM_TAG_PARAMS).s());
+		
+			// TODO: Lançar Exceção
+			if (!Utils.empty(tagName) && !Utils.empty(className)) {
+				try {
+					Class<? extends AbstractTag> cls = (Class<? extends AbstractTag>)Class.forName(className);
+					TagFactory factory;
+
+					if (!cls.isAssignableFrom(MappableTag.class)) {
+						factory = new TagFactory(tagName, cls, tagParams);
 					} else {
-						Class<? extends Tag> cls = (Class<? extends Tag>)Class.forName(className);
-						String p = u.substring(m.end()).trim().substring(1);
-						String [] params = SPLIT_BY_COMMA.split(p);
-						
-						TagFactory component = new TagFactory(tagName, cls, params);
-						TagInitializer.instance().addTag(component);
+						factory = new MappableTagFactory(tagName, cls, tagParams);
 					}
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+					
+					TagInitializer.instance().addTag(factory);
+				} catch (ClassNotFoundException ex) {
 					// TODO: Melhorar esta exceção
 					throw new RuntimeException(ex);
 				}
-			} else {
-				// TODO: Melhorar esta exceção
-				throw new RuntimeException("ERRO AO CARREGAR CUSTOM TAG: " + u);
 			}
-		});
+		}
 	}
 }

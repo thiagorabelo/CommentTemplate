@@ -19,31 +19,36 @@
 package commenttemplate.template.tags;
 
 import commenttemplate.context.Context;
-import commenttemplate.template.nodes.Node;
+import commenttemplate.expressions.tree.Exp;
+import static commenttemplate.template.tags.AbstractTag.EVAL_BODY;
 import commenttemplate.template.writer.Writer;
+import commenttemplate.util.maps.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author thiago
  */
-public interface Tag extends Node {
-
-	public void start(Context context, Writer sb);
-
-	public void end(Context context, Writer sb);
-
-	@Override
-	public abstract void eval(Context context, Writer sb);
+public abstract class MappableTag extends AbstractTag {
 	
-	public String getTagName();
-
-	public void setTagName(String tagName);
-	
-	public String paramsToString();
+	protected HashMap<String, Exp> params = new HashMap<>();
 	
 	@Override
-	public void toString(StringBuilder sb);
+	public void eval(Context context, Writer sb) {
+		EVAL_BODY.doEval(this, context, sb);
+	}
 	
 	@Override
-	public String toString();
+	public void start(Context context, Writer sb) {
+		context.push();
+
+		for (Map.Entry<String, Exp> e : params.entrySet()) {
+			context.put(e.getKey(), e.getValue().eval(context));
+		}
+	}
+
+	@Override
+	public void end(Context context, Writer sb) {
+		context.pop();
+	}
 }

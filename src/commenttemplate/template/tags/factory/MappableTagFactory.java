@@ -28,7 +28,7 @@ import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.template.exceptions.InvalidParamsSintaxException;
-import commenttemplate.template.tags.Tag;
+import commenttemplate.template.tags.AbstractTag;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
 import java.lang.reflect.InvocationTargetException;
@@ -41,7 +41,7 @@ import java.util.Map;
  */
 public class MappableTagFactory extends TagFactory {
 
-	public MappableTagFactory(String name, Class<? extends Tag> tagClass, String... params) {
+	public MappableTagFactory(String name, Class<? extends AbstractTag> tagClass, String... params) {
 		super(name, tagClass, params);
 	}
 	
@@ -60,7 +60,7 @@ public class MappableTagFactory extends TagFactory {
 		}
 	}
 
-	protected void populateMapParameters(Tag tag, List<Tuple<String, Exp>> parameters) {
+	protected void populateMapParameters(AbstractTag tag, List<Tuple<String, Exp>> parameters) {
 		Map<String, Exp> mapParams = (Map<String, Exp>)Utils.getProperty(tag, "params");
 		
 		for (Tuple<String, Exp> t : parameters) {
@@ -93,7 +93,7 @@ public class MappableTagFactory extends TagFactory {
 	}
 
 	@Override
-	protected void populateParameters(Tag tag, List<Tuple<String, Exp>> parameters)
+	protected void populateParameters(AbstractTag tag, List<Tuple<String, Exp>> parameters)
 			throws CouldNotSetTagParameterException {
 
 		Tuple<Boolean, String> []paramsCopy = new Tuple[params.length];
@@ -119,11 +119,11 @@ public class MappableTagFactory extends TagFactory {
 	}
 
 	@Override
-	public Tag populateParameters(String parameters)
+	public AbstractTag populateParameters(String parameters)
 			throws CouldNotInstanciateTagException, CouldNotSetTagParameterException,
 			BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
 
-		Tag tag = newInstance();
+		AbstractTag tag = newInstance();
 		List<Tuple<String, Exp>> params = paramsList(parameters);
 //		params = singleParameterVerifies(params, parameters);
 		new MappableParamsChecker().check(params);

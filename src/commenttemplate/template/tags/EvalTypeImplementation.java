@@ -29,30 +29,30 @@ import commenttemplate.template.writer.Writer;
 public enum EvalTypeImplementation implements EvalType {
 	SKIP_BODY {
 		@Override
-		public void doEval(Tag tag, Context context, Writer sb) {
+		public void doEval(AbstractTag tag, Context context, Writer sb) {
 			// do nothing
 		}
 	},
 	EVAL_BODY {
 		@Override
-		public void doEval(Tag tag, Context context, Writer sb) {
+		public void doEval(AbstractTag tag, Context context, Writer sb) {
 			Node []nodeList;
 
 			if ((nodeList = tag.getNodeList()) != null) {
 				tag.start(context, sb);
-				tag.loopBlockList(nodeList, context, sb);
+				tag.loopNodeList(nodeList, context, sb);
 				tag.end(context, sb);
 			}
 		}
 	},
 	EVAL_ELSE {
 		@Override
-		public void doEval(Tag tag, Context context, Writer sb) {
+		public void doEval(AbstractTag tag, Context context, Writer sb) {
 			Node []nodeListElse;
 
 			if ((nodeListElse = tag.getNodeListElse()) != null) {
 				tag.start(context, sb);
-				tag.loopBlockList(nodeListElse, context, sb);
+				tag.loopNodeList(nodeListElse, context, sb);
 				tag.end(context, sb);
 			}
 		}
@@ -60,7 +60,7 @@ public enum EvalTypeImplementation implements EvalType {
 	;
 
 	@Override
-	public void doEval(Tag tag, Context context, Writer sb) {
+	public void doEval(AbstractTag tag, Context context, Writer sb) {
 		throw new UnsupportedOperationException("Not supported.");
 	}
 }

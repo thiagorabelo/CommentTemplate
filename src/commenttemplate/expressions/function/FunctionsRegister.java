@@ -38,6 +38,7 @@ public class FunctionsRegister {
 		addBuiltInFunction("str", Str.class);
 		addBuiltInFunction("pow", Pow.class);
 		addBuiltInFunction("get", Get.class);
+		addBuiltInFunction("iterable", Iterable.class);
 	}
 	
 	private void addBuiltInFunction(String name, Class<? extends Function> f) {

@@ -21,14 +21,14 @@ package commenttemplate.template.tags.tags;
 import commenttemplate.context.Context;
 import commenttemplate.template.tags.MountingHelper;
 import commenttemplate.template.nodes.Node;
-import commenttemplate.template.tags.Tag;
+import commenttemplate.template.tags.AbstractTag;
 import commenttemplate.template.writer.Writer;
 
 /**
  *
  * @author thiago
  */
-public class Literal extends Tag {
+public class Literal extends AbstractTag {
 	
 	private String stringRepr;
 

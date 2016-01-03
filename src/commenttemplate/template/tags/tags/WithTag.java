@@ -19,38 +19,12 @@
 
 package commenttemplate.template.tags.tags;
 
-import commenttemplate.context.Context;
-import commenttemplate.expressions.tree.Exp;
-import commenttemplate.template.tags.Tag;
-import commenttemplate.template.writer.Writer;
-import commenttemplate.util.MyHashMap;
-import java.util.Map;
-import commenttemplate.template.tags.EvalType;
+import commenttemplate.template.tags.MappableTag;
 
 /**
  *
  * @author thiago
  */
-public class WithTag extends Tag {
-	
-	protected MyHashMap<String, Exp> params = new MyHashMap<>();
-	
-	@Override
-	public void eval(Context context, Writer sb) {
-		EVAL_BODY.doEval(this, context, sb);
-	}
-	
-	@Override
-	public void start(Context context, Writer sb) {
-		context.push();
+public class WithTag extends MappableTag {
 
-		for (Map.Entry<String, Exp> e : params.entrySet()) {
-			context.put(e.getKey(), e.getValue().eval(context));
-		}
-	}
-
-	@Override
-	public void end(Context context, Writer sb) {
-		context.pop();
-	}
 }

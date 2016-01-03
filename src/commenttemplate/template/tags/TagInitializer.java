@@ -9,7 +9,7 @@ import commenttemplate.template.tags.tags.SetTag;
 import commenttemplate.template.tags.tags.WithTag;
 import commenttemplate.template.tags.tags.ExtendsTag;
 import commenttemplate.template.tags.tags.BlockTag;
-import commenttemplate.template.tags.factory.ForTagFactory;
+import commenttemplate.template.tags.tags.ForTag;
 import commenttemplate.util.Utils;
 
 /**
@@ -48,8 +48,7 @@ public class TagInitializer {
 	
 	
 	private void initBuildin() {
-		TagFactoryContainer.instance().addBuiltinTag(new ForTagFactory());
-//		TagContainer.instance().addBuiltinTag(new WithComponent());
+		TagFactoryContainer.instance().addBuiltinTag(new TagFactory("for", ForTag.class, "!list", "var", /*"step",*/ "counter"));
 		TagFactoryContainer.instance().addBuiltinTag(new MappableTagFactory("with", WithTag.class));
 		TagFactoryContainer.instance().addBuiltinTag(new MappableTagFactory("include", IncludeTag.class,  "!template"));
 		TagFactoryContainer.instance().addBuiltinTag(new TagFactory("if", IfTag.class, "!test"));

@@ -24,13 +24,14 @@ import commenttemplate.expressions.tree.Exp;
 import commenttemplate.loader.TemplateLoader;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.template.nodes.RootNode;
+import commenttemplate.template.tags.MappableTag;
 import commenttemplate.template.writer.Writer;
 
 /**
  *
  * @author thiago
  */
-public class IncludeTag extends WithTag {
+public class IncludeTag extends MappableTag {
 	
 	private Exp template;
 	

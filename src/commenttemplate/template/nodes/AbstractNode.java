@@ -36,6 +36,7 @@ public abstract class AbstractNode implements Node {
 		return nodeList;
 	}
 
+	@Override
 	public void setNodeList(Node[] nodeList) {
 		this.nodeList = nodeList;
 	}
@@ -45,6 +46,7 @@ public abstract class AbstractNode implements Node {
 		return nodeListElse;
 	}
 
+	@Override
 	public void setNodeListElse(Node[] nodeListElse) {
 		this.nodeListElse = nodeListElse;
 	}

@@ -19,10 +19,7 @@
 
 package commenttemplate.loader;
 
-import commenttemplate.util.Join;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -31,74 +28,19 @@ import java.util.Set;
 public class Properties extends java.util.Properties {
 	private static final long serialVersionUID = -5804324205409904611L;
 	
-	@Override
-	public synchronized Object put(Object key, Object value) {
-		Object o = super.get(key);
-
-		if (o == null) {
-			return super.put(key, value);
-		} else {
-			o = o.getClass().isArray() ? (Object[])o : new Object[]{o};
-			Object []array = (Object[])o;
-			array = new Object[array.length + 1];
-			System.arraycopy((Object[])o, 0, array, 0, ((Object[])o).length);
-			array[((Object[])o).length] = value;
-			super.put(key, array);
-			return o;
-		}
-	}
+	private final Pattern spliter = Pattern.compile("\\s*,\\s*");
 	
-	public synchronized String []getAsArray(Object key) {
-		Object o = super.get(key);
-
+	public String []getPropertyAsArray(String key) {
+		Object o = super.getProperty(key);
 		if (o != null) {
-			if (o.getClass().isArray()) {
-				String []ret = new String[((Object[])o).length];
-				for (int i = ret.length; i-- > 0;) {
-					ret[i] = ((Object[])o)[i].toString();
-				}
-				return ret;
-			} else {
-				return new String[]{o.toString()};
+			String []ret = spliter.split(o.toString());
+			for (int i = 0, l = ret.length; i < l; i++) {
+				ret[i] = ret[i].trim();
 			}
-		} else {
-			return new String[]{};
+
+			return ret;
 		}
-	}
-	
-	@Override
-	public String getProperty(String key) {
-		Object oval = super.get(key);
-		
-		if (oval != null) {
-			if (!oval.getClass().isArray()) {
-				String sval = (oval instanceof String) ? (String)oval : null;
-				return ((sval == null) && (defaults != null)) ? defaults.getProperty(key) : sval;
-			} else {
-				return Join.with(",").these((Object[])oval).toString();
-			}
-		} 
-		
-		return defaults != null ? defaults.getProperty(key) : null;
-    }
-	
-	
-	
-	@Override
-	public synchronized boolean contains(Object value) {
-		Set<Map.Entry<Object,Object>> set = this.entrySet();
-		
-		for (Map.Entry<Object, Object> entry : set) {
-			Object val = entry.getValue();
-			if (!val.getClass().isArray()) {
-				if (entry.getValue().equals(value)) {
-					return true;
-				}
-			} else {
-				return Arrays.asList((Object[])val).contains(value);
-			}
-		}
-		
-		return false;
+
+		return new String[0];
 	}
 }

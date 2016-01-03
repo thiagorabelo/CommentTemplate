@@ -3,8 +3,8 @@ package commenttemplate.template.tags.tags;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
-import commenttemplate.template.tags.Tag;
-import static commenttemplate.template.tags.Tag.EVAL_BODY;
+import commenttemplate.template.tags.AbstractTag;
+import static commenttemplate.template.tags.AbstractTag.EVAL_BODY;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.template.tags.EvalType;
 
@@ -12,7 +12,7 @@ import commenttemplate.template.tags.EvalType;
  *
  * @author thiago
  */
-public class BlockTag extends Tag {
+public class BlockTag extends AbstractTag {
 	
 	private  enum TypeEvalBlock implements EvalType {
 
@@ -22,7 +22,7 @@ public class BlockTag extends Tag {
 		;
 
 		@Override
-		public void doEval(Tag tag, Context context, Writer sb) {
+		public void doEval(AbstractTag tag, Context context, Writer sb) {
 			EVAL_BODY.doEval(tag, context, sb);
 		}
 	}

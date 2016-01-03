@@ -27,5 +27,5 @@ import commenttemplate.template.writer.Writer;
  * @author thiago
  */
 public interface EvalType {
-	public void doEval(Tag tag, Context context, Writer sb);
+	public void doEval(AbstractTag tag, Context context, Writer sb);
 }

@@ -22,7 +22,7 @@ import commenttemplate.context.Context;
 import commenttemplate.expressions.tree.Exp;
 import static commenttemplate.template.tags.AbstractTag.EVAL_BODY;
 import commenttemplate.template.writer.Writer;
-import commenttemplate.util.maps.HashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**

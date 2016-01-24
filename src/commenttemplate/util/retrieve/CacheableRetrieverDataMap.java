@@ -34,8 +34,9 @@ public class CacheableRetrieverDataMap extends IterativeRetrieverDataMap {
 	protected Object getProperty(Object obj, String key) {
 		PropertyWrappersCache pwc = cache.get(obj.getClass());
 		if (pwc == null) {
-			pwc = new PropertyWrappersCache(obj.getClass());
-			cache.put(obj.getClass(), pwc);
+			Class klass;
+			pwc = new PropertyWrappersCache(klass = obj.getClass());
+			cache.put(klass, pwc);
 		}
 
 		PropertyWrapper pw = pwc.findProperty(key);

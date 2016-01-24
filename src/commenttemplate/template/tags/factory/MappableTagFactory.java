@@ -29,8 +29,11 @@ import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.template.exceptions.InvalidParamsSintaxException;
 import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.template.tags.adaptor.MappedTagAdaptor;
+import commenttemplate.template.tags.annotations.Instantiable;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
+import commenttemplate.util.reflection.MethodWrapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +71,7 @@ public class MappableTagFactory extends TagFactory {
 		}
 	}
 	
+	// @TODO:
 	// Provavel Bug: Se for passado o mesmo parâmetro mais de uma vez.
 	protected class FindInParams {
 		protected String []paramNames = new String[params.length];
@@ -94,10 +98,8 @@ public class MappableTagFactory extends TagFactory {
 
 	@Override
 	protected void populateParameters(AbstractTag tag, List<Tuple<String, Exp>> parameters)
-			throws CouldNotSetTagParameterException {
+	throws CouldNotSetTagParameterException {
 
-		Tuple<Boolean, String> []paramsCopy = new Tuple[params.length];
-		System.arraycopy(params, 0, paramsCopy, 0, params.length);
 		FindInParams f = new FindInParams();
 		
 		for (int i = 0, len = parameters.size(); i < len; i++) {
@@ -118,18 +120,56 @@ public class MappableTagFactory extends TagFactory {
 		}
 	}
 
+	protected void populateMapParameters(MappedTagAdaptor adaptor, List<Tuple<String, Exp>> parameters) {
+		for (Tuple<String, Exp> t : parameters) {
+			adaptor.addExtraParams(t.getA(), t.getB());
+		}
+	}
+
+	private void pupulateParameters(MappedTagAdaptor adaptor, List<Tuple<String, Exp>> parameters)
+	throws CouldNotSetTagParameterException {
+		FindInParams f = new FindInParams();
+		
+		for (int i = 0, len = parameters.size(); i < len; i++) {
+			Tuple<String, Exp> t = parameters.get(i);
+			if (f.isPresent(t.getA())) {
+				try {
+					MethodWrapper mw = new MethodWrapper(Utils.getMethod2(tagClass, "set" + Utils.capitalize(t.getA()), t.getB().getClass()));
+					adaptor.addSetter(mw, t.getB());
+
+					parameters.remove(i);
+					len = parameters.size();
+				} catch (NoSuchMethodException ex) {
+					throw new CouldNotSetTagParameterException(tagClass.getName(), t.getA(), ex);
+				}
+			}
+		}
+	}
+
 	@Override
 	public AbstractTag populateParameters(String parameters)
 			throws CouldNotInstanciateTagException, CouldNotSetTagParameterException,
 			BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
 
-		AbstractTag tag = newInstance();
 		List<Tuple<String, Exp>> params = paramsList(parameters);
 //		params = singleParameterVerifies(params, parameters);
 		new MappableParamsChecker().check(params);
-		populateParameters(tag, params);
-		populateMapParameters(tag, params);
 
-		return tag;
+		boolean instantiable = tagClass.isAnnotationPresent(Instantiable.class);
+
+		if (!instantiable) {
+			AbstractTag tag = newInstance();
+			populateParameters(tag, params);
+			populateMapParameters(tag, params);
+
+			return tag;
+		}
+
+		MappedTagAdaptor adaptor = new MappedTagAdaptor(tagClass);
+		adaptor.setTagName(name);
+		pupulateParameters(adaptor, params);
+		populateMapParameters(adaptor, params);
+
+		return adaptor;
 	}
 }

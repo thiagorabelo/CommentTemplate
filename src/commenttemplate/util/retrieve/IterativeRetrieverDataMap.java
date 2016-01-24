@@ -27,7 +27,7 @@ import java.util.Map;
 public class IterativeRetrieverDataMap extends IterativeRetrieverData<Map<String, Object>> {
 	
 	@Override
-	protected Object getSource(Map<String, Object> target, String key0) {
+	protected Object getInitialData(Map<String, Object> target, String key0) {
 		return target.get(key0);
 	}
 

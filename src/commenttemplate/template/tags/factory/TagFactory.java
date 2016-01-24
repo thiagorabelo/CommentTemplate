@@ -31,9 +31,12 @@ import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.template.exceptions.InvalidParamsSintaxException;
 import commenttemplate.template.tagparams.TagParamsTokenizer;
 import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.template.tags.adaptor.TagAdaptor;
+import commenttemplate.template.tags.annotations.Instantiable;
 import commenttemplate.util.Join;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
+import commenttemplate.util.reflection.MethodWrapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
@@ -250,18 +253,41 @@ public class TagFactory {
 			}
 		}
 	}
+	
+	protected void populateParameters(TagAdaptor adaptor, List<Tuple<String, Exp>> parameters)
+	throws CouldNotSetTagParameterException {
+		for (Tuple<String, Exp> t : parameters) {
+			try {
+				MethodWrapper mw = new MethodWrapper(Utils.getMethod2(tagClass, "set" + Utils.capitalize(t.getA()), t.getB().getClass()));
+				adaptor.addSetter(mw, t.getB());
+			} catch (NoSuchMethodException ex) {
+				throw new CouldNotSetTagParameterException(tagClass.getName(), t.getA(), ex);
+			}
+		}
+	}
 
 	public AbstractTag populateParameters(String parameters)
 			throws CouldNotInstanciateTagException, CouldNotSetTagParameterException,
 			BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
 
-		AbstractTag tag = newInstance();
+		boolean instantiable = tagClass.isAnnotationPresent(Instantiable.class);
+
 		List<Tuple<String, Exp>> params = paramsList(parameters);
 		params = singleParameterVerifier(params, parameters);
 		new ParamsChecker().check(params);
-		populateParameters(tag, params);
 
-		return tag;
+		if (!instantiable) {
+			AbstractTag tag = newInstance();
+			populateParameters(tag, params);
+
+			return tag;
+		}
+
+		TagAdaptor adaptor = new TagAdaptor(tagClass);
+		adaptor.setTagName(name);
+		populateParameters(adaptor, params);
+
+		return adaptor;
 	}
 
 	public String[] getParams() {

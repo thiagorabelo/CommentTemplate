@@ -41,7 +41,7 @@ public class ContextProcessorCache extends LinkedList<ContextProcessor> {
 	private static final ContextProcessorCache INSTANCE;
 	
 	/**
-	 * Return a unique instance o this class.
+	 * Return a unique instance of this class.
 	 * 
 	 * @return {@code PreprocessorCache}
 	 */

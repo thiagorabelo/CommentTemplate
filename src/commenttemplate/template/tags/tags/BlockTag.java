@@ -4,7 +4,6 @@ import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
 import commenttemplate.template.tags.AbstractTag;
-import static commenttemplate.template.tags.AbstractTag.EVAL_BODY;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.template.tags.EvalType;
 
@@ -23,7 +22,7 @@ public class BlockTag extends AbstractTag {
 
 		@Override
 		public void doEval(AbstractTag tag, Context context, Writer sb) {
-			EVAL_BODY.doEval(tag, context, sb);
+			AbstractTag.EVAL_BODY.doEval(tag, context, sb);
 		}
 	}
 
@@ -55,7 +54,7 @@ public class BlockTag extends AbstractTag {
 			
 			switch (type) {
 				case EVAL_BODY_WITH_MAPPED_WRITER:
-					EVAL_BODY.doEval(this, cwm, w);
+					AbstractTag.EVAL_BODY.doEval(this, cwm, w);
 					break;
 
 				case EVAL_WRITER:
@@ -63,7 +62,7 @@ public class BlockTag extends AbstractTag {
 					break;
 
 				case EVAL_BODY:
-					EVAL_BODY.doEval(this, cwm, sb);
+					AbstractTag.EVAL_BODY.doEval(this, cwm, sb);
 					break;
 
 				default:

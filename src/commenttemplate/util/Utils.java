@@ -108,21 +108,21 @@ public class Utils {
 		return getProperty(target, propertyName, true);
 	}
 	
-	private static boolean compareParams(Class<?> a1[], Class<?> a2[]) {
-		if (a1 == null) {
-			return a2 == null || a2.length == 0;
+	private static boolean compareParams(Class<?> c1[], Class<?> c2[]) {
+		if (c1 == null) {
+			return c2 == null || c2.length == 0;
 		}
 
-		if (a2 == null) {
-			return a1.length == 0;
+		if (c2 == null) {
+			return c1.length == 0;
 		}
 
-		if (a1.length != a2.length) {
+		if (c1.length != c2.length) {
 			return false;
 		}
 
-		for (int i = 0; i < a1.length; i++) {
-			if (!(a1[i] == a2[i] || a2[i].isAssignableFrom(a1[i]))) {
+		for (int i = 0; i < c1.length; i++) {
+			if (!(c1[i] == c2[i] || c2[i].isAssignableFrom(c1[i]))) {
 				return false;
 			}
 		}

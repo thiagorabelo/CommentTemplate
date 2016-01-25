@@ -16,34 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.util.retrieve;
+package commenttemplate.util.reflection.properties;
 
-import commenttemplate.util.reflection.properties.PropertyWrappersCache;
-import commenttemplate.util.reflection.properties.PropertyWrapper;
-import java.util.HashMap;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  *
  * @author thiago
  */
-public class CacheableRetrieverDataMap extends IterativeRetrieverDataMap {
+public abstract class PropertyWrapper<T> {
 	
-	private HashMap<Class, PropertyWrappersCache> cache = new HashMap<Class, PropertyWrappersCache>();
+	protected T property;
 
-	@Override
-	protected Object getProperty(Object obj, String key) {
-		PropertyWrappersCache pwc = cache.get(obj.getClass());
-		if (pwc == null) {
-			pwc = new PropertyWrappersCache(obj.getClass());
-			cache.put(obj.getClass(), pwc);
-		}
-
-		PropertyWrapper pw = pwc.findProperty(key);
-
-		try {
-			return pw != null ? pw.execute(obj) : null;
-		} catch (Exception ex) {
-			throw new RuntimeException(ex);
-		}
+	public PropertyWrapper(T property) {
+		this.property = property;
 	}
+
+	public abstract Object execute(Object obj, Object ...args)
+	throws IllegalAccessException, IllegalArgumentException, InvocationTargetException;
 }

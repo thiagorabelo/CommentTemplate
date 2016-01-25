@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Thiago Rabelo.
+ * Copyright (C) 2016 Thiago Rabelo.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,22 +16,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
+package commenttemplate.annotations;
 
-package commenttemplate.util.reflection;
-
-import java.lang.reflect.Field;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  *
  * @author thiago
  */
-public class IterateByFields extends IterateByProperties<Field> {
-	public IterateByFields(Class klass) {
-		super(klass);
-	}
-
-	@Override
-	protected Field[] getDeclaredProp(Class klass) {
-		return klass.getDeclaredFields();
-	}		
+@Target(value = {ElementType.TYPE})
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface Params {
+	String []values() default {};
 }

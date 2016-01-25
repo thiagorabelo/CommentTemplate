@@ -18,8 +18,8 @@
  */
 package commenttemplate.util;
 
-import commenttemplate.util.reflection.IterateByFields;
-import commenttemplate.util.reflection.IterateByMethods;
+import commenttemplate.util.reflection.properties.IterateByFields;
+import commenttemplate.util.reflection.properties.IterateByMethods;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;

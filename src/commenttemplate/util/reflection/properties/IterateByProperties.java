@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  */
 
-package commenttemplate.util.reflection;
+package commenttemplate.util.reflection.properties;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 thiago.
+ * Copyright (C) 2015 Thiago Rabelo.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,24 +16,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.util.reflection;
+
+package commenttemplate.util.reflection.properties;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  *
  * @author thiago
  */
-public class FieldWrapper extends PropertyWrapper<Field> {
-
-	public FieldWrapper(Field property) {
-		super(property);
+public class IterateByFields extends IterateByProperties<Field> {
+	public IterateByFields(Class klass) {
+		super(klass);
 	}
 
 	@Override
-	public Object execute(Object obj, Object... args)
-	throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		return property.get(obj);
-	}
+	protected Field[] getDeclaredProp(Class klass) {
+		return klass.getDeclaredFields();
+	}		
 }

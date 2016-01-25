@@ -16,22 +16,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.util.reflection;
+package commenttemplate.util.reflection.properties;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 /**
  *
  * @author thiago
  */
-public abstract class PropertyWrapper<T> {
-	
-	protected T property;
+public class FieldWrapper extends PropertyWrapper<Field> {
 
-	public PropertyWrapper(T property) {
-		this.property = property;
+	public FieldWrapper(Field property) {
+		super(property);
 	}
 
-	public abstract Object execute(Object obj, Object ...args)
-	throws IllegalAccessException, IllegalArgumentException, InvocationTargetException;
+	@Override
+	public Object execute(Object obj, Object... args)
+	throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		return property.get(obj);
+	}
 }

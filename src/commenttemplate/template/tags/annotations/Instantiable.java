@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Thiago Rabelo.
+ * Copyright (C) 2016 thiago.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,21 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.util.retrieve;
+package commenttemplate.template.tags.annotations;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  *
  * @author thiago
  */
-public class IterativeRetrieverDataObject extends IterativeRetrieverData<Object> {
 
-	@Override
-	protected Object getInitialData(Object target, String key0) {
-		return target;
-	}
-
-	@Override
-	protected int beginLoopIndex() {
-		return 0;
-	}
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Instantiable {
 }

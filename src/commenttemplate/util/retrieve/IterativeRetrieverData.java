@@ -27,7 +27,7 @@ import commenttemplate.util.Utils;
  */
 public abstract class IterativeRetrieverData<T> implements RetrieveData<T> {
 	
-	protected abstract Object getSource(T target, String key0);
+	protected abstract Object getInitialData(T target, String key0);
 	
 	protected abstract int beginLoopIndex();
 	
@@ -52,7 +52,7 @@ public abstract class IterativeRetrieverData<T> implements RetrieveData<T> {
 		if (len > 0) {
 			Object obj;
 
-			if ((obj = getSource(target, keys[0])) != null) {
+			if ((obj = getInitialData(target, keys[0])) != null) {
 				obj = loopProperties(beginLoopIndex(), len, obj, keys);
 			}
 

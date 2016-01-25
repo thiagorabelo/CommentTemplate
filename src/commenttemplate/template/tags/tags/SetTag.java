@@ -20,15 +20,15 @@ public class SetTag extends AbstractTag {
 	public SetTag() {
 	}
 
-	@Override
-	public void start(Context context, Writer sb) {
-		context.push();
-	}
-
-	@Override
-	public void end(Context context, Writer sb) {
-		context.pop();
-	}
+//	@Override
+//	public void start(Context context, Writer sb) {
+//		context.push();
+//	}
+//
+//	@Override
+//	public void end(Context context, Writer sb) {
+//		context.pop();
+//	}
 
 	@Override
 	public void eval(Context context, Writer sb) {

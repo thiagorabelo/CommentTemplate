@@ -120,9 +120,9 @@ public class TemplateParser {
 				// e empilhe este novo bloco na pilha.
 				if (!startsWithEnd && !isElse) {
 
-					TagFactory component = TagFactoryContainer.instance().getByTagName(expressions[0]);
+					TagFactory factory = TagFactoryContainer.instance().getByTagName(expressions[0]);
 					// @TODO: Fazer a validação das exceções aqui lançadas
-					AbstractTag tag = component.populateParameters(expressions[1]);
+					AbstractTag tag = factory.populateParameters(expressions[1]);
 
 					if (!usingElse.peek()) {
 						block.append(tag);

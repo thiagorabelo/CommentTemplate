@@ -32,8 +32,8 @@ public class MethodWrapper extends PropertyWrapper<Method> {
 	}
 
 	@Override
-	public Object execute(Object obj, Object ...args)
+	public Object execute(Object target, Object ...args)
 	throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		return property.invoke(obj, args);
+		return property.invoke(target, args);
 	}
 }

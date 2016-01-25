@@ -156,10 +156,10 @@ public class TagParamsTokenizer implements Iterable<String[]> {
 				return withQuotes(tokens, i + 1, length, paramBegin);
 			}
 
-			return withParenth(tokens, i + 1, length, paramBegin);
+			return withParenth(tokens, i + 1, length);
 		}
 
-		private int withParenth(String []tokens, int startIndex, int length, int paramBegin) {
+		private int withParenth(String []tokens, int startIndex, int length) {
 			StringBuilder right = sb();
 			int i, openedParenth = 0;
 

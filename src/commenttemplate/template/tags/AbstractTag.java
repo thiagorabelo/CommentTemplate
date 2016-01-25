@@ -22,7 +22,9 @@ public abstract class AbstractTag extends AbstractNode implements Tag {
 
 	public AbstractTag() {
 	}
-	
+
+//  @TODO: Em alguns pontos, estes métodos não estão sendo chamados. Verificar
+//	isso URGENRE.
 	@Override
 	public void start(Context context, Writer sb) {
 	}

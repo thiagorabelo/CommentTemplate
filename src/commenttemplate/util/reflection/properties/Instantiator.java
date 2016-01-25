@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.util.reflection;
+package commenttemplate.util.reflection.properties;
 
 import commenttemplate.util.Tuple;
 import java.lang.reflect.InvocationTargetException;

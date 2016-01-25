@@ -22,8 +22,8 @@ import commenttemplate.context.Context;
 import commenttemplate.template.tags.AbstractTag;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Tuple;
-import commenttemplate.util.reflection.Instantiator;
-import commenttemplate.util.reflection.MethodWrapper;
+import commenttemplate.util.reflection.properties.Instantiator;
+import commenttemplate.util.reflection.properties.MethodWrapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 

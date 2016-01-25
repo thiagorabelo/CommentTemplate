@@ -33,7 +33,7 @@ import commenttemplate.template.tags.adaptor.MappedTagAdaptor;
 import commenttemplate.template.tags.annotations.Instantiable;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
-import commenttemplate.util.reflection.MethodWrapper;
+import commenttemplate.util.reflection.properties.MethodWrapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;

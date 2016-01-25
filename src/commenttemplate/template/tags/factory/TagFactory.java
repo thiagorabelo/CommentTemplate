@@ -36,7 +36,7 @@ import commenttemplate.template.tags.annotations.Instantiable;
 import commenttemplate.util.Join;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
-import commenttemplate.util.reflection.MethodWrapper;
+import commenttemplate.util.reflection.properties.MethodWrapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;

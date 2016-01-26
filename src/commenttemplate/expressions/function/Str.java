@@ -22,15 +22,4 @@ public class Str extends Function {
 
 		return sb.toString();
 	}
-	
-	@Override
-	public void toString(StringBuilder sb) {
-		sb.append("str");
-		super.toString(sb);
-	}
-	
-	@Override
-	public String toString() {
-		return "str";
-	}
 }

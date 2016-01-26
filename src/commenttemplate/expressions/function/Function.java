@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.util.Join;
+import commenttemplate.util.Utils;
 
 /**
  * A function is a class that extends this Function class and implements the
@@ -18,6 +19,11 @@ public abstract class Function implements Exp {
 	 * The list of parameters of the function.
 	 */
 	private List<Exp> args = new ArrayList<Exp>();
+
+	/**
+	 * The name of the function.
+	 */
+	private String name;
 
 	/**
 	 * The default constructor.
@@ -74,6 +80,14 @@ public abstract class Function implements Exp {
 		}
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	/**
 	 * Convert this Function instance in String, putting the result in the
 	 * StringBuilder passed as parameter.
@@ -82,11 +96,9 @@ public abstract class Function implements Exp {
 	 */
 	@Override
 	public void toString(StringBuilder sb) {
+		sb.append(Utils.empty(name) ? "[anonymous]" : name);
 		sb.append("(");
-		String c = "";
-
 		sb.append(Join.with(", ").these(args));
-
 		sb.append(")");
 	}
 

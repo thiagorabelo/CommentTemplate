@@ -7,6 +7,8 @@ import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Join;
 import commenttemplate.util.Utils;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  *
@@ -60,16 +62,24 @@ public abstract class AbstractTag extends AbstractNode implements Tag {
 	@Override
 	public String paramsToString() {
 		String []params = TagFactoryContainer.instance().getByTagName(tagName).getParams();
-		ArrayList<String> l = new ArrayList<String>();
-		
-		for (String p : params) {
-			Object param = Utils.getProperty(this, p, true);
-			if (param != null) {
-				l.add(Utils.concat(p, "=\"", param.toString(), '"'));
+
+		return Join.with(" ").skipNulls().these(new Iterator<String>() {
+
+			private final Iterator<String> it = Arrays.asList(params).iterator();
+
+			@Override
+			public boolean hasNext() {
+				return it.hasNext();
 			}
-		}
-		
-		return Join.with(" ").these(l).toString();
+
+			@Override
+			public String next() {
+				String p = it.next();
+				Object param = Utils.getProperty(AbstractTag.this, p, true);
+				return param != null ? Utils.concat(p, "=\"", param.toString(), '"') : null;
+			}
+
+		}).toString();
 	}
 	
 	@Override

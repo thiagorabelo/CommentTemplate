@@ -45,15 +45,4 @@ public class Get extends Function {
 
 		return null;
 	}
-
-	@Override
-	public void toString(StringBuilder sb) {
-		sb.append("get");
-		super.toString(sb);
-	}
-
-	@Override
-	public String toString() {
-		return "get";
-	}
 }

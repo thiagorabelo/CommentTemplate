@@ -81,4 +81,14 @@ public class TagAdaptor extends AbstractTag {
 	public void addSetter(MethodWrapper wrapper, Object value) {
 		instanciator.addSetter(wrapper, value);
 	}
+
+	@Override
+	public void toString(StringBuilder sb) {
+		try {
+			AbstractTag tag = initTag();
+			tag.toString(sb);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 }

@@ -134,16 +134,4 @@ public class Iterable extends Function {
 			}
 		};
 	}
-		
-			
-	@Override
-	public void toString(StringBuilder sb) {
-		sb.append("iterable");
-		super.toString(sb);
-	}
-	
-	@Override
-	public String toString() {
-		return "iterable";
-	}
 }

@@ -248,7 +248,9 @@ public class TokensToExp {
 			}
 
 			try {
-				return fclass.newInstance();
+				Function f = fclass.newInstance();
+				f.setName(str);
+				return f;
 			} catch (Exception ex) {
 				throw new RuntimeException(ex);
 			}

@@ -40,15 +40,4 @@ public class Length extends Function {
 
 		return length;
 	}
-	
-	@Override
-	public void toString(StringBuilder sb) {
-		sb.append("length");
-		super.toString(sb);
-	}
-	
-	@Override
-	public String toString() {
-		return "length";
-	}
 }

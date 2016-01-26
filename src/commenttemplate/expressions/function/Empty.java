@@ -49,15 +49,4 @@ public class Empty extends Function {
 
 		return isEmpty;
 	}
-	
-	@Override
-	public void toString(StringBuilder sb) {
-		sb.append("empty");
-		super.toString(sb);
-	}
-	
-	@Override
-	public String toString() {
-		return "empty";
-	}
 }

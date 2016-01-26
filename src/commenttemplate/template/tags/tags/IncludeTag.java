@@ -44,9 +44,7 @@ public class IncludeTag extends MappableTag {
 		try {
 			RootNode node = TemplateLoader.get(template.eval(context).toString());
 
-			start(context, sb);
-			String result = node.eval(context);
-			end(context, sb);
+			String result = node.render(context);
 
 			sb.append(result);
 		} catch (TemplateException ex) {

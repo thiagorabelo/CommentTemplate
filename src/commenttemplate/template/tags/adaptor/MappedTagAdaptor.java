@@ -36,7 +36,8 @@ public class MappedTagAdaptor extends TagAdaptor {
 		extraParams = new HashMap<String, Exp>();
 	}
 
-	private AbstractTag initTag()
+	@Override
+	protected AbstractTag initTag()
 	throws IllegalAccessException, InstantiationException,
 	IllegalArgumentException, InvocationTargetException {
 

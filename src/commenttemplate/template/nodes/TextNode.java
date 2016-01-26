@@ -61,7 +61,7 @@ public class TextNode extends AbstractNode {
 
 	// Falta ajeitar essa onça
 	@Override
-	public void eval(Context context, Writer sb) {
+	public void render(Context context, Writer sb) {
 		for (Exp exp : content) {
 			sb.append(exp.eval(context));
 		}

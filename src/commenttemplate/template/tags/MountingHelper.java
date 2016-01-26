@@ -33,8 +33,8 @@ public class MountingHelper {
 	
 	public MountingHelper(Node b) {
 		block = b;
-		nodeList = new ArrayList<>();
-		nodeListElse = new ArrayList<>();
+		nodeList = new ArrayList<Node>();
+		nodeListElse = new ArrayList<Node>();
 	}
 
 	public Node getBlock() {

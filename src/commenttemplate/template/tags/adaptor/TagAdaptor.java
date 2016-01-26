@@ -39,7 +39,7 @@ public class TagAdaptor extends AbstractTag {
 		instanciator = new Instantiator(klass);
 	}
 
-	private AbstractTag initTag()
+	protected AbstractTag initTag()
 	throws IllegalAccessException, InstantiationException,
 	IllegalArgumentException, InvocationTargetException {
 
@@ -54,6 +54,10 @@ public class TagAdaptor extends AbstractTag {
 
 	@Override
 	public void eval(Context context, Writer sb) {
+	}
+
+	@Override
+	public void render(Context context, Writer sb) {
 		try {
 			AbstractTag tag = initTag();
 

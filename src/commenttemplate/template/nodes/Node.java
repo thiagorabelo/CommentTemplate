@@ -40,5 +40,5 @@ public interface Node {
 
 	public abstract void toString(StringBuilder sb);
 
-	public abstract void eval(Context context, Writer sb);
+	public abstract void render(Context context, Writer sb);
 }

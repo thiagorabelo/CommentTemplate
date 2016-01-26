@@ -23,8 +23,6 @@ public abstract class AbstractTag extends AbstractNode implements Tag {
 	public AbstractTag() {
 	}
 
-//  @TODO: Em alguns pontos, estes métodos não estão sendo chamados. Verificar
-//	isso URGENRE.
 	@Override
 	public void start(Context context, Writer sb) {
 	}
@@ -36,9 +34,16 @@ public abstract class AbstractTag extends AbstractNode implements Tag {
 	@Override
 	public abstract void eval(Context context, Writer sb);
 
+	@Override
+	public void render(Context context, Writer sb) {
+		start(context, sb);
+		eval(context, sb);
+		end(context, sb);
+	}
+
 	protected void loopNodeList(Node []blockList, Context context, Writer sb) {
 		for (Node t : blockList) {
-			t.eval(context, sb);
+			t.render(context, sb);
 		}
 	}
 	

@@ -37,7 +37,7 @@ public class ExtendsTag extends AbstractTag {
 			}
 
 			cwm.setMode(ContextWriterMap.Mode.RENDER);
-			base.eval(cwm, sb);
+			base.render(cwm, sb);
 
 		} catch (TemplateException ex) {
 			// @TODO: fazer o quê?

@@ -4,12 +4,12 @@ import commenttemplate.template.tags.factory.TagFactory;
 import commenttemplate.template.tags.factory.MappableTagFactory;
 import commenttemplate.template.tags.tags.IfTag;
 import commenttemplate.template.tags.tags.IncludeTag;
-import commenttemplate.template.tags.tags.Literal;
 import commenttemplate.template.tags.tags.SetTag;
 import commenttemplate.template.tags.tags.WithTag;
 import commenttemplate.template.tags.tags.ExtendsTag;
 import commenttemplate.template.tags.tags.BlockTag;
 import commenttemplate.template.tags.tags.ForTag;
+import commenttemplate.template.tags.tags.Literal;
 import commenttemplate.util.Utils;
 
 /**

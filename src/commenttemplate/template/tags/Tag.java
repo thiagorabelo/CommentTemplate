@@ -32,7 +32,6 @@ public interface Tag extends Node {
 
 	public void end(Context context, Writer sb);
 
-	@Override
 	public abstract void eval(Context context, Writer sb);
 	
 	public String getTagName();

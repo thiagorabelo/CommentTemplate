@@ -39,9 +39,7 @@ public enum EvalTypeImplementation implements EvalType {
 			Node []nodeList;
 
 			if ((nodeList = tag.getNodeList()) != null) {
-				tag.start(context, sb);
 				tag.loopNodeList(nodeList, context, sb);
-				tag.end(context, sb);
 			}
 		}
 	},
@@ -51,9 +49,7 @@ public enum EvalTypeImplementation implements EvalType {
 			Node []nodeListElse;
 
 			if ((nodeListElse = tag.getNodeListElse()) != null) {
-				tag.start(context, sb);
 				tag.loopNodeList(nodeListElse, context, sb);
-				tag.end(context, sb);
 			}
 		}
 	}

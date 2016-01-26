@@ -59,25 +59,25 @@ public class RootNode extends AbstractNode {
 		}
 	}
 
-	public String eval(Map<String, Object> params) {
+	public String render(Map<String, Object> params) {
 		TemplateWriter sb = new TemplateWriter(initialBufferSize);
 
 		if (params instanceof Context) {
-			eval((Context)params, sb);
+			render((Context)params, sb);
 		} else {
-			eval(params, sb);
+			render(params, sb);
 		}
 
 		return sb.toString();
 	}
 
-	public void eval(Map<String, Object> params, Writer sb) {
+	public void render(Map<String, Object> params, Writer sb) {
 		Context context = new Context(params);
-		eval(context, sb);
+		render(context, sb);
 	}
 
 	@Override
-	public void eval(Context context, Writer sb) {
+	public void render(Context context, Writer sb) {
 		
 		for (ContextProcessor p : ContextProcessorCache.instance()) {
 			p.before(context);
@@ -86,7 +86,7 @@ public class RootNode extends AbstractNode {
 		Node []list = getNodeList();
 		
 		for (int i = 0, len = list.length; i < len; i++) {
-			list[i].eval(context, sb);
+			list[i].render(context, sb);
 		}
 
 		for (ContextProcessor p : ContextProcessorCache.instance()) {

@@ -41,10 +41,10 @@ public class TemplateLoader {
 
 		String templateOutput;
 		if (!recursive) {
-			templateOutput = t.eval(params != null ? params : new HashMap<String, Object>());
+			templateOutput = t.render(params != null ? params : new HashMap<String, Object>());
 		} else {
 			Context context = new Context(params, new RecursiveRetrieveDataMap());
-			templateOutput = t.eval(context);
+			templateOutput = t.render(context);
 		}
 
 		return templateOutput;

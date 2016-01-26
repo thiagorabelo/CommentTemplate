@@ -58,7 +58,9 @@ public abstract class AbstractNode implements Node {
 	@Override
 	public abstract String toString();
 
+	@Override
 	public abstract void toString(StringBuilder sb);
 
-	public abstract void eval(Context context, Writer sb);
+	@Override
+	public abstract void render(Context context, Writer sb);
 }

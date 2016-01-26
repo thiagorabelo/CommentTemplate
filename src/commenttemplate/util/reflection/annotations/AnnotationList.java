@@ -18,8 +18,11 @@
  */
 package commenttemplate.util.reflection.annotations;
 
+import commenttemplate.util.Utils;
 import commenttemplate.util.reflection.IterateBySuperClasses;
+import commenttemplate.util.reflection.properties.IterateByMethods;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,12 +37,29 @@ public class AnnotationList {
 		this.klass = klass;
 	}
 
-	public List<Annotation> listInHierarchy(Class<? extends Annotation> c) {
-		ArrayList<Annotation> l = new ArrayList<Annotation>();
+	public <A extends Annotation> List<A> listInHierarchy(Class<A> annotation) {
+		ArrayList<A> l = new ArrayList<A>();
 
 		for (Class k : new IterateBySuperClasses(klass)) {
-			if (k.isAnnotationPresent(c)) {
-				l.add(k.getAnnotation(c));
+			if (k.isAnnotationPresent(annotation)) {
+				A an = (A)k.getAnnotation(annotation);
+				l.add(an);
+			}
+		}
+
+		return l;
+	}
+
+	public List<Object> annotationsParams(Class annotationClass, String ...params)
+	throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		ArrayList<Object> l = new ArrayList<Object>();
+
+		for (Class k : new IterateBySuperClasses(klass)) {
+			if (k.isAnnotationPresent(annotationClass)) {
+				Annotation a = k.getAnnotation(annotationClass);
+				for (String p : params) {
+					l.add(Utils.getMethod2(annotationClass, p).invoke(a));
+				}
 			}
 		}
 

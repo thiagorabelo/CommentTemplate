@@ -22,7 +22,7 @@ public class GreaterEqualsThan extends BinaryOperator {
 	}
 	
 	@Override
-	public String toString() {
+	public String getRepr() {
 		return ">=";
 	}
 }

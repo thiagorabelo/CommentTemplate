@@ -68,7 +68,7 @@ public class LessThan extends BinaryOperator {
 	}
 	
 	@Override
-	public String toString() {
+	public String getRepr() {
 		return "<";
 	}
 }

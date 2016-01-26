@@ -37,8 +37,15 @@ public abstract class BinaryOperator extends Operator {
 		
 		sb.append("(");
 		l.toString(sb);
-		sb.append(" ").append(this.toString()).append(" ");
+		sb.append(" ").append(this.getRepr()).append(" ");
 		r.toString(sb);
 		sb.append(")");
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		toString(sb);
+		return sb.toString();
 	}
 }

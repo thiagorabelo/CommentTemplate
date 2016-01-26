@@ -10,6 +10,11 @@ import commenttemplate.context.Context;
 public class Comma extends Operator {
 	
 	@Override
+	public String getRepr() {
+		return ",";
+	}
+
+	@Override
 	public String toString() {
 		return ",";
 	}

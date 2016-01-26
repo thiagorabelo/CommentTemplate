@@ -12,6 +12,11 @@ public class RParenthesis extends Parenthesis {
 	}
 
 	@Override
+	public String getRepr() {
+		return ")";
+	}
+
+	@Override
 	public void toString(StringBuilder sb) {
 	}
 }

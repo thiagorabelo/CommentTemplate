@@ -25,9 +25,16 @@ public abstract class UnaryOperator extends Operator {
 	public void toString(StringBuilder sb) {
 		Exp p = param;
 		
-		sb.append(this.toString());
+		sb.append(this.getRepr());
 		sb.append("(");
 		p.toString(sb);
 		sb.append(")");
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		toString(sb);
+		return sb.toString();
 	}
 }

@@ -63,7 +63,7 @@ public class And extends BinaryOperator {
 	}
 
 	@Override
-	public String toString() {
+	public String getRepr() {
 		return "&&";
 	}
 }

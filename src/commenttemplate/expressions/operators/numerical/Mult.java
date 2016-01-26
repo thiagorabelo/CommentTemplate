@@ -46,7 +46,7 @@ public class Mult extends BinaryOperator {
 	}
 	
 	@Override
-	public String toString() {
+	public String getRepr() {
 		return "*";
 	}
 }

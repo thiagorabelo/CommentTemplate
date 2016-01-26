@@ -41,7 +41,7 @@ public class Positive extends UnaryOperator {
 	}
 	
 	@Override
-	public String toString() {
+	public String getRepr() {
 		return "+";
 	}
 }

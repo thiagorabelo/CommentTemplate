@@ -12,7 +12,7 @@ import commenttemplate.context.Context;
 public class Equals extends BinaryOperator {
 	
 	@Override
-	public String toString() {
+	public String getRepr() {
 		return "==";
 	}
 	

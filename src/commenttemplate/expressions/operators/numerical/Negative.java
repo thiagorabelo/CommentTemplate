@@ -41,7 +41,7 @@ public class Negative extends UnaryOperator {
 	}
 	
 	@Override
-	public String toString() {
+	public String getRepr() {
 		return "-";
 	}
 }

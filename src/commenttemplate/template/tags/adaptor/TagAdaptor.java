@@ -19,10 +19,12 @@
 package commenttemplate.template.tags.adaptor;
 
 import commenttemplate.context.Context;
+import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.template.tags.AbstractTag;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Tuple;
-import commenttemplate.util.reflection.properties.Instantiator;
+import commenttemplate.util.Utils;
+import commenttemplate.util.reflection.Instantiator;
 import commenttemplate.util.reflection.properties.MethodWrapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -80,6 +82,11 @@ public class TagAdaptor extends AbstractTag {
 
 	public void addSetter(MethodWrapper wrapper, Object value) {
 		instanciator.addSetter(wrapper, value);
+	}
+
+	public void addSetter(String prefix, String propertyName, boolean capitalize, Object value)
+	throws NoSuchMethodException {
+		instanciator.addSetter(prefix, propertyName, capitalize, value);
 	}
 
 	@Override

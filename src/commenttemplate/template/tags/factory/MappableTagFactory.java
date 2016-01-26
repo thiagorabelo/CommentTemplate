@@ -129,17 +129,15 @@ public class MappableTagFactory extends TagFactory {
 	private void pupulateParameters(MappedTagAdaptor adaptor, List<Tuple<String, Exp>> parameters)
 	throws CouldNotSetTagParameterException {
 		FindInParams f = new FindInParams();
-		
+
 		for (int i = 0, len = parameters.size(); i < len; i++) {
 			Tuple<String, Exp> t = parameters.get(i);
 			if (f.isPresent(t.getA())) {
 				try {
-					MethodWrapper mw = new MethodWrapper(Utils.getMethod2(tagClass, "set" + Utils.capitalize(t.getA()), t.getB().getClass()));
-					adaptor.addSetter(mw, t.getB());
-
+					adaptor.addSetter("set", t.getA(), true, t.getB());
 					parameters.remove(i);
 					len = parameters.size();
-				} catch (NoSuchMethodException ex) {
+				}  catch (NoSuchMethodException ex) {
 					throw new CouldNotSetTagParameterException(tagClass.getName(), t.getA(), ex);
 				}
 			}

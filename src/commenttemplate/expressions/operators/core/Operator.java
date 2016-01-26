@@ -58,4 +58,6 @@ public abstract class Operator implements Exp {
 	
 	@Override
 	public abstract void toString(StringBuilder sb);
+
+	public abstract String getRepr();
 }

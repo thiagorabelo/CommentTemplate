@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Thiago Rabelo.
+ * Copyright (C) 2016 Thiago Rabelo.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,38 +16,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.expressions.operators.properties;
+package commenttemplate.util.reflection.annotations;
 
-import commenttemplate.context.Context;
-import commenttemplate.expressions.operators.core.BinaryOperator;
-import commenttemplate.util.retrieve.IterativeRetrieverDataObject;
+import commenttemplate.util.reflection.IterateBySuperClasses;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author thiago
  */
-public class Property extends BinaryOperator {
-	private static final IterativeRetrieverDataObject retriever = new IterativeRetrieverDataObject();
+public class AnnotationList {
+	private Class klass;
 
-	public static Object execute(Object l, Object r) {
-		if (!isNull(l)) {
-			String []ids = (String[])r;
-			return retriever.getValue(l, ids);
+	public AnnotationList(Class klass) {
+		this.klass = klass;
+	}
+
+	public List<Annotation> listInHierarchy(Class<? extends Annotation> c) {
+		ArrayList<Annotation> l = new ArrayList<Annotation>();
+
+		for (Class k : new IterateBySuperClasses(klass)) {
+			if (k.isAnnotationPresent(c)) {
+				l.add(k.getAnnotation(c));
+			}
 		}
 
-		return null;
-	}
-
-	@Override
-	public String getRepr() {
-		return ".";
-	}
-
-	@Override
-	public Object eval(Context context) {
-		Object left = getLeft().eval(context);
-		Object right = getRight().eval(context);
-
-		return execute(left, right);
+		return l;
 	}
 }

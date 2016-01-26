@@ -10,7 +10,7 @@ import commenttemplate.context.Context;
 public class GreaterThan extends BinaryOperator {
 	
 	@Override
-	public String toString() {
+	public String getRepr() {
 		return ">";
 	}
 

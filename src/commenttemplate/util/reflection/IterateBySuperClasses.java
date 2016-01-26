@@ -17,7 +17,7 @@
  * MA 02110-1301  USA
  */
 
-package commenttemplate.util.reflection.properties;
+package commenttemplate.util.reflection;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -25,6 +25,7 @@ import java.util.NoSuchElementException;
 /**
  *
  * @author thiago
+ * @param <C>
  */
 public class IterateBySuperClasses implements Iterable<Class> {
 	private final Class klass;

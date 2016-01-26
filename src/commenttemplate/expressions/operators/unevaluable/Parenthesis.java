@@ -1,9 +1,7 @@
 package commenttemplate.expressions.operators.unevaluable;
 
-import java.util.Map;
-import commenttemplate.expressions.operators.core.Operator;
 import commenttemplate.context.Context;
-
+import commenttemplate.expressions.operators.core.Operator;
 
 /**
  *

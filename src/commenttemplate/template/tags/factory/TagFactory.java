@@ -258,8 +258,7 @@ public class TagFactory {
 	throws CouldNotSetTagParameterException {
 		for (Tuple<String, Exp> t : parameters) {
 			try {
-				MethodWrapper mw = new MethodWrapper(Utils.getMethod2(tagClass, "set" + Utils.capitalize(t.getA()), t.getB().getClass()));
-				adaptor.addSetter(mw, t.getB());
+				adaptor.addSetter("set", t.getA(), true, t.getB());
 			} catch (NoSuchMethodException ex) {
 				throw new CouldNotSetTagParameterException(tagClass.getName(), t.getA(), ex);
 			}

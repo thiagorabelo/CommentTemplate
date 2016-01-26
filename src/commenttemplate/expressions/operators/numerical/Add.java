@@ -47,7 +47,7 @@ public class Add extends BinaryOperator {
 	}
 
 	@Override
-	public String toString() {
+	public String getRepr() {
 		return "+";
 	}
 }

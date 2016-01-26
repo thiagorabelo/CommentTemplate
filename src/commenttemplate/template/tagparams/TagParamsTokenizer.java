@@ -29,8 +29,9 @@ import java.util.List;
  */
 public class TagParamsTokenizer implements Iterable<String[]> {
 
-//	public static void main(String[] args) {
-//		String []t = {
+	public static void main(String[] args) {
+		String []t = {
+			"abcd.RegA == \"Thiago\"",
 //			"foo=\"bar\" one= \" tow\" three =\"four\" abc = \"cde\"",
 //			"foo=(bar) one= ( two) three =(four) abc = (cde)",
 //			"foo=( one * ( two + three ) % four  )",
@@ -39,24 +40,25 @@ public class TagParamsTokenizer implements Iterable<String[]> {
 //			" 'vish maria'",
 //			" one * ( two + three  % four ) ",
 //			""
-//		};
-//
-//		for (String s : t) {
-//			System.out.println(s);
-//			for (String []tks : new TagParamsTokenizer(s)) {
-//				System.out.flush();
-//				System.out.println("[0]::" + tks[0]);
-//				System.out.println("[1]::" + tks[1]);
-//				System.out.println("-------------------");
-//			}
-//			System.out.println("\n===================\n");
-//		}
-//	}
+		};
+
+		for (String s : t) {
+			System.out.println(s);
+			for (String []tks : new TagParamsTokenizer(s)) {
+				System.out.flush();
+				System.out.println("[0]::" + tks[0]);
+				System.out.println("[1]::" + tks[1]);
+				System.out.println("-------------------");
+			}
+			System.out.println("\n===================\n");
+		}
+	}
 
 	//                                                 0    1
 	private static final String []ALLOWED_OPENING = {"\"", "("};
 	private static final String []ALLOWED_CLOSING = {"\"", ")"};
 	private static final String ASSIGNMENT = "=";
+	private static final String []PRE_ASSIGNMENT_EXCLUDES = {"=", "!", "<", ">"};
 	private static final int WITH_QUOTES = 0;
 	private static final int WITH_PARENTH = 1;
 
@@ -97,7 +99,7 @@ public class TagParamsTokenizer implements Iterable<String[]> {
 				boolean whiteSpace = Character.isWhitespace(ch);
 
 				if (!whiteSpace && paramBegin > -1) {
-					boolean assigment = ASSIGNMENT.equals("" + ch);
+					boolean assigment = isAssignment(ch);//ASSIGNMENT.equals("" + ch);
 					if (!assigment && tokens[0] == null) {
 						left.append(ch);
 						if (paramBegin == -1) {
@@ -213,6 +215,22 @@ public class TagParamsTokenizer implements Iterable<String[]> {
 
 		private StringBuilder sb() {
 			return new StringBuilder();
+		}
+
+		private boolean isAssignment(char ch) {
+			boolean is_assigment = ASSIGNMENT.equals("" + ch);
+			
+			if (!is_assigment) {
+				return false;
+			}
+
+			for (String s : PRE_ASSIGNMENT_EXCLUDES) {
+				if (("" + stream.charAt(index - 1)).equals(s)) {
+					return false;
+				}
+			}
+
+			return is_assigment && !(stream.charAt(index + 1) + "").equals(ASSIGNMENT);
 		}
 	}
 

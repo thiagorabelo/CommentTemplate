@@ -16,9 +16,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.util.reflection.properties;
+package commenttemplate.util.reflection;
 
+import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.util.Tuple;
+import commenttemplate.util.Utils;
+import commenttemplate.util.reflection.properties.MethodWrapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -63,5 +66,13 @@ public class Instantiator<C> {
 
 	public void addSetter(MethodWrapper wrapper, Object value) {
 		setterCache.add(new Tuple<MethodWrapper, Object>(wrapper, value));
+	}
+
+	public void addSetter(String prefix, String propertyName, boolean capitalize, Object value) throws NoSuchMethodException {
+		prefix = (prefix == null ? "" : prefix);
+		String methodName = prefix + (capitalize ? Utils.capitalize(propertyName) : propertyName);
+
+		MethodWrapper mw = new MethodWrapper(Utils.getMethod2(klass, methodName, value.getClass()));
+		addSetter(mw, value);
 	}
 }

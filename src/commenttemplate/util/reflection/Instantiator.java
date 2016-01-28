@@ -18,7 +18,6 @@
  */
 package commenttemplate.util.reflection;
 
-import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
 import commenttemplate.util.reflection.properties.MethodWrapper;
@@ -40,7 +39,7 @@ public class Instantiator<C> {
 		setterCache = new ArrayList<Tuple<MethodWrapper, Object>>();
 	}
 
-	public C newInstance()
+	public C newPopulatedInstance()
 	throws IllegalAccessException, InstantiationException,
 	IllegalArgumentException, InvocationTargetException{
 		C i = (C) klass.newInstance();
@@ -48,6 +47,14 @@ public class Instantiator<C> {
 		for (Tuple<MethodWrapper, Object> t : setterCache) {
 			t.getA().execute(i, t.getB());
 		}
+
+		return i;
+	}
+
+	public C newInstance()
+	throws IllegalAccessException, InstantiationException,
+	IllegalArgumentException, InvocationTargetException{
+		C i = (C) klass.newInstance();
 
 		return i;
 	}

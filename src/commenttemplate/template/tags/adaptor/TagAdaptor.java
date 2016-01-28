@@ -21,6 +21,7 @@ package commenttemplate.template.tags.adaptor;
 import commenttemplate.context.Context;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.template.tags.MountingHelper;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
@@ -45,7 +46,7 @@ public class TagAdaptor extends AbstractTag {
 	throws IllegalAccessException, InstantiationException,
 	IllegalArgumentException, InvocationTargetException {
 
-		AbstractTag tag = instanciator.newInstance();
+		AbstractTag tag = instanciator.newPopulatedInstance();
 
 		tag.setNodeList(getNodeList());
 		tag.setNodeListElse(getNodeListElse());
@@ -67,6 +68,19 @@ public class TagAdaptor extends AbstractTag {
 			tag.eval(context, sb);
 			tag.end(context, sb);
 
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
+
+	// @TODO: Existem casos em que o MountingHelper vai receber um TagAdaptor
+	//        invez de um Node em si.
+	//        Isto está quebrando com a lógica da ExtendsTag, por exemplo, quando
+	//        anotada com @Instantiable.
+	@Override
+	public MountingHelper createMountingHelper() {
+		try {
+			return instanciator.newInstance().createMountingHelper();
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}

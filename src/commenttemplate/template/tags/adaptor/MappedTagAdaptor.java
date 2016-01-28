@@ -41,7 +41,7 @@ public class MappedTagAdaptor extends TagAdaptor {
 	throws IllegalAccessException, InstantiationException,
 	IllegalArgumentException, InvocationTargetException {
 
-		AbstractTag tag = instanciator.newInstance();
+		AbstractTag tag = instanciator.newPopulatedInstance();
 
 		tag.setNodeList(getNodeList());
 		tag.setNodeListElse(getNodeListElse());

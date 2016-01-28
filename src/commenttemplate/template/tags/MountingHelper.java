@@ -37,11 +37,11 @@ public class MountingHelper {
 		nodeListElse = new ArrayList<Node>();
 	}
 
-	public Node getBlock() {
+	public Node getNode() {
 		return block;
 	}
 
-	public void setBlock(Node block) {
+	public void setNode(Node block) {
 		this.block = block;
 	}
 

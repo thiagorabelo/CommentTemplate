@@ -18,6 +18,8 @@
  */
 package commenttemplate.loader;
 
+import commenttemplate.annotations.ComponentName;
+import commenttemplate.annotations.Params;
 import commenttemplate.context.ContextProcessor;
 import commenttemplate.context.processor.ContextProcessorCache;
 import commenttemplate.expressions.function.Function;
@@ -28,12 +30,17 @@ import commenttemplate.template.tags.MappableTag;
 import commenttemplate.template.tags.TagInitializer;
 import commenttemplate.template.tags.factory.MappableTagFactory;
 import commenttemplate.util.Join;
+import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
+import commenttemplate.util.Wrap;
+import commenttemplate.util.reflection.annotations.Annotations;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -126,7 +133,7 @@ public class Init extends TemplateLoaderConfig {
 
 		return list;
 	}
-	
+
 	protected void customFunctions(Properties prop) {
 		List<String> functions = startsWith(CUSTOM_FUNCTION, prop);
 		
@@ -146,7 +153,54 @@ public class Init extends TemplateLoaderConfig {
 			}
 		}
 	}
+
+	protected Tuple<String, String[]> getAnnotedTagsParams(String className, Wrap<Class> tagClass) {
+		try {
+			tagClass.setValue(Class.forName(className));
+
+			Annotations ann = new Annotations(tagClass.getValue());
+			String tagName = (String)ann.annotationParam(ComponentName.class, "value");
+
+			tagName = Utils.empty(tagName) ? Utils.uncapitalize(tagClass.getValue().getSimpleName()) : tagName;
+
+			Set<Object> rawTagParamsSet = ann.annotationParamsInHierarchy(Params.class, "values");
+			Set<String> tagParamsSet = new HashSet<String>();
+
+			for (Object arr : rawTagParamsSet) {
+				Object []arrayObject = (Object[])arr;
+
+				for (Object p : arrayObject) {
+					tagParamsSet.add((String)p);
+				}
+			}
+
+			String []tagParams = new String[tagParamsSet.size()];
+			tagParamsSet.toArray(tagParams);
+
+			return new Tuple<String, String[]>(tagName, tagParams);
+
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 	
+	protected void customTags2(Properties prop) {
+		List<String> classNames = null;
+
+		for (String className : classNames) {
+			Wrap<Class> tagClass = new Wrap<Class>(null);
+			Tuple<String, String[]> config = getAnnotedTagsParams(className, tagClass);
+
+			TagFactory factory;
+
+			if (!tagClass.getValue().isAssignableFrom(MappableTag.class)) {
+				factory = new TagFactory(config.getA(), tagClass.getValue(), config.getB());
+			} else {
+				factory = new MappableTagFactory(config.getA(), tagClass.getValue(), config.getB());
+			}
+		}
+	}
+
 	protected void customTags(Properties prop) {
 		List<String> tagsParams = startsWith(CUSTOM_TAG, prop);
 

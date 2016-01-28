@@ -263,4 +263,12 @@ public class Utils {
 
 		return str.toUpperCase();
 	}
+	
+	public static String uncapitalize(String str) {
+		if (str.length() > 1) {
+			return Character.toLowerCase(str.charAt(0)) + str.substring(1);
+		}
+
+		return str.toLowerCase();
+	}
 }

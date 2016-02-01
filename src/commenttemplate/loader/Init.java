@@ -53,6 +53,7 @@ public class Init extends TemplateLoaderConfig {
 	private static final String RESOURCES = "commenttemplate.resource_folder";
 	private static final String CONTEXTPROCESSOR = "commenttemplate.contextprocessors";
 	private static final String CUSTOM_TAG = "commenttemplate.tag";
+	private static final String CUSTOM_TAG_CLASSES = "commenttemplate.tags";
 	private static final String CUSTOM_TAG_PARAMS = "params";
 	private static final String CUSTOM_FUNCTION = "commenttemplate.function";
 //	private static final String CONFIG_CLASS = "commenttemplate.config_class";
@@ -185,7 +186,7 @@ public class Init extends TemplateLoaderConfig {
 	}
 	
 	protected void customTags2(Properties prop) {
-		List<String> classNames = null;
+		String []classNames = SPLIT_BY_COMMA.split(prop.getProperty(CUSTOM_TAG_CLASSES));
 
 		for (String className : classNames) {
 			Wrap<Class> tagClass = new Wrap<Class>(null);
@@ -198,6 +199,8 @@ public class Init extends TemplateLoaderConfig {
 			} else {
 				factory = new MappableTagFactory(config.getA(), tagClass.getValue(), config.getB());
 			}
+
+			TagInitializer.instance().addTag(factory);
 		}
 	}
 

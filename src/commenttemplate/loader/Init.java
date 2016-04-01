@@ -41,7 +41,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -59,11 +58,6 @@ public class Init extends TemplateLoaderConfig {
 //	private static final String CONFIG_CLASS = "commenttemplate.config_class";
 	
 	private static final String filename = "commenttemplate.properties";
-	
-	// TODO: Fonte de Bug! Se a classe não estiver em um pacote (padrão: a.b.Class), esta regex não
-	//       vai conseguir identificar o padrão.
-	private static final Pattern SPLIT_NAME_AND_CLASS = Pattern.compile("((?<name>\\w+)\\s*,\\s*)?(?<class>[\\w|\\.]+)");
-	private static final Pattern SPLIT_BY_COMMA = Pattern.compile("\\s*,\\s*");
 	
 	private static Boolean configured = false;
 	
@@ -119,6 +113,7 @@ public class Init extends TemplateLoaderConfig {
 		}
 		
 		customTags(prop);
+		customTags2(prop);
 		customFunctions(prop);
 	}
 
@@ -127,7 +122,12 @@ public class Init extends TemplateLoaderConfig {
 
 		for (Map.Entry<Object, Object> e : prop.entrySet()) {
 			String key = e.getKey().toString();
-			if (key.startsWith(property) && !key.substring(property.length() + 1).contains(".")) {
+			String remainder = null;
+
+			if (key.startsWith(property) &&
+					!(remainder = key.substring(property.length())).isEmpty()
+					&& remainder.startsWith(".")) {
+
 				list.add(key);
 			}
 		}
@@ -185,8 +185,9 @@ public class Init extends TemplateLoaderConfig {
 		}
 	}
 	
+	// @TODO: Ver se há erros por falta de anotações.
 	protected void customTags2(Properties prop) {
-		String []classNames = SPLIT_BY_COMMA.split(prop.getProperty(CUSTOM_TAG_CLASSES));
+		String []classNames = prop.getPropertyAsArray(CUSTOM_TAG_CLASSES);
 
 		for (String className : classNames) {
 			Wrap<Class> tagClass = new Wrap<Class>(null);

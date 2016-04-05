@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 thiago.
+ * Copyright (C) 2016 thiago.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,21 +18,21 @@
  */
 package commenttemplate.template.tags;
 
-import commenttemplate.context.Context;
-import commenttemplate.template.writer.Writer;
-import commenttemplate.template.tags.consequence.Consequence;
-
 /**
  *
  * @author thiago
  */
-public abstract class ConditionalTag extends BasicTag {
+// @TODO: Falta implementar
+public interface StatusLoop {
 
-	public abstract Consequence doTest(Context context, Writer sb);
+	public Object getCurrent();
+	
+	public int getIndex();
+	
+	public int getCount();
+	
+	public boolean isFirst();
+	
+	public boolean isLast();
 
-	@Override
-	public void eval(Context context, Writer sb) {
-		Consequence type = doTest(context, sb);
-		type.doEval(this, context, sb);
-	}
 }

@@ -16,9 +16,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.template.tags;
+package commenttemplate.template.tags.consequence;
 
 import commenttemplate.context.Context;
+import commenttemplate.template.nodes.Node;
+import commenttemplate.template.tags.BasicTag;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.template.tags.consequence.Consequence;
 
@@ -26,13 +28,43 @@ import commenttemplate.template.tags.consequence.Consequence;
  *
  * @author thiago
  */
-public abstract class ConditionalTag extends BasicTag {
+public enum ConsequenceImplementation implements Consequence {
 
-	public abstract Consequence doTest(Context context, Writer sb);
+	SKIP_BODY {
+		@Override
+		public void doEval(BasicTag tag, Context context, Writer sb) {
+			// do nothing
+			return;
+		}
+	},
+	EVAL_BODY {
+		@Override
+		public void doEval(BasicTag tag, Context context, Writer sb) {
+			Node []nodeList;
+
+			if ((nodeList = tag.getNodeList()) != null) {
+				for (Node t : nodeList) {
+					t.render(context, sb);
+				}
+			}
+		}
+	},
+	EVAL_ELSE {
+		@Override
+		public void doEval(BasicTag tag, Context context, Writer sb) {
+			Node []nodeListElse;
+
+			if ((nodeListElse = tag.getNodeListElse()) != null) {
+				for (Node t : nodeListElse) {
+					t.render(context, sb);
+				}
+			}
+		}
+	}
+	;
 
 	@Override
-	public void eval(Context context, Writer sb) {
-		Consequence type = doTest(context, sb);
-		type.doEval(this, context, sb);
+	public void doEval(BasicTag tag, Context context, Writer sb) {
+		throw new UnsupportedOperationException("Not supported.");
 	}
 }

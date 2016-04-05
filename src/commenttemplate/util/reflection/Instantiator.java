@@ -82,4 +82,12 @@ public class Instantiator<C> {
 		MethodWrapper mw = new MethodWrapper(Utils.getMethod2(klass, methodName, value.getClass()));
 		addSetter(mw, value);
 	}
+
+	public boolean isInstanceOf(Object o) {
+		return this.klass.isInstance(o);
+	}
+
+	public boolean isAssignableFrom(Class klass) {
+		return this.klass.isAssignableFrom(klass);
+	}
 }

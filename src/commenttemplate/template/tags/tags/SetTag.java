@@ -1,6 +1,6 @@
 package commenttemplate.template.tags.tags;
 
-import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.template.tags.BasicTag;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.writer.TemplateWriter;
 import commenttemplate.context.Context;
@@ -12,7 +12,7 @@ import commenttemplate.template.writer.Writer;
  *
  * @author thiago
  */
-public class SetTag extends AbstractTag {
+public class SetTag extends BasicTag {
 	
 	private Exp var;
 	private Exp value;
@@ -51,7 +51,10 @@ public class SetTag extends AbstractTag {
 				context.put(name, result);
 			} else if ((nodeList = getNodeList()) != null){
 				TemplateWriter tw = new TemplateWriter();
-				loopNodeList(nodeList, context, tw);
+
+				for (Node t : nodeList) {
+					t.render(context, sb);
+				}
 
 				if (!tw.isEmpty()) {
 					context.put(name, tw.toString());

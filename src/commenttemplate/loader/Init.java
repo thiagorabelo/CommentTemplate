@@ -25,7 +25,7 @@ import commenttemplate.context.processor.ContextProcessorCache;
 import commenttemplate.expressions.function.Function;
 import commenttemplate.expressions.function.FunctionsRegister;
 import commenttemplate.template.tags.factory.TagFactory;
-import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.template.tags.BasicTag;
 import commenttemplate.template.tags.MappableTag;
 import commenttemplate.template.tags.TagInitializer;
 import commenttemplate.template.tags.factory.MappableTagFactory;
@@ -217,7 +217,7 @@ public class Init extends TemplateLoaderConfig {
 			// TODO: Lançar Exceção
 			if (!Utils.empty(tagName) && !Utils.empty(className)) {
 				try {
-					Class<? extends AbstractTag> cls = (Class<? extends AbstractTag>)Class.forName(className);
+					Class<? extends BasicTag> cls = (Class<? extends BasicTag>)Class.forName(className);
 					TagFactory factory;
 
 					if (!cls.isAssignableFrom(MappableTag.class)) {

@@ -3,26 +3,36 @@ package commenttemplate.template.tags.tags;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
-import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.template.tags.BasicTag;
 import commenttemplate.template.writer.Writer;
-import commenttemplate.template.tags.EvalType;
 
 /**
  *
  * @author thiago
  */
-public class BlockTag extends AbstractTag {
+public class BlockTag extends BasicTag {
 	
-	private  enum TypeEvalBlock implements EvalType {
+	private  enum ConsequenceBlock {
 
-		EVAL_WRITER,
-		EVAL_BODY_WITH_MAPPED_WRITER,
-		EVAL_BODY
+		RENDER_FROM_CACHED_WRITER {
+			@Override
+			public void doEval(BasicTag tag, ContextWriterMap context, Writer writer, Writer cachedWriter) {
+				writer.append(cachedWriter.toString());
+			}
+		},
+
+		EVAL_BLOCK_BODY_WITH_MAPPED_WRITER {
+			@Override
+			public void doEval(BasicTag tag, ContextWriterMap context, Writer sb, Writer cachedWriter) {
+				BasicTag.EVAL_BODY.doEval(tag, context, cachedWriter);
+			}
+		},
+
+		EVAL_BLOCK_BODY
 		;
 
-		@Override
-		public void doEval(AbstractTag tag, Context context, Writer sb) {
-			AbstractTag.EVAL_BODY.doEval(tag, context, sb);
+		public void doEval(BasicTag tag, ContextWriterMap context, Writer sb, Writer cachedWriter) {
+			BasicTag.EVAL_BODY.doEval(tag, context, sb);
 		}
 	}
 
@@ -31,43 +41,27 @@ public class BlockTag extends AbstractTag {
 	public BlockTag() {
 	}
 
-	private TypeEvalBlock params(Context context, Writer sb) {
-		ContextWriterMap cwm = (ContextWriterMap)context;
+	private ConsequenceBlock getConsequence(ContextWriterMap context, Writer sb) {
 
-		if (cwm.getMode() == ContextWriterMap.Mode.STORE) {
-			return TypeEvalBlock.EVAL_BODY_WITH_MAPPED_WRITER;
+		if (context.getMode() == ContextWriterMap.Mode.STORE) {
+			return ConsequenceBlock.EVAL_BLOCK_BODY_WITH_MAPPED_WRITER;
 		} else if (sb != null && !sb.isEmpty()) {
-			return TypeEvalBlock.EVAL_WRITER;
+			return ConsequenceBlock.RENDER_FROM_CACHED_WRITER;
 		}
 
-		return TypeEvalBlock.EVAL_BODY;
+		return ConsequenceBlock.EVAL_BLOCK_BODY;
 	}
 	
 	@Override
-	public void eval(Context context, Writer sb) {
+	public void eval(Context context, Writer writer) {
 		if (context instanceof ContextWriterMap) {
 			ContextWriterMap cwm = (ContextWriterMap)context;
 			String blockName = name.eval(context).toString();
-			Writer w = cwm.getWriter(blockName);
+			Writer cachedWriter = cwm.getWriter(blockName);
 
-			TypeEvalBlock type = params(cwm, w);
-			
-			switch (type) {
-				case EVAL_BODY_WITH_MAPPED_WRITER:
-					AbstractTag.EVAL_BODY.doEval(this, cwm, w);
-					break;
+			ConsequenceBlock type = getConsequence(cwm, cachedWriter);
 
-				case EVAL_WRITER:
-					sb.append(w.toString());
-					break;
-
-				case EVAL_BODY:
-					AbstractTag.EVAL_BODY.doEval(this, cwm, sb);
-					break;
-
-				default:
-					break;
-			}
+			type.doEval(this, cwm, writer, cachedWriter);
 		}
 	}
 

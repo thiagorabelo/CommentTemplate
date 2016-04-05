@@ -19,7 +19,7 @@
 package commenttemplate.template.tags.adaptor;
 
 import commenttemplate.expressions.tree.Exp;
-import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.template.tags.BasicTag;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
@@ -31,17 +31,17 @@ public class MappedTagAdaptor extends TagAdaptor {
 	
 	protected HashMap<String, Exp> extraParams;
 
-	public MappedTagAdaptor(Class<? extends AbstractTag> klass) {
+	public MappedTagAdaptor(Class<? extends BasicTag> klass) {
 		super(klass);
 		extraParams = new HashMap<String, Exp>();
 	}
 
 	@Override
-	protected AbstractTag initTag()
+	protected BasicTag initTag()
 	throws IllegalAccessException, InstantiationException,
 	IllegalArgumentException, InvocationTargetException {
 
-		AbstractTag tag = instanciator.newPopulatedInstance();
+		BasicTag tag = instanciator.newPopulatedInstance();
 
 		tag.setNodeList(getNodeList());
 		tag.setNodeListElse(getNodeListElse());

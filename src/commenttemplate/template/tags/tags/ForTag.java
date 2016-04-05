@@ -1,23 +1,31 @@
 package commenttemplate.template.tags.tags;
 
-import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.context.Context;
 import java.util.Iterator;
 import commenttemplate.expressions.tree.Exp;
-import commenttemplate.context.Context;
-import commenttemplate.template.nodes.Node;
+import commenttemplate.template.tags.LoopTag;
+import commenttemplate.template.tags.annotations.Instantiable;
+import commenttemplate.template.tags.consequence.Consequence;
 import commenttemplate.template.writer.Writer;
 import java.lang.reflect.Array;
+import java.util.NoSuchElementException;
 
 /**
  *
  * @author thiago
  */
-public class ForTag extends AbstractTag {
+@Instantiable
+public class ForTag extends LoopTag {
 	
 	private Exp list;
 	private Exp var;
 //	private Exp step;
-	private Exp counter;
+	private Exp index;
+
+	private Iterator<Object> iterator;
+	private int iterationCounter;
+	private String varName = null;
+	private String counterName = null;
 	
 	private class ObjectArrayIterator implements Iterator<Object> {
 	
@@ -65,81 +73,75 @@ public class ForTag extends AbstractTag {
 		}
 	}
 	
-	
+
 	public ForTag() {
 	}
 
-	protected int iterable(Context context, Object iterable, Writer sb) {
+	@Override
+	public void init(Context context, Writer sb) {
+		iterator = getIterator(list.eval(context));
+		iterationCounter = 0;
+
+		if (var != null) {
+			varName = var.eval(context).toString();
+		}
+
+		if (index != null) {
+			counterName = index.eval(context).toString();
+		}
+	}
+
+	@Override
+	public Consequence doTest(Context context, Writer sb) {
+		if (iterator.hasNext()) {
+			Object el = iterator.next();
+
+			if (varName != null) {
+				context.put(varName, el);
+			}
+			if (counterName != null) {
+				context.put(counterName, iterationCounter);
+			}
+
+			iterationCounter += 1;
+			
+			return EVAL_BODY;
+
+		} else if (iterationCounter == 0) {
+			return EVAL_ELSE;
+		}
+
+		return SKIP_BODY;
+	}
+	
+
+	protected Iterator<Object> getIterator(Object iterable) {
+		Iterator it = null;
+
 		if (iterable != null) {
-
-			Iterator it = null;
-
 			if (iterable.getClass().isArray()) {
-				it = new ObjectArrayIterator(iterable);
+				it = new ForTag.ObjectArrayIterator(iterable);
 			} else if (iterable instanceof Iterable) {
 				it = ((Iterable)iterable).iterator();
 			}
 
-			if (it != null) {
-				int i = 0;
-
-				Object v = null;
-				if (var != null && (v = var.eval(context)) == null) {
-					v = var.toString();
-				}
-
-				Object c = null;
-				if (counter != null && (c = counter.eval(context)) == null) {
-					c = counter.toString();
-				}
-
-				Node []nodeList = getNodeList();
-
-				while (it.hasNext()) {
-					Object el = it.next();
-
-					if (v != null) {
-						context.put(v.toString(), el);
-					}
-					if (c != null) {
-						context.put(c.toString(), i);
-					}
-
-					if (nodeList != null) {
-						loopNodeList(nodeList, context, sb);
-					}
-
-					i += 1;
-				}
-
-				return i;
+			return it;
+		}
+		
+		return new Iterator<Object>() {
+			@Override
+			public boolean hasNext() {
+				return false;
 			}
-		}
 
-		return 0;
+			@Override
+			public Object next() {
+				throw new NoSuchElementException("There is no elements to iterate over.");
+			}
+		};
 	}
 
-	@Override
-	public void eval(Context context, Writer sb) {
-		Exp result = list;
-		int iterations;
 
-		iterations = iterable(context, result.eval(context), sb);
-
-		if (!(iterations > 0)) {
-			EVAL_ELSE.doEval(this, context, sb);
-		}
-	}
-
-	@Override
-	public void start(Context context, Writer sb) {
-		context.push();
-	}
-
-	@Override
-	public void end(Context context, Writer sb) {
-		context.pop();
-	}
 
 	public Exp getList() {
 		return list;
@@ -157,19 +159,11 @@ public class ForTag extends AbstractTag {
 		this.var = var;
 	}
 
-//	public Exp getStep() {
-//		return step;
-//	}
-//
-//	public void setStep(Exp step) {
-//		this.step = step;
-//	}
-
-	public Exp getCounter() {
-		return counter;
+	public Exp getIndex() {
+		return index;
 	}
 
-	public void setCounter(Exp counter) {
-		this.counter = counter;
+	public void setIndex(Exp index) {
+		this.index = index;
 	}
 }

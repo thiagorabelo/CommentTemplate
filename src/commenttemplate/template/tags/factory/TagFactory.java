@@ -30,13 +30,12 @@ import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.template.exceptions.InvalidParamsSintaxException;
 import commenttemplate.template.tagparams.TagParamsTokenizer;
-import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.template.tags.BasicTag;
 import commenttemplate.template.tags.adaptor.TagAdaptor;
 import commenttemplate.template.tags.annotations.Instantiable;
 import commenttemplate.util.Join;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
-import commenttemplate.util.reflection.properties.MethodWrapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
@@ -71,7 +70,7 @@ public class TagFactory {
 
 	protected String name;
 //	protected String elseName = "else";
-	protected final Class<? extends AbstractTag> tagClass;
+	protected final Class<? extends BasicTag> tagClass;
 	protected final Tuple<Boolean, String> []params;
 	
 	protected class ParamsChecker {
@@ -157,28 +156,17 @@ public class TagFactory {
 		}
 	}
 	
-	public TagFactory(String name, Class<? extends AbstractTag> tagClass, String ...params) {
+	public TagFactory(String name, Class<? extends BasicTag> tagClass, String ...params) {
 		this.name = name;
 		this.tagClass = tagClass;
 		this.params = setParams(params);
 	}
-	
-//	public TagComponent(String name, String elseName, Class<? extends TemplateTag> tagClass, String ...params) {
-//		this.name = name;
-//		this.tagClass = tagClass;
-//		this.params = setParams(params);
-//		this.elseName = elseName;
-//	}
 
 	public String getName() {
 		return name;
 	}
 
-//	public String getElseName() {
-//		return elseName;
-//	}
-
-	public Class<? extends AbstractTag> getTagClass() {
+	public Class<? extends BasicTag> getTagClass() {
 		return tagClass;
 	}
 	
@@ -229,9 +217,9 @@ public class TagFactory {
 		return params;
 	}
 	
-	protected AbstractTag newInstance() throws CouldNotInstanciateTagException {
+	protected BasicTag newInstance() throws CouldNotInstanciateTagException {
 		try {
-			AbstractTag tag = tagClass.newInstance();
+			BasicTag tag = tagClass.newInstance();
 			tag.setTagName(name);
 			return tag;
 		} catch (IllegalAccessException | InstantiationException ex) {
@@ -239,7 +227,7 @@ public class TagFactory {
 		}
 	}
 	
-	protected void populateParameters(AbstractTag tag, List<Tuple<String, Exp>> parameters)
+	protected void populateParameters(BasicTag tag, List<Tuple<String, Exp>> parameters)
 			throws CouldNotSetTagParameterException {
 		for (Tuple<String, Exp> t : parameters) {
 			try {
@@ -265,7 +253,7 @@ public class TagFactory {
 		}
 	}
 
-	public AbstractTag populateParameters(String parameters)
+	public BasicTag populateParameters(String parameters)
 			throws CouldNotInstanciateTagException, CouldNotSetTagParameterException,
 			BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
 
@@ -276,7 +264,7 @@ public class TagFactory {
 		new ParamsChecker().check(params);
 
 		if (!instantiable) {
-			AbstractTag tag = newInstance();
+			BasicTag tag = newInstance();
 			populateParameters(tag, params);
 
 			return tag;

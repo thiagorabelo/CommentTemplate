@@ -52,7 +52,11 @@ public abstract class AbstractNode implements Node {
 	}
 
 	public MountingHelper createMountingHelper() {
-		return new MountingHelper(this);
+		return createMountingHelper(this);
+	}
+
+	public MountingHelper createMountingHelper(Node node) {
+		return new MountingHelper(node);
 	}
 
 	@Override

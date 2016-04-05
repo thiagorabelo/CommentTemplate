@@ -1,6 +1,6 @@
 package commenttemplate.template.tags.tags;
 
-import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.template.tags.BasicTag;
 import commenttemplate.context.Context;
 import commenttemplate.template.writer.Writer;
 
@@ -9,7 +9,7 @@ import commenttemplate.template.writer.Writer;
  * @author thiago
  */
 // TODO: Construir Formatadores básicos.
-public class ValueFormatterTag extends AbstractTag {
+public class ValueFormatterTag extends BasicTag {
 	
 	public ValueFormatterTag() {
 	}

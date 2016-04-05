@@ -28,12 +28,11 @@ import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.exceptions.CouldNotInstanciateTagException;
 import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
 import commenttemplate.template.exceptions.InvalidParamsSintaxException;
-import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.template.tags.BasicTag;
 import commenttemplate.template.tags.adaptor.MappedTagAdaptor;
 import commenttemplate.template.tags.annotations.Instantiable;
 import commenttemplate.util.Tuple;
 import commenttemplate.util.Utils;
-import commenttemplate.util.reflection.properties.MethodWrapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,7 @@ import java.util.Map;
  */
 public class MappableTagFactory extends TagFactory {
 
-	public MappableTagFactory(String name, Class<? extends AbstractTag> tagClass, String... params) {
+	public MappableTagFactory(String name, Class<? extends BasicTag> tagClass, String... params) {
 		super(name, tagClass, params);
 	}
 	
@@ -63,7 +62,7 @@ public class MappableTagFactory extends TagFactory {
 		}
 	}
 
-	protected void populateMapParameters(AbstractTag tag, List<Tuple<String, Exp>> parameters) {
+	protected void populateMapParameters(BasicTag tag, List<Tuple<String, Exp>> parameters) {
 		Map<String, Exp> mapParams = (Map<String, Exp>)Utils.getProperty(tag, "params");
 		
 		for (Tuple<String, Exp> t : parameters) {
@@ -97,7 +96,7 @@ public class MappableTagFactory extends TagFactory {
 	}
 
 	@Override
-	protected void populateParameters(AbstractTag tag, List<Tuple<String, Exp>> parameters)
+	protected void populateParameters(BasicTag tag, List<Tuple<String, Exp>> parameters)
 	throws CouldNotSetTagParameterException {
 
 		FindInParams f = new FindInParams();
@@ -145,7 +144,7 @@ public class MappableTagFactory extends TagFactory {
 	}
 
 	@Override
-	public AbstractTag populateParameters(String parameters)
+	public BasicTag populateParameters(String parameters)
 			throws CouldNotInstanciateTagException, CouldNotSetTagParameterException,
 			BadExpression, ExpectedExpression, ExpectedOperator, FunctionDoesNotExists, Unexpected, InvalidParamsSintaxException {
 
@@ -156,7 +155,7 @@ public class MappableTagFactory extends TagFactory {
 		boolean instantiable = tagClass.isAnnotationPresent(Instantiable.class);
 
 		if (!instantiable) {
-			AbstractTag tag = newInstance();
+			BasicTag tag = newInstance();
 			populateParameters(tag, params);
 			populateMapParameters(tag, params);
 

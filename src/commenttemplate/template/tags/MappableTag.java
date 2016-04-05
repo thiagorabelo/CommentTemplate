@@ -20,11 +20,10 @@ package commenttemplate.template.tags;
 
 import commenttemplate.context.Context;
 import commenttemplate.expressions.tree.Exp;
-import static commenttemplate.template.tags.AbstractTag.EVAL_BODY;
+import static commenttemplate.template.tags.BasicTag.EVAL_BODY;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Join;
 import commenttemplate.util.Utils;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -33,7 +32,7 @@ import java.util.Map;
  *
  * @author thiago
  */
-public abstract class MappableTag extends AbstractTag {
+public abstract class MappableTag extends BasicTag {
 	
 	protected HashMap<String, Exp> params = new HashMap<>();
 	

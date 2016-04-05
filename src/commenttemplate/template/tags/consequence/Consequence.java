@@ -16,47 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package commenttemplate.template.tags;
+
+package commenttemplate.template.tags.consequence;
 
 import commenttemplate.context.Context;
-import commenttemplate.template.nodes.Node;
+import commenttemplate.template.tags.BasicTag;
 import commenttemplate.template.writer.Writer;
 
 /**
  *
  * @author thiago
  */
-public enum EvalTypeImplementation implements EvalType {
-	SKIP_BODY {
-		@Override
-		public void doEval(AbstractTag tag, Context context, Writer sb) {
-			// do nothing
-		}
-	},
-	EVAL_BODY {
-		@Override
-		public void doEval(AbstractTag tag, Context context, Writer sb) {
-			Node []nodeList;
-
-			if ((nodeList = tag.getNodeList()) != null) {
-				tag.loopNodeList(nodeList, context, sb);
-			}
-		}
-	},
-	EVAL_ELSE {
-		@Override
-		public void doEval(AbstractTag tag, Context context, Writer sb) {
-			Node []nodeListElse;
-
-			if ((nodeListElse = tag.getNodeListElse()) != null) {
-				tag.loopNodeList(nodeListElse, context, sb);
-			}
-		}
-	}
-	;
-
-	@Override
-	public void doEval(AbstractTag tag, Context context, Writer sb) {
-		throw new UnsupportedOperationException("Not supported.");
-	}
+public interface Consequence {
+	public void doEval(BasicTag tag, Context context, Writer sb);
 }

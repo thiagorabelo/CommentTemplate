@@ -4,10 +4,10 @@ import commenttemplate.expressions.primitivehandle.NumHandle;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
 import commenttemplate.template.tags.ConditionalTag;
-import static commenttemplate.template.tags.AbstractTag.EVAL_BODY;
-import static commenttemplate.template.tags.AbstractTag.EVAL_ELSE;
+import static commenttemplate.template.tags.BasicTag.EVAL_BODY;
+import static commenttemplate.template.tags.BasicTag.EVAL_ELSE;
 import commenttemplate.template.writer.Writer;
-import commenttemplate.template.tags.EvalType;
+import commenttemplate.template.tags.consequence.Consequence;
 
 /**
  *
@@ -41,7 +41,7 @@ public class IfTag extends ConditionalTag {
 	}
 
 	@Override
-	public EvalType evalParams(Context context, Writer sb) {
+	public Consequence doTest(Context context, Writer sb) {
 		Exp exp = test;
 
 		Object t = exp.eval(context);

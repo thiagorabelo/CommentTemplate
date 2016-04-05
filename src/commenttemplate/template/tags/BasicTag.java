@@ -1,28 +1,29 @@
 package commenttemplate.template.tags;
 
+import commenttemplate.template.tags.consequence.ConsequenceImplementation;
 import commenttemplate.context.Context;
 import commenttemplate.template.nodes.AbstractNode;
 import commenttemplate.template.nodes.Node;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Join;
 import commenttemplate.util.Utils;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import commenttemplate.template.tags.consequence.Consequence;
 
 /**
  *
  * @author thiago
  */
-public abstract class AbstractTag extends AbstractNode implements Tag {
+public abstract class BasicTag extends AbstractNode implements Tag {
 	
-	public static final EvalType SKIP_BODY = EvalTypeImplementation.SKIP_BODY;
-	public static final EvalType EVAL_BODY = EvalTypeImplementation.EVAL_BODY;
-	public static final EvalType EVAL_ELSE = EvalTypeImplementation.EVAL_ELSE;
+	public static final Consequence SKIP_BODY = ConsequenceImplementation.SKIP_BODY;
+	public static final Consequence EVAL_BODY = ConsequenceImplementation.EVAL_BODY;
+	public static final Consequence EVAL_ELSE = ConsequenceImplementation.EVAL_ELSE;
 
 	private String tagName;
 
-	public AbstractTag() {
+	public BasicTag() {
 	}
 
 	@Override
@@ -41,12 +42,6 @@ public abstract class AbstractTag extends AbstractNode implements Tag {
 		start(context, sb);
 		eval(context, sb);
 		end(context, sb);
-	}
-
-	protected void loopNodeList(Node []blockList, Context context, Writer sb) {
-		for (Node t : blockList) {
-			t.render(context, sb);
-		}
 	}
 	
 	@Override
@@ -75,7 +70,7 @@ public abstract class AbstractTag extends AbstractNode implements Tag {
 			@Override
 			public String next() {
 				String p = it.next();
-				Object param = Utils.getProperty(AbstractTag.this, p, true);
+				Object param = Utils.getProperty(BasicTag.this, p, true);
 				return param != null ? Utils.concat(p, "=\"", param.toString(), '"') : null;
 			}
 

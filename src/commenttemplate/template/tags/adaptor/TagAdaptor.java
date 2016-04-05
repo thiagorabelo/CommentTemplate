@@ -19,12 +19,10 @@
 package commenttemplate.template.tags.adaptor;
 
 import commenttemplate.context.Context;
-import commenttemplate.template.exceptions.CouldNotSetTagParameterException;
-import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.template.tags.BasicTag;
 import commenttemplate.template.tags.MountingHelper;
 import commenttemplate.template.writer.Writer;
 import commenttemplate.util.Tuple;
-import commenttemplate.util.Utils;
 import commenttemplate.util.reflection.Instantiator;
 import commenttemplate.util.reflection.properties.MethodWrapper;
 import java.lang.reflect.InvocationTargetException;
@@ -34,19 +32,19 @@ import java.util.List;
  *
  * @author thiago
  */
-public class TagAdaptor extends AbstractTag {
+public class TagAdaptor extends BasicTag {
 	
-	protected final Instantiator<? extends AbstractTag> instanciator;
+	protected final Instantiator<? extends BasicTag> instanciator;
 
-	public TagAdaptor(Class<? extends AbstractTag> klass) {
+	public TagAdaptor(Class<? extends BasicTag> klass) {
 		instanciator = new Instantiator(klass);
 	}
 
-	protected AbstractTag initTag()
+	protected BasicTag initTag()
 	throws IllegalAccessException, InstantiationException,
 	IllegalArgumentException, InvocationTargetException {
 
-		AbstractTag tag = instanciator.newPopulatedInstance();
+		BasicTag tag = instanciator.newPopulatedInstance();
 
 		tag.setNodeList(getNodeList());
 		tag.setNodeListElse(getNodeListElse());
@@ -62,7 +60,7 @@ public class TagAdaptor extends AbstractTag {
 	@Override
 	public void render(Context context, Writer sb) {
 		try {
-			AbstractTag tag = initTag();
+			BasicTag tag = initTag();
 
 			tag.start(context, sb);
 			tag.eval(context, sb);
@@ -73,14 +71,10 @@ public class TagAdaptor extends AbstractTag {
 		}
 	}
 
-	// @TODO: Existem casos em que o MountingHelper vai receber um TagAdaptor
-	//        invez de um Node em si.
-	//        Isto está quebrando com a lógica da ExtendsTag, por exemplo, quando
-	//        anotada com @Instantiable.
 	@Override
 	public MountingHelper createMountingHelper() {
 		try {
-			return instanciator.newInstance().createMountingHelper();
+			return instanciator.newInstance().createMountingHelper(this);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
@@ -103,10 +97,18 @@ public class TagAdaptor extends AbstractTag {
 		instanciator.addSetter(prefix, propertyName, capitalize, value);
 	}
 
+	public boolean isInstanceOf(Object o) {
+		return instanciator.isInstanceOf(o);
+	}
+
+	public boolean isAssignableOf(Class klass) {
+		return instanciator.isAssignableFrom(klass);
+	}
+
 	@Override
 	public void toString(StringBuilder sb) {
 		try {
-			AbstractTag tag = initTag();
+			BasicTag tag = initTag();
 			tag.toString(sb);
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);

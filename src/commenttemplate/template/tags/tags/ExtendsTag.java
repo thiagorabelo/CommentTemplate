@@ -5,17 +5,18 @@ import commenttemplate.loader.TemplateLoader;
 import commenttemplate.template.exceptions.TemplateException;
 import commenttemplate.context.Context;
 import commenttemplate.context.ContextWriterMap;
-import commenttemplate.template.tags.AbstractTag;
+import commenttemplate.template.tags.BasicTag;
 import commenttemplate.template.tags.MountingHelper;
 import commenttemplate.template.nodes.Node;
 import commenttemplate.template.nodes.RootNode;
+import commenttemplate.template.tags.adaptor.TagAdaptor;
 import commenttemplate.template.writer.Writer;
 
 /**
  *
  * @author thiago
  */
-public class ExtendsTag extends AbstractTag {
+public class ExtendsTag extends BasicTag {
 	
 	private Exp name;
 	
@@ -27,14 +28,11 @@ public class ExtendsTag extends AbstractTag {
 			String templateName = exp.eval(context).toString();
 			RootNode base = TemplateLoader.get(templateName);
 
-			Node []inner = getNodeList();
 			ContextWriterMap cwm = new ContextWriterMap(context);
 
 			cwm.setMode(ContextWriterMap.Mode.STORE);
 
-			if (inner != null) {
-				loopNodeList(inner, cwm, sb);
-			}
+			EVAL_BODY.doEval(this, cwm, sb);
 
 			cwm.setMode(ContextWriterMap.Mode.RENDER);
 			base.render(cwm, sb);
@@ -61,7 +59,7 @@ public class ExtendsTag extends AbstractTag {
 
 		@Override
 		public void append(Node other) {
-			if (other instanceof BlockTag) {
+			if (other instanceof BlockTag || (other instanceof TagAdaptor && ((TagAdaptor)other).isAssignableOf(BlockTag.class))) {
 				super.append(other);
 			}
 		}
@@ -69,6 +67,11 @@ public class ExtendsTag extends AbstractTag {
 
 	@Override
 	public MountingHelper createMountingHelper() {
-		return new MountingExtendsHelper(this);
+		return createMountingHelper(this);
+	}
+
+	@Override
+	public MountingHelper createMountingHelper(Node node) {
+		return new MountingExtendsHelper(node);
 	}
 }

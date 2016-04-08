@@ -48,7 +48,7 @@ public class TagInitializer {
 	
 	
 	private void initBuildin() {
-		TagFactoryContainer.instance().addBuiltinTag(new TagFactory("for", ForTag.class, "!list", "var", /*"step",*/ "index"));
+		TagFactoryContainer.instance().addBuiltinTag(new TagFactory("for", ForTag.class, "!list", "var", "index", "status"));
 		TagFactoryContainer.instance().addBuiltinTag(new MappableTagFactory("with", WithTag.class));
 		TagFactoryContainer.instance().addBuiltinTag(new MappableTagFactory("include", IncludeTag.class,  "!template"));
 		TagFactoryContainer.instance().addBuiltinTag(new TagFactory("if", IfTag.class, "!test"));

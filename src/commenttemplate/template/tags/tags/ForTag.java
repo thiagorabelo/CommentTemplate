@@ -4,9 +4,11 @@ import commenttemplate.context.Context;
 import java.util.Iterator;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.template.tags.LoopTag;
+import commenttemplate.template.tags.StatusLoop;
 import commenttemplate.template.tags.annotations.Instantiable;
 import commenttemplate.template.tags.consequence.Consequence;
 import commenttemplate.template.writer.Writer;
+import commenttemplate.util.Utils;
 import java.lang.reflect.Array;
 import java.util.NoSuchElementException;
 
@@ -16,16 +18,51 @@ import java.util.NoSuchElementException;
  */
 @Instantiable
 public class ForTag extends LoopTag {
+
+	private class ForStatus implements StatusLoop {
+		private Object current;
+		private Integer index;
+		private Integer count;
+		private boolean first;
+		private boolean last;
+
+		@Override
+		public Object getCurrent() {
+			return current;
+		}
+
+		@Override
+		public int getIndex() {
+			return index;
+		}
+
+		@Override
+		public int getCount() {
+			return count;
+		}
+
+		@Override
+		public boolean isFirst() {
+			return first;
+		}
+
+		@Override
+		public boolean isLast() {
+			return last;
+		}
+	}
+	
 	
 	private Exp list;
 	private Exp var;
-//	private Exp step;
 	private Exp index;
+	private Exp status;
 
 	private Iterator<Object> iterator;
 	private int iterationCounter;
 	private String varName = null;
 	private String counterName = null;
+	private ForStatus statusLoop;
 	
 	private class ObjectArrayIterator implements Iterator<Object> {
 	
@@ -83,11 +120,26 @@ public class ForTag extends LoopTag {
 		iterationCounter = 0;
 
 		if (var != null) {
-			varName = var.eval(context).toString();
+			Object vName = var.eval(context);
+			varName = vName != null ? vName.toString() : null;
 		}
 
 		if (index != null) {
-			counterName = index.eval(context).toString();
+			Object idx = index.eval(context);
+			counterName = idx != null ? idx.toString() : null;
+		}
+
+		if (status != null && iterator.hasNext()) {
+			Object sttsName = status.eval(context);
+			String statusName;
+
+			if (sttsName != null && !Utils.empty(statusName = sttsName.toString())) {
+				statusLoop = new ForStatus();
+				statusLoop.index = -1;
+				statusLoop.count = 0;
+
+				context.put(statusName, statusLoop);
+			}
 		}
 	}
 
@@ -101,6 +153,13 @@ public class ForTag extends LoopTag {
 			}
 			if (counterName != null) {
 				context.put(counterName, iterationCounter);
+			}
+			if (statusLoop != null) {
+				statusLoop.current = el;
+				statusLoop.index += 1;
+				statusLoop.count += 1;
+				statusLoop.first = statusLoop.index == 0;
+				statusLoop.last = !iterator.hasNext();
 			}
 
 			iterationCounter += 1;
@@ -165,5 +224,13 @@ public class ForTag extends LoopTag {
 
 	public void setIndex(Exp index) {
 		this.index = index;
+	}
+
+	public Exp getStatus() {
+		return status;
+	}
+
+	public void setStatus(Exp status) {
+		this.status = status;
 	}
 }

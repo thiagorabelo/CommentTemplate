@@ -28,7 +28,7 @@ import commenttemplate.util.Wrap;
  */
 public class TemplateParser {
 	
-	// TODO: Muito cuidado ao mudar os parênteses dessas RegEx, pois elas definem os grupos.
+	// @TODO: Muito cuidado ao mudar os parênteses dessas RegEx, pois elas definem os grupos.
 	// No código é usado índices para estes inteiros e eles aumentam na ordem em que os
 	// parênteses vão aparecendo.
 	// Numeração dos grupos:                                                1         2

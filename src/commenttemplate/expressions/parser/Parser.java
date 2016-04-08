@@ -101,7 +101,7 @@ public class Parser {
 	}
 
 	/*
-	 * TODO:
+	 * @TODO:
 	 *      1 - Buscar a chamada de funções na expressão
 	 *      2 - O Tokenizer deve retornar uma função na seguinte forma:
 	 *          "func", "(", "arg1", "arg2", ... "arg_n", ")"

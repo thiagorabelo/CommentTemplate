@@ -206,7 +206,7 @@ public class LazeTokenizer implements Iterable<Tuple<String, Integer>> {
 							case '\\':
 								ch = '\\';
 								break;
-							/* TODO: Rever este caso */
+							/* @TODO: Rever este caso */
 							/*
 							case 'u':
 								int j, count;

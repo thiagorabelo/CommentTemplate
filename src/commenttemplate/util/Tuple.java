@@ -8,7 +8,7 @@ import java.util.Map;
  * @param <A>
  * @param <B>
  */
-// TODO: Map.Entry é usado para fins de depuração, pois as IDEs mostram o toString().
+// @TODO: Map.Entry é usado para fins de depuração, pois as IDEs mostram o toString().
 public class Tuple<A, B> /*implements Map.Entry<A, B>*/ {
 	
 	private A a;

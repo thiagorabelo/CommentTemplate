@@ -16,7 +16,7 @@ import org.w3c.dom.NodeList;
  * @author thiago
  */
 // Era o que seria usado pelo futurepages
-// TODO: Apagar assim que possível
+// @TODO: Apagar assim que possível
 @Deprecated()
 public class TemplateLoaderInit extends TemplateLoaderConfig {
 	

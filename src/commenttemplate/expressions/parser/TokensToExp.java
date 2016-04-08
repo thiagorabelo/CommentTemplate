@@ -244,7 +244,13 @@ public class TokensToExp {
 			Class<? extends Function> fclass = FunctionsRegister.instance().getFunctionClass(str);
 
 			if (fclass == null) {
-				throw new FunctionDoesNotExists(expression, tokens.get(i).getB(), "Function \"", str, "\" does not exists");
+				throw new FunctionDoesNotExists(
+					expression,
+					tokens.get(i).getB(),
+					"Function \"",
+					str,
+					"\" does not exists"
+				);
 			}
 
 			try {

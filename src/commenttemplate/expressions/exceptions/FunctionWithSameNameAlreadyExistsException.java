@@ -4,7 +4,7 @@ package commenttemplate.expressions.exceptions;
  *
  * @author thiago
  */
-// TODO: RuntimeException?
+// @TODO: RuntimeException?
 public class FunctionWithSameNameAlreadyExistsException extends RuntimeException {
 	
 	/**

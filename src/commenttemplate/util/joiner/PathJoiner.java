@@ -58,7 +58,7 @@ public class PathJoiner extends DefaultJoiner {
 		sb.append(append);
 	}
 	
-	// TODO: Ver os casos onde parts[i] pode ser iterado
+	// @TODO: Ver os casos onde parts[i] pode ser iterado
 	@Override
 	public Joiner these(Iterator iterator) {
 		Object part;
@@ -86,7 +86,7 @@ public class PathJoiner extends DefaultJoiner {
 		return this;
 	}
 
-	// TODO: Ver os casos onde parts[i] pode ser iterado
+	// @TODO: Ver os casos onde parts[i] pode ser iterado
 	@Override
 	public Joiner these(Object[] parts) {
 		Object part;

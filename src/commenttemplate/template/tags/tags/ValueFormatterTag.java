@@ -8,7 +8,7 @@ import commenttemplate.template.writer.Writer;
  *
  * @author thiago
  */
-// TODO: Construir Formatadores básicos.
+// @TODO: Construir Formatadores básicos.
 public class ValueFormatterTag extends BasicTag {
 	
 	public ValueFormatterTag() {

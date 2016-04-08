@@ -26,7 +26,7 @@ import java.util.Map;
  *
  * @author thiago
  */
-// TODO: Reescrever todo este código.
+// @TODO: Reescrever todo este código.
 // Ideia: Em "a.b.c.d". Tentar na ordem:
 //     "a".getB().getC().getD()
 //     "a.b.c.d"

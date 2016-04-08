@@ -124,7 +124,7 @@ public class TagFactory {
 				}
 			}
 			
-			// TODO: DO IT BETTER
+			// @TODO: DO IT BETTER
 			throw new RuntimeException(Utils.concat("The Tag [", 
 				TagFactory.this.name,
 				"] does not accept a param named ",
@@ -142,7 +142,7 @@ public class TagFactory {
 				requireds.add(requiredParams[i].getB());
 			}
 			
-			// TODO: DO IT BETTER
+			// @TODO: DO IT BETTER
 			if (!requireds.isEmpty()) {
 				StringBuilder sb = new StringBuilder();
 				sb.append("The parameters ")

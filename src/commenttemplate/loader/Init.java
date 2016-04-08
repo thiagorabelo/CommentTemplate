@@ -91,7 +91,7 @@ public class Init extends TemplateLoaderConfig {
 
 		prop.load(is);
 
-		// TODO: Providenciar o uso do métodos DB
+		// @TODO: Providenciar o uso do métodos DB
 		String []res = prop.getPropertyAsArray(RESOURCES);
 
 		for (int i = res.length; i-- > 0;) {
@@ -144,7 +144,7 @@ public class Init extends TemplateLoaderConfig {
 			String className = prop.getProperty(funcDef);
 			
 			try {
-				// TODO: Lançar exceção
+				// @TODO: Lançar exceção
 				if (!Utils.empty(functionName) && !Utils.empty(className)) {
 					Class<? extends Function> fclass = (Class<? extends Function>)Class.forName(className);
 					FunctionsRegister.instance().addFunction(functionName, fclass);
@@ -214,7 +214,7 @@ public class Init extends TemplateLoaderConfig {
 			String className = prop.getProperty(tagDef).trim();
 			String []tagParams = prop.getPropertyAsArray(Join.path(".").these(tagDef, CUSTOM_TAG_PARAMS).s());
 		
-			// TODO: Lançar Exceção
+			// @TODO: Lançar Exceção
 			if (!Utils.empty(tagName) && !Utils.empty(className)) {
 				try {
 					Class<? extends BasicTag> cls = (Class<? extends BasicTag>)Class.forName(className);
@@ -228,7 +228,7 @@ public class Init extends TemplateLoaderConfig {
 					
 					TagInitializer.instance().addTag(factory);
 				} catch (ClassNotFoundException ex) {
-					// TODO: Melhorar esta exceção
+					// @TODO: Melhorar esta exceção
 					throw new RuntimeException(ex);
 				}
 			}

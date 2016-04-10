@@ -633,4 +633,9 @@ public class MyHashMap<K, V> implements Map<K, V> {
 	public Object clone() {
 		return new MyHashMap<>(this);
 	}
+
+	// @TODO: implementar esta função.
+	public String jsonfy() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

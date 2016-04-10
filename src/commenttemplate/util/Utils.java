@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.util.Iterator;
 
 /**
  *
@@ -158,8 +159,55 @@ public class Utils {
 			".",
 			name,
 			"(",
-			concat((Object[])paramsTypes),
+			Join.with(",").these(new Iterator<String>() {
+				int length = paramsTypes != null ? paramsTypes.length : 0;
+				int index = 0;
+				
+				@Override
+				public boolean hasNext() {
+					return index < length;
+				}
+
+				@Override
+				public String next() {
+					return paramsTypes[index++].getName();
+				}
+			}),
 			")"
+		));
+	}
+
+	public static Method[] getMethodsByName(Class klass, String name) throws NoSuchMethodException {
+		return getMethodsByName(klass, name, 0);
+	}
+
+	public static Method[] getMethodsByName(Class klass, String name, int max) throws NoSuchMethodException {
+		IterateByMethods im = new IterateByMethods(klass);
+		MyStack<Method> stack = new MyStack<Method>();
+		int total = 0;
+
+		String internedName = name.intern();
+		for (Method m : im) {
+			if (m.getName() == internedName) {
+				stack.push(m);
+				total += 1;
+			}
+			if (max > 0 && total >= max) {
+				break;
+			}
+		}
+
+		if (!stack.isEmpty()) {
+			Method []ms = new Method[stack.size()];
+			stack.toArray(ms);
+			return ms;
+		}
+
+		throw new NoSuchMethodException(concat(
+			klass.getName(),
+			".",
+			name,
+			"(?)"
 		));
 	}
 

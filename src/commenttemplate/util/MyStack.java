@@ -169,6 +169,24 @@ public class MyStack<T> implements Iterable<T> {
 		return new StackNodeIterator();
 	}
 
+	public T[] toArray(T[] array) {
+		int maxUntil = array.length;
+		
+		if (array.length > size) {
+			maxUntil = size;
+		}
+
+		for (StackNode current = this.top; (current != null && maxUntil > 0); current = current.previus) {
+			array[--maxUntil] = current.item;
+		}
+
+		return array;
+	}
+
+	public Object[] toArray() {
+		return toArray((T[]) new Object[size]);
+	}
+
 //	public List<T> getList() {
 //		return stack;
 //	}

@@ -1,7 +1,5 @@
 package commenttemplate.expressions.function;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.util.Join;
@@ -18,7 +16,7 @@ public abstract class Function implements Exp {
 	/**
 	 * The list of parameters of the function.
 	 */
-	private List<Exp> args = new ArrayList<Exp>();
+	private Exp []args;
 
 	/**
 	 * The name of the function.
@@ -32,52 +30,39 @@ public abstract class Function implements Exp {
 	}
 
 	/**
-	 * Return the list of arguments.
-	 * @return The list of arguments.
+	 * Return the array of arguments.
+	 * @return The array of arguments.
 	 */
-	public List<Exp> getArgs() {
+	public Exp []getArgs() {
 		return args;
 	}
-	
+
+	/**
+	 * Return the array of arguments.
+	 * @return The array of arguments.
+	 */
+	public Exp []arguments() {
+		return args;
+	}
+
+	/**
+	 * Convert a list of Exp in a array of function arguments.
+	 * 
+	 * @param args The new list of arguments.
+	 */
+	public void setArgs(List<Exp> args) {
+		Exp [] array = new Exp[args.size()];
+		args.toArray(array);
+		this.args = array;
+	}
+
 	/**
 	 * Set the list of arguments.
 	 * 
 	 * @param args The new list of arguments.
 	 */
-	public void setArgs(List<Exp> args) {
+	public void setArgs(Exp []args) {
 		this.args = args;
-	}
-
-	/**
-	 * Convert a array of Exp in a list of function arguments.
-	 * 
-	 * @param args The array to be converted to a new list of arguments.
-	 */
-	public void setArgs(Exp [] args) {
-		this.args = new ArrayList<Exp>(Arrays.asList(args));
-	}
-	
-	/**
-	 * Append some Exp object in list arguments.
-	 * 
-	 * @param arg The Exp object to be appended to the list arguments.
-	 */
-	public void appendArg(Exp arg) {
-		if (args == null) {
-			args = new ArrayList<Exp>();
-		}
-		args.add(arg);
-	}
-	
-	/**
-	 * Trim the list of arguments to save memory.
-	 */
-	public void trim() {
-		try {
-			((ArrayList<Exp>)this.args).trimToSize();
-		} catch (ClassCastException ex) {
-			this.args = new ArrayList<Exp>(this.args);
-		}
 	}
 
 	public String getName() {
@@ -96,10 +81,10 @@ public abstract class Function implements Exp {
 	 */
 	@Override
 	public void toString(StringBuilder sb) {
-		sb.append(Utils.empty(name) ? "[anonymous]" : name);
-		sb.append("(");
-		sb.append(Join.with(", ").these(args));
-		sb.append(")");
+		sb.append(Utils.empty(name) ? "[anonymous]" : name)
+		  .append("(")
+		  .append(Join.with(", ").these(args))
+		  .append(")");
 	}
 
 	/**

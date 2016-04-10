@@ -34,11 +34,11 @@ public class Get extends Function {
 
 	@Override
 	public Object eval(Context context) {
-		List<Exp> args = getArgs();
+		Exp []args = getArgs();
 
-		if (args.size() >= 2) {
-			Object collection = args.get(0).eval(context);
-			Object index = args.get(1).eval(context);
+		if (args.length >= 2) {
+			Object collection = args[0].eval(context);
+			Object index = args[1].eval(context);
 
 			return get(collection, index);
 		}

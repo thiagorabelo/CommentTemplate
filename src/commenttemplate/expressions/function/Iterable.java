@@ -19,66 +19,54 @@
 package commenttemplate.expressions.function;
 
 import commenttemplate.context.Context;
-import commenttemplate.expressions.parser.Parser;
-import commenttemplate.expressions.tree.Exp;
-import commenttemplate.expressions.tree.Literal;
 import commenttemplate.util.Utils;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
  *
  * @author thiago
  */
-public class Iterable extends Function {
+public class Iterable extends ExecuteFunction {
 
-	private class NumericalListIterator implements Iterator<Integer> {
-		private final Exp start;
-		private final Exp length;
-		private final Exp step;
-
-		private int i_start;
-		private int i_length;
-		private int i_step;
-		private int i_size;
+	private static class NumericalListIterator implements Iterator<Integer> {
+		private int start;
+		private int length;
+		private int step;
+		private int size;
 
 		private int current;
 		private boolean started;
 		private final boolean upward; // ascendente
 
-		public NumericalListIterator(Context context, Exp start, Exp length, Exp step) {
-			this.start = start;
-			this.length = length;
-			this.step = step;
+		public NumericalListIterator(Number start, Number length, Number step) {
+			this.start = start.intValue();
+			this.length = length.intValue();
+			this.step = step == null ? 1 : step.intValue();
 
-			i_init(context);
+			init2();
 
-			current = i_start;
-			started = false;
-
-			upward = i_length >= i_start;
+			upward = this.length >= this.start;
 		}
 
-		private void i_init(Context context) {
-			i_start = ((Number)start.eval(context)).intValue();
-			i_length = ((Number)length.eval(context)).intValue();
-			i_step = step == null ? 1 : ((Number)step.eval(context)).intValue();
-			i_size = Math.abs(i_length - i_start);
+		private void init2() {
+			size = Math.abs(length - start);
+			step = length >= start ? Math.abs(step) : -Math.abs(step);
 
-			i_step = i_length >= i_start ? Math.abs(i_step) : -Math.abs(i_step);
+			current = start;
+			started = false;
 		}
 
 		@Override
 		public boolean hasNext() {
-			return (i_size > 0) && (!started || (upward ? current < (i_length - 1) : current > (i_length + 1)));
+			return (size > 0) && (!started || (upward ? current + step < length : current + step > length));
 		}
 
 		@Override
 		public Integer next() {
 			if (hasNext()) {
 				if (started) {
-					current += i_step;
+					current += step;
 				} else {
 					started = true;
 				}
@@ -86,7 +74,7 @@ public class Iterable extends Function {
 				return current;
 			}
 
-			throw new NoSuchElementException(Utils.concat("Iterating over the limit of list [", i_start, "..", i_length, "]"));
+			throw new NoSuchElementException(Utils.concat("Iterating over the limit of list [", start, "..", length, "]"));
 		}
 
 		@Override
@@ -95,28 +83,32 @@ public class Iterable extends Function {
 		}
 	}
 
-	@Override
-	public java.lang.Iterable<Integer> eval(Context context) {
-		Exp start;
-		Exp length;
-		Exp step;
+	private static class InnerIterable implements java.lang.Iterable<Integer> {
+		Number start;
+		Number length;
+		Number step;
 
-		List<Exp> args = getArgs();
-
-		if (args.size() >= 2) {
-			start = args.get(0);
-			length = args.get(1);
-			step =  args.size() > 2 ? args.get(2) : new Literal(1);
-
-			return new java.lang.Iterable<Integer>() {
-				@Override
-				public Iterator<Integer> iterator() {
-					return new NumericalListIterator(context, start, length, step);
-				}
-			};
+		public InnerIterable(Number start, Number length, Number step) {
+			this.start = start;
+			this.length = length;
+			this.step = step;
 		}
 
-		
+		@Override
+		public Iterator<Integer> iterator() {
+			return new NumericalListIterator(start, length, step);
+		}
+	}
+
+	public java.lang.Iterable<Integer> execute(Context context, Number start, Number length, Number step) {
+		if (length != null) {
+			return new InnerIterable(start, length, step);
+		}
+
+		if (start != null) {
+			return new InnerIterable(0, start, step);
+		}
+
 		return new java.lang.Iterable<Integer>() {
 			@Override
 			public Iterator<Integer> iterator() {

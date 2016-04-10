@@ -2,7 +2,6 @@ package commenttemplate.expressions.function;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
-import java.util.List;
 import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
 
@@ -30,7 +29,7 @@ public class Length extends Function {
 
 	@Override
 	public Object eval(Context context) {
-		List<Exp> args = getArgs();
+		Exp []args = getArgs();
 		int length = 0;
 
 		for (Exp arg : args) {

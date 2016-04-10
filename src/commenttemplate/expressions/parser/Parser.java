@@ -259,6 +259,7 @@ public class Parser {
 	public Tuple<Exp, Integer> resolveFunction(List<Exp> itens, int begin) {
 		Function f = (Function) itens.get(begin++);
 		List<Exp> argItens = new ArrayList<Exp>();
+		List<Exp> finalArgummentsList = new ArrayList<Exp>();
 		int parenthesis = 1, i;
 		
 		begin += 1;
@@ -268,9 +269,9 @@ public class Parser {
 			
 			if (expr instanceof Comma) {
 				MyStack<Exp> stack = buildStack0(argItens);
-				f.appendArg(buildTree(stack));
+				finalArgummentsList.add(buildTree(stack));
 				argItens = new ArrayList<Exp>();
-			} else if (expr instanceof Function) {
+			} else if (isFunction(expr)) {
 				Tuple<Exp, Integer> func = resolveFunction(itens, i);
 				
 				argItens.add(func.getA());
@@ -289,15 +290,15 @@ public class Parser {
 					argItens.add(expr);
 				} else {
 					MyStack<Exp> stack = buildStack0(argItens);
-					f.appendArg(buildTree(stack));
+					finalArgummentsList.add(buildTree(stack));
 
 					break;
 				}
 			}
 		}
-		
-		f.trim();
-		
+
+		f.setArgs(finalArgummentsList);
+
 		return new Tuple<Exp, Integer>(f, i);
 	}
 	
@@ -309,7 +310,7 @@ public class Parser {
 	 * Temos três pilhas:
 	 * mainStack - a pilha que será retornada
 	 *   opStack - guarda temporariamente um operador enquanto carrega os demais operandos
-	 *    lastOp - Guarda os últimos operadores
+	 *    lastOp - guarda os últimos operadores
 	 *
 	 * 1 - Retire um token da fila e guarde em expr
 	 *

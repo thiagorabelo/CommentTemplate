@@ -6,7 +6,6 @@ import commenttemplate.context.Context;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,7 +38,7 @@ public class Empty extends Function {
 
 	@Override
 	public Object eval(Context context) {
-		List<Exp> args = getArgs();
+		Exp []args = getArgs();
 		boolean isEmpty = true;
 
 		for (Exp arg : args) {

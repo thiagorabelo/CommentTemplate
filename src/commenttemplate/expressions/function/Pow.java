@@ -1,21 +1,15 @@
 package commenttemplate.expressions.function;
 
-import java.util.List;
 import commenttemplate.expressions.operators.numerical.Power;
-import commenttemplate.expressions.tree.Exp;
 import commenttemplate.context.Context;
 
 /**
  *
  * @author thiago
  */
-public class Pow extends Function {
+public class Pow extends ExecuteFunction {
 
-	@Override
-	public Object eval(Context context) {
-		List<Exp> args = getArgs();
-		Exp a = args.get(0), b = args.get(1);
-		
-		return Power.execute(a.eval(context), b.eval(context));
+	public Object execute(Context context, Number a, Number b) {		
+		return Power.execute(a, b);
 	}
 }

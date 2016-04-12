@@ -44,14 +44,16 @@ public class ExecuteFunction extends Function {
 			Class []params = m.getParameterTypes();
 
 			if (params.length == 0 || !params[0].isAssignableFrom(Context.class)) {
-				// @TODO: Melhorar esta exceção.
-				throw new RuntimeException("The fisrt parameter of \"execute\" method must be the Context");
+				// @TODO: Esta exceção deve ser aqui ou na hora de fazer o parser?
+				throw new RuntimeException(Utils.concat(
+					"The fisrt parameter of \"execute\" method in ",
+					this.getClass().getName(),
+					"[,", getName(), "]",
+					" must be the Context"
+				));
 			}
 
 			if (args.size() < params.length) {
-				//       0 1 2
-				// ct -> n a
-				// mi -> c a b
 				for (int i = args.size(), max = params.length; i < max; i++) {
 					args.add(null);
 				}
@@ -59,7 +61,6 @@ public class ExecuteFunction extends Function {
 
 			if (params.length < args.size()) {
 				for (int i = args.size() - 1, min = params.length; i >= min; i--) {
-				//for (int i = params.length, max = args.size(); i < max; i++) {
 					args.remove(i);
 				}
 			}
@@ -88,7 +89,12 @@ public class ExecuteFunction extends Function {
 
 			if (execute.getReturnType() == Void.class) {
 				// @TODO: Melhorar esta exceção.
-				throw new RuntimeException("The method execute must return a type.");
+				throw new RuntimeException(Utils.concat(
+					"The method \"execute\" from ",
+					this.getClass().getName(),
+					"[", getName(), "]",
+					"must return a type."
+				));
 			}
 
 			normalizeParams(args, execute);
@@ -169,7 +175,7 @@ public class ExecuteFunction extends Function {
 
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
 			// @TODO: Melhorar esta exceção.
-			throw new RuntimeException(ex);
+			throw new RuntimeException(this.toString(), ex);
 		}
 	}
 }

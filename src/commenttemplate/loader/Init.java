@@ -57,7 +57,7 @@ public class Init extends TemplateLoaderConfig {
 	private static final String CUSTOM_FUNCTION = "commenttemplate.function";
 //	private static final String CONFIG_CLASS = "commenttemplate.config_class";
 	
-	private static final String filename = "commenttemplate.properties";
+	private static final String FILE_NAME = "commenttemplate.properties";
 	
 	private static Boolean configured = false;
 	
@@ -83,10 +83,10 @@ public class Init extends TemplateLoaderConfig {
 	public void init() throws Exception {
 		Properties prop = new Properties();
 		
-		InputStream is = Init.class.getClassLoader().getResourceAsStream(filename);
+		InputStream is = Init.class.getClassLoader().getResourceAsStream(FILE_NAME);
 		
 		if (is == null) {
-			throw new FileNotFoundException(filename);
+			throw new FileNotFoundException(FILE_NAME);
 		}
 
 		prop.load(is);

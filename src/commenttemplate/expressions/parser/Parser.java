@@ -199,43 +199,37 @@ public class Parser {
 		}
 	}
 
+	protected boolean greaterThan(Operator []ops) {
+		int []idxs = new int[2];
+		int len = precedence.length, len_inner;
+		boolean tObreak = false;
+
+		for (int opIdx = 0; opIdx < 2; opIdx++) {
+			Operator op = ops[opIdx];
+			tObreak = false;
+
+			for (idxs[opIdx] = 0; idxs[opIdx] < len; idxs[opIdx]++) {
+				len_inner = precedence[idxs[opIdx]].length;
+				for (int k = 0; k < len_inner; k++) {
+					if (op.getClass().equals(precedence[idxs[opIdx]][k])) {
+						tObreak = true;
+						break;
+					}
+				}
+
+				if (tObreak) {
+					break;
+				}
+			}
+		}
+
+		return idxs[0] < idxs[1];
+	}
+
 	// Compara dois operadores op1 e op2, para saber se op1 tem maior
 	// prioridade que op1.
 	protected boolean greaterThan(Operator op1, Operator op2) {
-		int i, j, len = precedence.length, len_inner;
-		boolean tObreak = false;
-
-		for (i = 0; i < len; i++) {
-			len_inner = precedence[i].length;
-			for (int k = 0; k < len_inner; k++) {
-				if (op1.getClass().equals(precedence[i][k])) {
-					tObreak = true;
-					break;
-				}
-			}
-
-			if (tObreak) {
-				break;
-			}
-		}
-
-		tObreak = false;
-
-		for (j = 0; j < len; j++) {
-			len_inner = precedence[j].length;
-			for (int k = 0; k < len_inner; k++) {
-				if (op2.getClass().equals(precedence[j][k])) {
-					tObreak = true;
-					break;
-				}
-			}
-
-			if (tObreak) {
-				break;
-			}
-		}
-
-		return i < j;
+		return greaterThan(new Operator[]{op1, op2});
 	}
 	
 	public MyStack<Exp> buildStack(List<Exp> itens) {

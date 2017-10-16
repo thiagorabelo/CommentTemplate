@@ -1,8 +1,10 @@
 /build/
 /dist/
+.kateproject.d/
 /nbproject/private/
 /nbproject/
 /build.xml
 /src/commenttemplate/util/maps
 .directory
+.kateproject
 
